@@ -1,0 +1,227 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
+
+html, body, canvas {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow-y: hidden;
+}
+
+#ui {
+    position: absolute;
+    top: 1.4vh;
+    margin-left: auto;
+    max-width: 25vw;
+    max-height: 100vh;
+}
+
+#tabsLine{
+    display: flex;
+}
+
+#infoBtn{
+    width: 0.5vw;
+    height: 1.4vw;
+}
+
+.uiBtn{
+    width: 100%; 
+    overflow: auto;
+    max-height: 3.5vh;
+    overflow-y: hidden;
+}
+
+
+#IpModelButtonLine{
+    display: flex;
+}
+
+#selectCarDataFile, #selectCarModel{
+    width: 49%; 
+    overflow: auto;
+    max-height: 3.5vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+#selectCarDataFile{
+    margin-left: 2%;
+}
+
+.box{
+    width: 25vw;
+}
+
+li{
+    min-width: 4.8vw;
+    max-width: 4.8vw;
+}
+
+#menuToggle{
+    width: 1vw;
+    scrollbar-width: none;
+    height: 7vh;
+}
+
+#content{
+    height: 73vh;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(36, 36, 36);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+#selectImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;    
+  justify-content: center;
+  width: 35%;
+  position: relative;
+  max-width: 35%;
+  height: auto;   
+  display: block;
+  cursor: pointer;
+  margin: auto;
+  margin-bottom: 5%;
+}
+
+#selectImageInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+  margin-bottom: 5%;
+}
+
+#fieldsLines{
+    display: flex;
+}
+
+#PositionsFieldsLines {
+  display: table !important;
+  width: 100% !important;
+  table-layout: fixed !important;
+  padding-left: 2%;
+}
+
+#PositionsFieldsLines .title,
+#PositionsFieldsLines .input {
+  display: table-cell !important;
+  vertical-align: middle !important;
+  width: auto !important;
+}
+
+#PositionsFieldsLines .title {
+  width: 6% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#PositionsFieldsLines .input {
+  width: 90% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+.title{
+    min-width: 8vw;
+    max-width: 8vw;
+}
+
+.extended-title{
+  max-width: none;
+}
+
+.textarea{
+    resize: vertical;
+    overflow: auto;
+    max-width: 10vw;
+}
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #06061c;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+
+#baseCameras, #onboards{
+  display: flex;
+  flex-direction: row;
+  align-items: center;    
+  justify-content: center;
+  width: 33%;
+  position: relative;
+  max-width: 33%;
+  margin: auto;
+  margin-bottom: 5%;
+}
+
+.minMaxIn{
+  display: flex;
+}
+
+.minMaxIn input{
+  margin-left: 2%;
+}
+
+.minMaxTitle{
+  max-width: 100% !important;
+  margin-bottom: 3% !important;
+  margin-top: 6% !important;
+}
+
+.minMaxIn span{
+  margin-top: 1.5%;
+}
+
+.gearIn{
+  max-width: 25%;
+  display: flex;
+}

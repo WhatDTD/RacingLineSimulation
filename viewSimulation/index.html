@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <title>Simulator</title>
+    <link rel="stylesheet" href="style.css"></link>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <canvas id="canvas" tabindex="1"></canvas>
+    <div id="uiBar">
+      <button id="runSimulation">Run Simulation</button>
+      <input type="file" id="importLine" accept=".json"/>
+      <input type="file" id="importTrackModel"/>
+      <input type="file" id="importCarModel"/>
+    </div>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="track.js"></script> 
+    <script src="script.js"></script>
+    <script src="simulation.js"></script>
+    <script src="lapCalculation.js"></script>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
+
+html, body, canvas {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow-y: hidden;
+}
+
+#ui {
+    position: absolute;
+    top: 1.4vh;
+    margin-left: auto;
+    max-width: 25vw;
+    max-height: 100vh;
+}
+
+.title{
+  max-width: 100%;
+}
+
+
+.uiBtn{
+    width: 100%; 
+    overflow: auto;
+    max-height: 3.5vh;
+    overflow-y: hidden;
+}
+
+#uiTitle{
+  display: flex;
+  justify-content: center;
+  min-width: 100%;
+}
+
+#noCar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+#carInfo{
+  display: flex;
+}
+
+#carInfo img{
+  min-height: 15vh;
+  max-height: 15vh;
+  align-items: flex-start;
+}
+
+#carInfo #infos{
+  align-items: flex-end;
+  margin-left: 3%;
+}
+
+#infos div{
+  margin-bottom: 6%;
+  min-width: 100%;
+}
+
+.flex-spBtw{
+  justify-content: space-between;
+}
+
+.flex{
+    display: flex;
+}
+
+.inputButton{
+    width: 49%; 
+    overflow: auto;
+    max-height: 3.5vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.buttonMargin{
+    margin-left: 2%;
+}
+
+.box{
+    width: 25vw;
+}
+
+li{
+    min-width: 4.8vw;
+    max-width: 100%;
+}
+
+#menuToggle{
+    width: 1vw;
+    scrollbar-width: none;
+    height: 7vh;
+}
+
+#content{
+    height: 73vh;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(36, 36, 36);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+.extended-title{
+  max-width: none;
+}
+
+.textarea{
+    resize: vertical;
+    overflow: auto;
+    max-width: 10vw;
+}
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #06061c;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.setupIn{
+  display: flex;
+}
+
+.setupIn input{
+  margin-left: 2%;
+  max-width: 25%;
+}
+
+.setupTitle{
+  max-width: 100% !important;
+  margin-bottom: 3% !important;
+  margin-top: 6% !important;
+}
+
+.setupIn span{
+  margin-top: 1.5%;
+}
+
+.gearIn{
+  max-width: 25%;
+  display: flex;
+}

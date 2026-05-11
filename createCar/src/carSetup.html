@@ -1,0 +1,130 @@
+<h2 class='title is-5'>Car Setup</h2>
+
+
+<!--Weights-->
+<div class="title is-5">Weights</div>
+
+
+<div class="title is-6 minMaxTitle">Mass (kg):</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='massMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='massMaxIn'/>
+</div>
+
+
+<!--Aerodynamic-->
+<div class="title is-5 mt-6">Aerodynamic</div>
+
+<div class="title is-6 minMaxTitle">Coefficient of Lift:</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='clMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='clMaxIn'/>
+</div>
+
+
+<div class="title is-6 minMaxTitle">Coefficient of Drag:</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='cdMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='cdMaxIn'/>
+</div>
+
+
+<div class="title is-6 minMaxTitle">Frontal Area (m²):</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='areaMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='areaMaxIn'/>
+</div>
+
+<input class="mt-5" type="checkbox" id="bindedAero"/><span class="ml-3">Binded Aero</span>
+<div>(Not Raccomended for Cars that produce Lift)</div>
+
+
+<div class="title is-5 mt-6">PU</div>
+
+<div class="title is-6 minMaxTitle">Power (Kw):</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='powerMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='powerMaxIn'/>
+</div>
+
+
+<div class="title is-5 mt-6">Brakes</div>
+
+<div class="title is-6 minMaxTitle">Braking Power (Kw):</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='brakingPowerMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='brakingPowerMaxIn'/>
+</div>
+
+
+<div class="title is-5 mt-6">Tyres</div>
+
+<div class="title is-6 minMaxTitle">Tyres Friction Coefficient:</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='FrCMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='FrCMaxIn'/>
+</div>
+
+
+<!--GearBox-->
+<div class="title is-5 mt-6">Gear Box</div>
+
+<div class="title is-6 minMaxTitle">Engine RPM</div>
+<div class="minMaxIn">
+    <span>Idle: </span>
+    <input class='input mr-3' type='number' placeholder='RPM' id='RPMidleIn'/>
+
+    <span>Min: </span>
+    <input class='input mr-3' type='number' placeholder='RPM' id='RPMminIn'/>
+
+</div>
+
+<div class="minMaxIn mt-5">
+    
+    <span>Shift: </span>
+    <input class='input mr-3' type='number' placeholder='RPM' id='RPMshiftIn'/>
+
+    <span>Max: </span>
+    <input class='input mr-3' type='number' placeholder='RPM' id='RPMmaxIn'/>
+
+</div>
+
+
+<div class="minMaxIn mt-5">
+    <span>Variation: </span>
+    <input class='input mr-3' type='number' placeholder='RPM' id='RPMvariationIn'/>
+</div>
+
+<div class="title is-5 mt-6">Gears</div>
+
+<span>Number of Gears: </span>
+<input class='input mr-3 gearIn' type='number' placeholder='' id='nGearsIn'/>
+
+<hr>
+
+<div class="minMaxIn">
+    <div class="title is-6">Gears End Speed (Km/h):</div>
+</div>
+<br>
+<div id="gears"></div>
