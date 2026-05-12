@@ -20,6 +20,8 @@ async function startSimulation(simulation, scene, engine) {
 
         meshLoaded = true;
         carMesh = result.meshes[0];
+        carMesh.renderingGroupId = 2; //so it renders on the track(0) and on line(1)
+        carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 2);
         scene.meshes.forEach(mesh => {
           //console.log(mesh.name);
 
@@ -43,10 +45,8 @@ async function startSimulation(simulation, scene, engine) {
 
   carMesh = await loadMesh(simulation.car.meshURL);
   
-  carMesh.position.copyFrom(() => {
-    const startPos = simulation.nodes[0];
-    return new BABYLON.Vector3(startPos.x, startPos.y, startPos.z);
-  });
+  const startPos = simulation.nodes[0];
+  carMesh.position = new BABYLON.Vector3(startPos.x, startPos.y, startPos.z);
   
   const fc = new BABYLON.FollowCamera(
     "FollowCamera",
@@ -59,7 +59,7 @@ async function startSimulation(simulation, scene, engine) {
   fc.rotationOffset = 180;
   fc.cameraAcceleration = 0.05;
   fc.maxCameraSpeed = 10;
-  //scene.activeCamera = fc;
+  scene.activeCamera = fc;
   
   const points = simulation.nodes;
   const FRAME_RATE = 60;
