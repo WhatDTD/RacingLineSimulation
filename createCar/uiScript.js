@@ -109,73 +109,68 @@ menuToggle.element.addEventListener("click", (event) => {
 
 
 function activateCarUi(){
-//Car Ui
+    //Car Ui
 
-fetch('/createCar/src/carUi.html')
-.then(response => response.text())
-.then(
-    (data) => {
-        content.innerHTML = data;
+    content.innerHTML = carUiHtml;
     
-        //Car Ui inputs
-        const manufactureIn = document.querySelector("#manufactureIn");
-        const modelIn = document.querySelector("#modelIn");
-        const yearIn = document.querySelector("#yearIn");
-        const categoryIn = document.querySelector("#categoryIn");
-        const descriptionIn = document.querySelector("#descriptionIn");
+    //Car Ui inputs
+    const manufactureIn = document.querySelector("#manufactureIn");
+    const modelIn = document.querySelector("#modelIn");
+    const yearIn = document.querySelector("#yearIn");
+    const categoryIn = document.querySelector("#categoryIn");
+    const descriptionIn = document.querySelector("#descriptionIn");
 
-        if(car.manufacture && car.manufacture != "") manufactureIn.value = car.manufacture;
-        if(car.model && car.model != "") modelIn.value = car.model;
-        if(car.year && car.year > 0) yearIn.value = car.year;
-        if(car.category && car.category != "") categoryIn.value = car.category;
-        if(car.description && car.description != "") descriptionIn.value = car.description;
+    if(car.manufacture && car.manufacture != "") manufactureIn.value = car.manufacture;
+    if(car.model && car.model != "") modelIn.value = car.model;
+    if(car.year && car.year > 0) yearIn.value = car.year;
+    if(car.category && car.category != "") categoryIn.value = car.category;
+    if(car.description && car.description != "") descriptionIn.value = car.description;
         
         
-        //inputs events
-        manufactureIn.addEventListener("change", (e) =>{
-            car.manufacture = manufactureIn.value;
-        });
+    //inputs events
+    manufactureIn.addEventListener("change", (e) =>{
+        car.manufacture = manufactureIn.value;
+    });
         
-        modelIn.addEventListener("change", (e) =>{
-            car.model = modelIn.value;
-        });
+    modelIn.addEventListener("change", (e) =>{
+        car.model = modelIn.value;
+    });
         
-        yearIn.addEventListener("change", (e) =>{
-            car.year = yearIn.value;
-        });
+    yearIn.addEventListener("change", (e) =>{
+        car.year = yearIn.value;
+    });
         
-        categoryIn.addEventListener("change", (e) =>{
-            car.category = categoryIn.value;
-        });
+    categoryIn.addEventListener("change", (e) =>{
+        car.category = categoryIn.value;
+    });
         
-        manufactureIn.addEventListener("change", (e) =>{
-            car.manufacture = manufactureIn.value;
-        });
+    manufactureIn.addEventListener("change", (e) =>{
+        car.manufacture = manufactureIn.value;
+    });
         
-        descriptionIn.addEventListener("change", (e) =>{
-            car.description = descriptionIn.value;
-        });
+    descriptionIn.addEventListener("change", (e) =>{
+        car.description = descriptionIn.value;
+    });
         
         
         
-        //image
-        const previewImage = ui.querySelector("#previewImage");
-        const previewImageInput = ui.querySelector("#selectImageInput");
+    //image
+    const previewImage = ui.querySelector("#previewImage");
+    const previewImageInput = ui.querySelector("#selectImageInput");
 
-        if(car.previewImageURL) loadPreviewImage(car.previewImageURL);
+    if(car.previewImageURL) loadPreviewImage(car.previewImageURL);
         
-            previewImageInput.addEventListener('change', async (event)=>{
-            const file = event.target.files[0];             
-            toBase64(file).then(res =>{
-                car.previewImageURL = res;
-                loadPreviewImage(res);
-            });
+        previewImageInput.addEventListener('change', async (event)=>{
+        const file = event.target.files[0];             
+        toBase64(file).then(res =>{
+            car.previewImageURL = res;
+            loadPreviewImage(res);
         });
+    });
 
 
-        function loadPreviewImage(url){
-            previewImage.setAttribute("src", url);
-        }
-});
+    function loadPreviewImage(url){
+        previewImage.setAttribute("src", url);
+    }
 
 }
