@@ -1,3 +1,4 @@
+const simulationSetupHtml = `
 <div id="carInfo">
     <img id='previewImage' src='' alt='Preview Image'/>
     <div id="infos">
@@ -222,3 +223,4 @@
 </button>
 
 <br><br><br>
+`;

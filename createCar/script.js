@@ -19,7 +19,7 @@ let fovChange = 0.0005;
 
 scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
 scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("/assets/environment.env", scene);
-BABYLON.SceneLoader.ImportMeshAsync("", "./assets/", "Showroom.glb", scene);
+BABYLON.SceneLoader.ImportMeshAsync("", "./resources/", "Showroom.glb", scene);
 
 const defaultSpeed = 0.2;
 let freeCamera = new BABYLON.FreeCamera(

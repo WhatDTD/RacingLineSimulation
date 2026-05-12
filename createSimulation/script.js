@@ -300,431 +300,425 @@ function deepCopy(obj){
 
 //Activate Simulation Setup HTML
 function activateSimSetup(){
-  fetch('/createSimulation/simulationSetup.html')
-  .then(response => response.text())
-  .then(
-    (data) => {
-      content.innerHTML = data;
 
-      //Preview Image
-      const previewImage = document.querySelector("#previewImage");
-      previewImage.setAttribute("src", car.previewImageURL);
+  content.innerHTML = simulationSetupHtml;
 
-      //Car Infos
-      const carNameModelYear = document.querySelector("#carNameModelYear");
-      carNameModelYear.innerHTML = `${car.manufacture} ${car.model} '<i>${car.year}</i>`
+  //Preview Image
+  const previewImage = document.querySelector("#previewImage");
+  previewImage.setAttribute("src", car.previewImageURL);
 
-      const category = document.querySelector("#category");
-      category.innerHTML = car.category;
+  //Car Infos
+  const carNameModelYear = document.querySelector("#carNameModelYear");
+  carNameModelYear.innerHTML = `${car.manufacture} ${car.model} '<i>${car.year}</i>`
 
-      const description = document.querySelector("#description");
-      description.innerHTML = car.description;
+  const category = document.querySelector("#category");
+  category.innerHTML = car.category;
+
+  const description = document.querySelector("#description");
+  description.innerHTML = car.description;
 
 
 
-      //Car Setup
+  //Car Setup
 
-      function updateInput(input, min, max, value){
-        if(value < min){ 
-          input.value = min;
-        }else if(value > max){
-          input.value = max;
-        }else{
-          input.value = value;
-        }
-      }
+  function updateInput(input, min, max, value){
+    if(value < min){ 
+      input.value = min;
+    }else if(value > max){
+      input.value = max;
+    }else{
+      input.value = value;
+    }
+  }
 
 
-      function updateSlider(slider, sliderPrecision, min, max, value){
-        slider.value = value*sliderPrecision;
-        slider.min = min*sliderPrecision;
-        slider.max = max*sliderPrecision;
-      }
+  function updateSlider(slider, sliderPrecision, min, max, value){
+    slider.value = value*sliderPrecision;
+    slider.min = min*sliderPrecision;
+    slider.max = max*sliderPrecision;
+  }
 
-      function updateInputAndSlider(input, slider, sliderPrecision, min, max, value){
-        updateInput(input, min, max, value);
-        updateSlider(slider, sliderPrecision, min, max, value);
-      }
+  function updateInputAndSlider(input, slider, sliderPrecision, min, max, value){
+    updateInput(input, min, max, value);
+    updateSlider(slider, sliderPrecision, min, max, value);
+  }
       
 
-      //Weights
+  //Weights
 
-      //Mass
-      const massInput = document.querySelector("#massInput");
-      const massSlider = document.querySelector("#massSlider");
+  //Mass
+  const massInput = document.querySelector("#massInput");
+  const massSlider = document.querySelector("#massSlider");
 
-      massInput.value = simCar.mass;
-      massSlider.value = car.mass.min;
-      massSlider.min = car.mass.min;
-      massSlider.max = car.mass.max;
+  massInput.value = simCar.mass;
+  massSlider.value = car.mass.min;
+  massSlider.min = car.mass.min;
+  massSlider.max = car.mass.max;
 
-      massInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, Number(massInput.value));
-        simCar.mass = Number(massInput.value);
-      });
+  massInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, Number(massInput.value));
+    simCar.mass = Number(massInput.value);
+  });
 
-      massSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, Number(massSlider.value));
-        simCar.mass = Number(massInput.value);
-      });
+  massSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, Number(massSlider.value));
+    simCar.mass = Number(massInput.value);
+  });
 
 
-      //Aerodynamics
+  //Aerodynamics
 
-      //Cl
-      const ClInput = document.querySelector("#ClInput");
-      const ClSlider = document.querySelector("#ClSlider");
-      const ClRange = Math.abs(car.Cl.max - car.Cl.min);
+  //Cl
+  const ClInput = document.querySelector("#ClInput");
+  const ClSlider = document.querySelector("#ClSlider");
+  const ClRange = Math.abs(car.Cl.max - car.Cl.min);
 
-      const ClSliderPrecision = 100;
+  const ClSliderPrecision = 100;
 
 
-      ClInput.value = simCar.Cl;
-      ClSlider.value = -car.Cl.max * ClSliderPrecision;
-      ClSlider.max = -car.Cl.min * ClSliderPrecision;
-      ClSlider.min = -car.Cl.max * ClSliderPrecision;
+  ClInput.value = simCar.Cl;
+  ClSlider.value = -car.Cl.max * ClSliderPrecision;
+  ClSlider.max = -car.Cl.min * ClSliderPrecision;
+  ClSlider.min = -car.Cl.max * ClSliderPrecision;
 
-      ClInput.addEventListener("change", (e) =>{
-        updateInput(ClInput, car.Cl.min, car.Cl.max, Number(ClInput.value));
-        updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, Number(-ClInput.value));
-        if(car.bindedAero) updateBindedAero((-ClInput.value + car.Cl.max)/ClRange);
-        simCar.Cl = Number(ClInput.value);
-      });
+  ClInput.addEventListener("change", (e) =>{
+    updateInput(ClInput, car.Cl.min, car.Cl.max, Number(ClInput.value));
+    updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, Number(-ClInput.value));
+    if(car.bindedAero) updateBindedAero((-ClInput.value + car.Cl.max)/ClRange);
+    simCar.Cl = Number(ClInput.value);
+  });
 
-      ClSlider.addEventListener("change", (e) =>{
-        updateInput(ClInput, car.Cl.min, car.Cl.max, Number(-ClSlider.value)/ClSliderPrecision);
-        if(car.bindedAero) updateBindedAero((-ClInput.value + car.Cl.max)/ClRange);
-        simCar.Cl = Number(ClInput.value);
-      });
+  ClSlider.addEventListener("change", (e) =>{
+    updateInput(ClInput, car.Cl.min, car.Cl.max, Number(-ClSlider.value)/ClSliderPrecision);
+    if(car.bindedAero) updateBindedAero((-ClInput.value + car.Cl.max)/ClRange);
+    simCar.Cl = Number(ClInput.value);
+  });
 
 
-      function updateClChange(change){
-        updateInput(ClInput, car.Cl.min, car.Cl.max, +car.Cl.max - change*ClRange);
-        if(car.bindedAero) updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, -car.Cl.max + change*ClRange);
-        simCar.Cl = Number(ClInput.value);
-      }
+  function updateClChange(change){
+    updateInput(ClInput, car.Cl.min, car.Cl.max, +car.Cl.max - change*ClRange);
+    if(car.bindedAero) updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, -car.Cl.max + change*ClRange);
+    simCar.Cl = Number(ClInput.value);
+  }
 
 
 
 
-      //Cd
-      const CdInput = document.querySelector("#CdInput");
-      const CdSlider = document.querySelector("#CdSlider");
-      const CdRange = Math.abs(car.Cd.max - car.Cd.min);
+  //Cd
+  const CdInput = document.querySelector("#CdInput");
+  const CdSlider = document.querySelector("#CdSlider");
+  const CdRange = Math.abs(car.Cd.max - car.Cd.min);
 
-      const CdSliderPrecision = 100;
+  const CdSliderPrecision = 100;
 
-      CdInput.value = simCar.Cd;
-      CdSlider.value = car.Cd.min * CdSliderPrecision;
-      CdSlider.min = car.Cd.min * CdSliderPrecision;
-      CdSlider.max = car.Cd.max * CdSliderPrecision;
+  CdInput.value = simCar.Cd;
+  CdSlider.value = car.Cd.min * CdSliderPrecision;
+  CdSlider.min = car.Cd.min * CdSliderPrecision;
+  CdSlider.max = car.Cd.max * CdSliderPrecision;
 
-      CdInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, Number(CdInput.value));
-        if(car.bindedAero) updateBindedAero((Number(CdInput.value) - car.Cd.min)/CdRange);
-        simCar.Cd = Number(CdInput.value);
-      });
+  CdInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, Number(CdInput.value));
+    if(car.bindedAero) updateBindedAero((Number(CdInput.value) - car.Cd.min)/CdRange);
+    simCar.Cd = Number(CdInput.value);
+  });
 
-      CdSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, Number(CdSlider.value)/CdSliderPrecision);
-        if(car.bindedAero) updateBindedAero((Number(CdInput.value) - car.Cd.min)/CdRange);
-        simCar.Cd = Number(CdInput.value);
-      });
+  CdSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, Number(CdSlider.value)/CdSliderPrecision);
+    if(car.bindedAero) updateBindedAero((Number(CdInput.value) - car.Cd.min)/CdRange);
+    simCar.Cd = Number(CdInput.value);
+  });
 
 
-      function updateCdChange(change){
-        updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, car.Cd.min + change*CdRange);
-        simCar.Cd = Number(CdInput.value);
-      }
+  function updateCdChange(change){
+    updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, car.Cd.min + change*CdRange);
+    simCar.Cd = Number(CdInput.value);
+  }
 
 
 
 
-      //Frontal Area
-      const areaInput = document.querySelector("#areaInput");
-      const areaSlider = document.querySelector("#areaSlider");
-      const areaRange = Math.abs(car.A.max - car.A.min);
+  //Frontal Area
+  const areaInput = document.querySelector("#areaInput");
+  const areaSlider = document.querySelector("#areaSlider");
+  const areaRange = Math.abs(car.A.max - car.A.min);
 
-      const areaSliderPrecision = 100;
+  const areaSliderPrecision = 100;
 
-      areaInput.value = simCar.A;
-      areaSlider.value = car.A.min * areaSliderPrecision;
-      areaSlider.min = car.A.min * areaSliderPrecision;
-      areaSlider.max = car.A.max * areaSliderPrecision;
+  areaInput.value = simCar.A;
+  areaSlider.value = car.A.min * areaSliderPrecision;
+  areaSlider.min = car.A.min * areaSliderPrecision;
+  areaSlider.max = car.A.max * areaSliderPrecision;
 
-      areaInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, Number(areaInput.value));
-        if(car.bindedAero) updateBindedAero((Number(areaInput.value) - car.A.min)/areaRange);
-        simCar.A = Number(areaInput.value);
-      });
+  areaInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, Number(areaInput.value));
+    if(car.bindedAero) updateBindedAero((Number(areaInput.value) - car.A.min)/areaRange);
+    simCar.A = Number(areaInput.value);
+  });
 
-      areaSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, Number(areaSlider.value)/areaSliderPrecision);
-        if(car.bindedAero) updateBindedAero((Number(areaInput.value) - car.A.min)/areaRange);
-        simCar.A = Number(areaInput.value);
-      });
+  areaSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, Number(areaSlider.value)/areaSliderPrecision);
+    if(car.bindedAero) updateBindedAero((Number(areaInput.value) - car.A.min)/areaRange);
+    simCar.A = Number(areaInput.value);
+  });
 
 
-      function updateAreaChange(change){
-        updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, car.A.min + change*areaRange);
-        simCar.A = Number(areaInput.value);
-      }
+  function updateAreaChange(change){
+    updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, car.A.min + change*areaRange);
+    simCar.A = Number(areaInput.value);
+  }
 
 
 
-      //Update all binded Aero
-      function updateBindedAero(change){
-        updateClChange(change);
-        updateCdChange(change);
-        updateAreaChange(change);
-      }
+  //Update all binded Aero
+  function updateBindedAero(change){
+    updateClChange(change);
+    updateCdChange(change);
+    updateAreaChange(change);
+  }
 
 
 
-      //PU
+  //PU
 
-      //Power
+  //Power
 
-      const powerInput = document.querySelector("#powerInput");
-      const powerSlider = document.querySelector("#powerSlider");
+  const powerInput = document.querySelector("#powerInput");
+  const powerSlider = document.querySelector("#powerSlider");
 
-      powerInput.value = simCar.Power;
-      powerSlider.value = car.Power.min;
-      powerSlider.min = car.Power.min;
-      powerSlider.max = car.Power.max;
+  powerInput.value = simCar.Power;
+  powerSlider.value = car.Power.min;
+  powerSlider.min = car.Power.min;
+  powerSlider.max = car.Power.max;
 
-      powerInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, Number(powerInput.value));
-        simCar.Power = Number(powerInput.value);
-      });
+  powerInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, Number(powerInput.value));
+    simCar.Power = Number(powerInput.value);
+  });
 
-      powerSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, Number(powerSlider.value));
-        simCar.Power = Number(powerInput.value);
-      });
+  powerSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, Number(powerSlider.value));
+    simCar.Power = Number(powerInput.value);
+  });
 
 
 
-      //Brakes
+  //Brakes
 
-      //Braking Power
+  //Braking Power
 
-      const brakingPowerInput = document.querySelector("#brakingPowerInput");
-      const brakingPowerSlider = document.querySelector("#brakingPowerSlider");
+  const brakingPowerInput = document.querySelector("#brakingPowerInput");
+  const brakingPowerSlider = document.querySelector("#brakingPowerSlider");
 
-      brakingPowerInput.value = simCar.brakingPower;
-      brakingPowerSlider.value = car.brakingPower.min;
-      brakingPowerSlider.min = car.brakingPower.min;
-      brakingPowerSlider.max = car.brakingPower.max;
+  brakingPowerInput.value = simCar.brakingPower;
+  brakingPowerSlider.value = car.brakingPower.min;
+  brakingPowerSlider.min = car.brakingPower.min;
+  brakingPowerSlider.max = car.brakingPower.max;
 
-      brakingPowerInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, Number(brakingPowerInput.value));
-        simCar.brakingPower = Number(brakingPowerInput.value);
-      });
+  brakingPowerInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, Number(brakingPowerInput.value));
+    simCar.brakingPower = Number(brakingPowerInput.value);
+  });
 
-      brakingPowerSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, Number(brakingPowerSlider.value));
-        simCar.brakingPower = Number(brakingPowerInput.value);
-      });
+  brakingPowerSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, Number(brakingPowerSlider.value));
+    simCar.brakingPower = Number(brakingPowerInput.value);
+  });
 
 
 
 
-      //Tyres
+  //Tyres
 
-      //Friction Coefficient
+  //Friction Coefficient
 
-      const FrCInput = document.querySelector("#FrCInput");
-      const FrCSlider = document.querySelector("#FrCSlider");
+  const FrCInput = document.querySelector("#FrCInput");
+  const FrCSlider = document.querySelector("#FrCSlider");
 
-      const FrCSliderPrecision = 100;
+  const FrCSliderPrecision = 100;
 
-      FrCInput.value = simCar.FrC;
-      FrCSlider.value = car.FrC.min * FrCSliderPrecision;
-      FrCSlider.min = car.FrC.min * FrCSliderPrecision;
-      FrCSlider.max = car.FrC.max * FrCSliderPrecision;
+  FrCInput.value = simCar.FrC;
+  FrCSlider.value = car.FrC.min * FrCSliderPrecision;
+  FrCSlider.min = car.FrC.min * FrCSliderPrecision;
+  FrCSlider.max = car.FrC.max * FrCSliderPrecision;
 
-      FrCInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCInput.value));
-        simCar.FrC = Number(FrCInput.value);
-      });
+  FrCInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCInput.value));
+    simCar.FrC = Number(FrCInput.value);
+  });
 
-      FrCSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCSlider.value)/FrCSliderPrecision);
-        simCar.FrC = Number(FrCInput.value);
-      });
+  FrCSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCSlider.value)/FrCSliderPrecision);
+    simCar.FrC = Number(FrCInput.value);
+  });
 
 
 
 
-      //Track & World Conditions
+  //Track & World Conditions
 
-      //Air Density
+  //Air Density
 
-      const airDensityInput = document.querySelector("#airDensityInput");
+  const airDensityInput = document.querySelector("#airDensityInput");
 
-      airDensityInput.value = airDensity;
+  airDensityInput.value = airDensity;
 
-      airDensityInput.addEventListener("change", (e) =>{
-        if(!Number(airDensityInput.value) > 0) airDensityInput.value = airDensity;
-        airDensity = Number(airDensityInput.value);
-      });
+  airDensityInput.addEventListener("change", (e) =>{
+    if(!Number(airDensityInput.value) > 0) airDensityInput.value = airDensity;
+    airDensity = Number(airDensityInput.value);
+  });
 
 
 
-      //Gravity Acceleration
+  //Gravity Acceleration
 
-      const gInput = document.querySelector("#gInput");
+  const gInput = document.querySelector("#gInput");
 
-      gInput.value = g;
+  gInput.value = g;
 
-      gInput.addEventListener("change", (e) =>{
-        if(!Number(gInput.value) > 0) gInput.value = g;
-        g = Number(gInput.value);
-      });
+  gInput.addEventListener("change", (e) =>{
+    if(!Number(gInput.value) > 0) gInput.value = g;
+    g = Number(gInput.value);
+  });
 
 
 
 
-      //Track Grip
+  //Track Grip
 
-      const trackGripInput = document.querySelector("#trackGripInput");
-      const trackGripSlider = document.querySelector("#trackGripSlider");
+  const trackGripInput = document.querySelector("#trackGripInput");
+  const trackGripSlider = document.querySelector("#trackGripSlider");
 
-      trackGripInput.value = trackGrip*100;
+  trackGripInput.value = trackGrip*100;
 
-      const trackGripSliderPrecision = 1;
+  const trackGripSliderPrecision = 1;
 
-      trackGripInput.addEventListener("change", (e) =>{
-        updateInputAndSlider(trackGripInput, trackGripSlider, trackGripSliderPrecision, trackGripSlider.min, trackGripSlider.max, Number(trackGripInput.value));
-        trackGrip = Number(trackGripInput.value)/100;
-      });
+  trackGripInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(trackGripInput, trackGripSlider, trackGripSliderPrecision, trackGripSlider.min, trackGripSlider.max, Number(trackGripInput.value));
+    trackGrip = Number(trackGripInput.value)/100;
+  });
 
-      trackGripSlider.addEventListener("change", (e) =>{
-        updateInputAndSlider(trackGripInput, trackGripSlider, trackGripSliderPrecision, trackGripSlider.min, trackGripSlider.max, Number(trackGripSlider.value)/trackGripSliderPrecision);
-        trackGrip = Number(trackGripInput.value)/100;
-      });
+  trackGripSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(trackGripInput, trackGripSlider, trackGripSliderPrecision, trackGripSlider.min, trackGripSlider.max, Number(trackGripSlider.value)/trackGripSliderPrecision);
+    trackGrip = Number(trackGripInput.value)/100;
+  });
 
 
 
 
-      //Simulation Info
+  //Simulation Info
 
-      //Simulation Start Speed
+  //Simulation Start Speed
 
-      const startSpeedInput = document.querySelector("#startSpeedInput");
+  const startSpeedInput = document.querySelector("#startSpeedInput");
 
-      startSpeedInput.value = simulationStartVelocity;
+  startSpeedInput.value = simulationStartVelocity;
 
-      startSpeedInput.addEventListener("change", (e) =>{
-        if(!Number(startSpeedInput.value) > 0) startSpeedInput.value = simulationStartVelocity;
-        simulationStartVelocity = Number(startSpeedInput.value);
-      });
+  startSpeedInput.addEventListener("change", (e) =>{
+    if(!Number(startSpeedInput.value) > 0) startSpeedInput.value = simulationStartVelocity;
+    simulationStartVelocity = Number(startSpeedInput.value);
+  });
 
 
 
 
-      //-----------------------------------------------------------------//
+  //-----------------------------------------------------------------//
 
-      //Lap Time
+  //Lap Time
 
-      const simulationTime = document.querySelector("#simulationTime");
-      const deltaToBest = document.querySelector("#deltaToBest");
+  const simulationTime = document.querySelector("#simulationTime");
+  const deltaToBest = document.querySelector("#deltaToBest");
 
 
-      updateSimulationTime = function updateTime(time){
-        simulationTime.innerHTML = secondsToTimeString(time, 3);
+  updateSimulationTime = function updateTime(time){
+    simulationTime.innerHTML = secondsToTimeString(time, 3);
 
-        let comparationTime = time < lastBestSimulation.totalTime ? time - lastBestSimulation.totalTime : time - bestSimulation.totalTime;
+    let comparationTime = time < lastBestSimulation.totalTime ? time - lastBestSimulation.totalTime : time - bestSimulation.totalTime;
                 
-        let value = Math.trunc(comparationTime*1000)/1000;
+    let value = Math.trunc(comparationTime*1000)/1000;
 
-        if(value == -Infinity || value == Infinity) value = 0;
+    if(value == -Infinity || value == Infinity) value = 0;
 
-        deltaToBest.innerHTML = (value >= 0 ? "+" : "")+value.toFixed(3);
+    deltaToBest.innerHTML = (value >= 0 ? "+" : "")+value.toFixed(3);
 
-        if(value == 0){
-          deltaToBest.style.color = "#ebecf0";
-        }else if(value < 0){
-          deltaToBest.style.color = "#16c419";
-        }else{
-          deltaToBest.style.color = "#d11104";
-        }
-      }
-
-
-      function secondsToTimeString(time, decimals){
-        let str;
-        let m = Math.trunc(time/60);
-
-        str = m +":"
-
-        let s = Math.trunc((time/60 - m)*60);
-
-        let mill = Math.trunc((time - Math.trunc(time))*(10**decimals));
-
-        if(s < 10) str += "0";
-
-        mill = String(mill).padEnd(3, "0");
-
-        return str+s+"."+mill;
-      }
+    if(value == 0){
+      deltaToBest.style.color = "#ebecf0";
+    }else if(value < 0){
+      deltaToBest.style.color = "#16c419";
+    }else{
+      deltaToBest.style.color = "#d11104";
+    }
+  }
 
 
+  function secondsToTimeString(time, decimals){
+    let str;
+    let m = Math.trunc(time/60);
 
-      //Downloads
-      assignListenersToDownloadBtns();
+    str = m +":"
 
+    let s = Math.trunc((time/60 - m)*60);
 
-      //Return to Best Simulation Setup
+    let mill = Math.trunc((time - Math.trunc(time))*(10**decimals));
 
-      function updateSimSetup(){
-        updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, simCar.mass);
+    if(s < 10) str += "0";
 
-        updateInput(ClInput, car.Cl.min, car.Cl.max, simCar.Cl);
-        updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, -simCar.Cl);
+    mill = String(mill).padEnd(3, "0");
 
-        updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, simCar.Cd);
-
-        updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, simCar.A);
-
-        updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, simCar.Power);
-
-        updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, simCar.brakingPower);
-
-        updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, simCar.FrC);
-
-        airDensityInput.value = airDensity
-
-        gInput.value = g;
-
-        trackGripInput.value = trackGrip*100;
-        trackGripSlider.value = trackGrip*100;
-
-        startSpeedInput.value = simulationStartVelocity;
-      }
-
-      simBestResBtn = document.querySelector("#simBestRes");
-
-      simBestRes.addEventListener("click", (e) =>{
-        simCar = deepCopy(bestSimulation.car);
-        airDensity = deepCopy(bestSimulation.airDensity);
-        trackGrip = deepCopy(bestSimulation.trackGrip);
-        simulationStartVelocity = deepCopy(bestSimulation.simulationStartVelocity);
-        updateSimSetup();
-
-        //console.log(bestSimulation, lastBestSimulation,simulatedLap)
-
-        lastBestSimulation = deepCopy(bestSimulation);
-        updateSimulationTime(bestSimulation.totalTime);
-        simulatedLap = deepCopy(bestSimulation);
-
-        simBestResBtn.setAttribute("disabled",true);
-      });
+    return str+s+"."+mill;
+  }
 
 
 
-    });
+  //Downloads
+  assignListenersToDownloadBtns();
+
+
+  //Return to Best Simulation Setup
+
+  function updateSimSetup(){
+    updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, simCar.mass);
+
+    updateInput(ClInput, car.Cl.min, car.Cl.max, simCar.Cl);
+    updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, -simCar.Cl);
+
+    updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, simCar.Cd);
+
+    updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, simCar.A);
+
+    updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, simCar.Power);
+
+    updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, simCar.brakingPower);
+
+    updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, simCar.FrC);
+
+    airDensityInput.value = airDensity
+
+    gInput.value = g;
+
+    trackGripInput.value = trackGrip*100;
+    trackGripSlider.value = trackGrip*100;
+
+    startSpeedInput.value = simulationStartVelocity;
+  }
+
+  simBestResBtn = document.querySelector("#simBestRes");
+
+  simBestRes.addEventListener("click", (e) =>{
+    simCar = deepCopy(bestSimulation.car);
+    airDensity = deepCopy(bestSimulation.airDensity);
+    trackGrip = deepCopy(bestSimulation.trackGrip);
+    simulationStartVelocity = deepCopy(bestSimulation.simulationStartVelocity);
+    updateSimSetup();
+
+    //console.log(bestSimulation, lastBestSimulation,simulatedLap)
+
+    lastBestSimulation = deepCopy(bestSimulation);
+    updateSimulationTime(bestSimulation.totalTime);
+    simulatedLap = deepCopy(bestSimulation);
+
+    simBestResBtn.setAttribute("disabled",true);
+  });
+
 }
 
 //--------------------------------------------------------------------------------------------//
