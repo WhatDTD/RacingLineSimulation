@@ -11,7 +11,7 @@ window.addEventListener('load', () => {
 
     const createSimulationButton = document.querySelector('#createSimulationButton');
     createSimulationButton.addEventListener('click', () => {
-        location.href = 'createLine';
+        location.href = 'createSimulation';
     });
 
     const viewSimulationButton = document.querySelector('#viewSimulationButton');
