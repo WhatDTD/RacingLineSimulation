@@ -105,7 +105,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let yB = Math.abs(y2) - Math.abs(y1);
         let aB = Math.atan(yB/xB);
 
-        let dir = aB < aA ? 1 : -1;
+        let dir = aB < aA ? -1 : 1;
 
         let rFinal = rV < r ? rV : r;
 

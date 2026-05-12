@@ -121,9 +121,9 @@ function hideHelmet(){
   });
 }
 
-//not my code og code src --> https://www.youtube.com/watch?v=0oE7SdXCmqE&t=76s   (why r indian people so smart?!!)
+//not my code og code src --> https://www.youtube.com/watch?v=0oE7SdXCmqE&t=76s
 //maximum file size seems to be around 3 MB
-//3D models textures dont work, only base colors (it's not a problem, it's a feature)
+//3D models textures dont work, only base colors
 const toBase64 = file => new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.readAsDataURL(file);

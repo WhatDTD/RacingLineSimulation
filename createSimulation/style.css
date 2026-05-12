@@ -87,11 +87,6 @@ html, body, canvas {
     width: 25vw;
 }
 
-li{
-    min-width: 4.8vw;
-    max-width: 100%;
-}
-
 #menuToggle{
     width: 1vw;
     scrollbar-width: none;
@@ -170,17 +165,6 @@ li{
   max-width: 25%;
 }
 
-.setupTitle{
-  max-width: 100% !important;
-  margin-bottom: 3% !important;
-  margin-top: 6% !important;
-}
-
 .setupIn span{
   margin-top: 1.5%;
-}
-
-.gearIn{
-  max-width: 25%;
-  display: flex;
 }

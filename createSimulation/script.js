@@ -10,10 +10,12 @@ let fovChange = 0.0005;
 
 let freeCamera = new BABYLON.FreeCamera(
   "camera",
-  new BABYLON.Vector3(-5.6334244397982065, 4.714844991974612, 13.893594048703429),
+  new BABYLON.Vector3(1409.1058060557475, 1881.39279522408, 259.716450140158),
   scene
 );
 freeCamera.attachControl(canvas, true);
+freeCamera.rotation.x = 0.7935088533067846;
+freeCamera.rotation.y = -1.7741211144033804;
 freeCamera.speed = defaultSpeed;
 
 
@@ -69,7 +71,7 @@ window.addEventListener("keyup", (e) => {
 //Camera Speed while holding Ctrl
 window.addEventListener("keydown", (e) => {
   if (e.ctrlKey) {
-    freeCamera.speed = 10;
+    freeCamera.speed = 15;
   }
 });
 
@@ -259,8 +261,10 @@ lineInput.addEventListener("change", async (e) =>{
   lineMesh = BABYLON.MeshBuilder.CreateLines("line", { points: line });
   lineMesh.color = new BABYLON.Color3(0,0,1);
 
-  updateSimulationTime(0);
-  simBestResBtn.setAttribute("disabled", true);
+  if(carLoaded){
+    updateSimulationTime(0);
+    simBestResBtn.setAttribute("disabled", true);
+  }
 });
 
 //Run Simulation Button
@@ -296,7 +300,7 @@ function deepCopy(obj){
 
 //Activate Simulation Setup HTML
 function activateSimSetup(){
-  fetch('/simulationSetup.html')
+  fetch('/SimulationSetup/simulationSetup.html')
   .then(response => response.text())
   .then(
     (data) => {
