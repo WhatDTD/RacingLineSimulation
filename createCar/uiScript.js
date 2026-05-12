@@ -111,7 +111,7 @@ menuToggle.element.addEventListener("click", (event) => {
 function activateCarUi(){
 //Car Ui
 
-fetch('/RlsGarage/src/carUi.html')
+fetch('/createCar/src/carUi.html')
 .then(response => response.text())
 .then(
     (data) => {

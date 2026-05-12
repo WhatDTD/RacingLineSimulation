@@ -72,7 +72,7 @@ let numberOfGears = 1;
 //you can find activateCarUi at the end of uiScript
 
 function activateCarSetup(){
-fetch('/RlsGarage/src/carSetup.html')
+fetch('/createCar/src/carSetup.html')
 .then(response => response.text())
 .then(
     (data) => {
@@ -320,7 +320,7 @@ fetch('/RlsGarage/src/carSetup.html')
 function activateAnimations(){
 //Animations
 
-fetch('/RlsGarage/src/animations.html')
+fetch('/createCar/src/animations.html')
 .then(response => response.text())
 .then(
     (data) => {
@@ -397,7 +397,7 @@ fetch('/RlsGarage/src/animations.html')
 function activateCameras(){
     //Cameras
 
-    fetch('/RlsGarage/src/cameras.html')
+    fetch('/createCar/src/cameras.html')
     .then(response => response.text())
     .then(
         (data) => {

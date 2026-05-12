@@ -300,7 +300,7 @@ function deepCopy(obj){
 
 //Activate Simulation Setup HTML
 function activateSimSetup(){
-  fetch('/SimulationSetup/simulationSetup.html')
+  fetch('/createSimulation/simulationSetup.html')
   .then(response => response.text())
   .then(
     (data) => {
