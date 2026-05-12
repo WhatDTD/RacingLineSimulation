@@ -72,12 +72,14 @@ class Track {
     };
     
     if (this.nodes.length === 1) {
+      this.history.push(action); 
       return node;
     }
     
     if (this.nodes.length === 2) {
       this.arrowController = this.createArrow(this.nodes[0]);
       action.meshesAdded.push(this.arrowController.mesh);
+      this.history.push(action); 
       return node;
     }
     
@@ -121,6 +123,10 @@ class Track {
         m.dispose();
       }
     });
+    if (this.nodes.length === 1) {
+      this.arrowController.dispose();
+      delete this.arrowController;
+    }
     if (this.nodes.length === 2) {
       this.arrowController = this.createArrow(this.nodes[0]);
     }
@@ -188,7 +194,7 @@ class Track {
       }
     });
 
-    points[points.length-1].r = lastR;
+    points[points.length-1].r = lastR ? lastR : points[points.length-2].r;
 
     if (this.nodes.length > 2) {
       let beforeP2Index = 0;
