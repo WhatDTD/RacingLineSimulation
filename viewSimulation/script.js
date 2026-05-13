@@ -3,8 +3,12 @@ const engine = new BABYLON.Engine(canvas);
 const scene = new BABYLON.Scene(engine);
 
 scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-scene.environmentTexture =
-  BABYLON.CubeTexture.CreateFromPrefilteredData("/assets/environment.env", scene);
+const hostname = window.location.hostname;
+let folder = "";
+if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+  folder = "/RacingLineSimulation";
+} 
+scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(`${folder}/assets/environment.env`, scene);
 
 const camera = new BABYLON.FreeCamera(
   "camera",
