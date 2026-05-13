@@ -18,7 +18,13 @@ let wheelsSpeedRotation;
 let fovChange = 0.0005;
 
 scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("/assets/environment.env", scene);
+const hostname = window.location.hostname;
+if (hostname === "localhost" || hostname === "127.0.0.1") {
+  const folder = "";
+} else {
+  const folder = "/RacingLineSimulation"
+}
+scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(`${folder}/assets/environment.env`, scene);
 BABYLON.SceneLoader.ImportMeshAsync("", "./resources/", "Showroom.glb", scene);
 
 const defaultSpeed = 0.2;
