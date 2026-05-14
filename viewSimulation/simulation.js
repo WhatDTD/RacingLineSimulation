@@ -89,7 +89,7 @@ async function startSimulation(simulation, scene, engine) {
       points[i+1].z - points[i].z
     )
     const rotY = Math.atan2(direction.x, direction.z) + Math.PI;
-    const rotX = -Math.asin(direction.y);
+    const rotX = Math.asin(direction.y);
     const rotZ = 0;
     rotationKeysFrames.push({
       frame: FRAME_RATE * t,

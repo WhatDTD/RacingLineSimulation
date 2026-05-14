@@ -4,14 +4,22 @@
     <meta charset="utf-8" />
     <title>Simulator</title>
     <link rel="stylesheet" href="style.css"></link>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
   </head>
   <body>
     <canvas id="canvas" tabindex="1"></canvas>
-    <div id="uiBar">
-      <button id="runSimulation">Run Simulation</button>
-      <input type="file" id="importTrackModel"/>
-      <input type="file" id="importSimulation"/>
+    <div class="box" id="buttonsUi">
+      <button class="button is-info is-small is-responsive" id="runSimulation">Run Simulation</button>
+
+      <button class="button buttonMargin is-link is-small is-responsive" id="importTrackModelBtn">
+        <span>↑ Import Track</span>
+        <input class="file-input" type="file" accept=".glb" id="importTrackModel"/>
+      </button>
+
+      <button class="button buttonMargin is-light is-small is-responsive" id="importSimulationBtn">
+        <span>↑ Import Simulation</span>
+        <input class="file-input" type="file" accept=".RLSsim" id="importSimulation"/>
+      </button>
+      
     </div>
     
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
