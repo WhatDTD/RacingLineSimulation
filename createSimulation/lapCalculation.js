@@ -97,6 +97,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //wheels angle from radius
     function wheelsAngleFromR(r, rV, x0, y0, x1, y1, x2, y2){  //x and y in 2d space from top view
+        let slipAngleMultiplier = 3;
+
         let xA = Math.abs(x1) - Math.abs(x0);
         let yA = Math.abs(y1) - Math.abs(y0);
         let aA = Math.atan(yA/xA);
@@ -109,7 +111,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let rFinal = rV < r ? rV : r;
 
-        return Math.atan(2/rFinal)*dir;
+        return Math.atan(2/rFinal)*dir * slipAngleMultiplier;
     }
 
     //throttle/brake percentage

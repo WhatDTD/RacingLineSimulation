@@ -4,15 +4,23 @@
     <meta charset="utf-8" />
     <title>Simulator</title>
     <link rel="stylesheet" href="style.css"></link>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div id="uiBar">
-      <button id="exportLine">Export Line</button>
-      <button id="undo">Undo</button>
-      <input type="file" id="importTrackModel"/>
-    </div>
     <canvas id="canvas" tabindex="1"></canvas>
+
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="radiusBox">
+      <div class="title is-6" id="radius">Radius: 0 m</div>
+    </div>
+
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="buttonsUi">
+      <button class="button is-info is-small is-responsive" id="exportLine">⤓ Export Line</button>
+      <button class="button is-focus is-small is-responsive buttonMargin" id="undo">Undo</button>
+
+      <button class="button buttonMargin is-link is-small is-responsive" id="importTrackModelBtn">
+        <span>↑ Import Track</span>
+        <input class="file-input" type="file" accept=".glb" id="importTrackModel"/>
+      </button>
+    </div>
 
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
