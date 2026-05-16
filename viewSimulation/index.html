@@ -8,23 +8,23 @@
   <body>
     <canvas id="canvas" tabindex="1"></canvas>
     <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="buttonsUi">
-      <button class="button is-info is-small is-responsive" id="runSimulation" disabled>Run Simulation</button>
+      <button class="button is-info is-small is-responsive" id="runSimulation">Run Simulation</button>
 
       <button class="button buttonMargin is-link is-small is-responsive" id="importTrackModelBtn">
         <span>↑ Import Track</span>
         <input class="file-input" type="file" accept=".glb" id="importTrackModel"/>
       </button>
 
-      <button class="button buttonMargin is-light is-small is-responsive" id="importSimulationBtn" disabled>
+      <button class="button buttonMargin is-light is-small is-responsive" id="importSimulationBtn">
         <span>↑ Import Simulation</span>
-        <input class="file-input" type="file" accept=".RLSsim" id="importSimulation" disabled/>
+        <input class="file-input" type="file" accept=".RLSsim" id="importSimulation"/>
       </button>
       
     </div>
     
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-    <script src="script.js"></script>
-    <script src="simulation.js"></script>
+    <script src="SimulationAnimation.js"></script>
+    <script src="scriptAlt.js"></script>
   </body>
 </html>
