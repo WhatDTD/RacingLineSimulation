@@ -31,91 +31,78 @@ let colorList = [ {r: 0, g: 0, b: 0.6},
 
 let colorCounter = 0;
 
-let trackMeshes = [];
-let lineMeshes = [];
+let trackMesh;
 let simulationsList = [];
 
+
+let trackMeshLoaded = false;
+let simulationLoaded = false;
+
+
+//import Track
 const importTrackModel = document.querySelector('#importTrackModel');
-importTrackModel.addEventListener('change', async (event) => {
+
+importTrackModel.addEventListener("change", async (e) =>{
+  const file = e.target.files[0];
+  if (!file) return;
+
+
+  const url = URL.createObjectURL(file);
+
+  if(trackMesh) trackMesh.dispose();
+
+  engine.displayLoadingUI();
+  scene.useRightHandedSystem = false;
+  BABYLON.SceneLoader.ImportMeshAsync("", "", file, scene)
+    .then((result) => {
+        engine.hideLoadingUI();
+        scene.useRightHandedSystem = true;
+
+        trackMeshLoaded = true;
+        //checkRunAnimationBtn();
+
+        trackMesh = result.meshes[0];
+    });
+});
+
+
+
+//import Simulation
+
+const importSimulation = document.querySelector('#importSimulation');
+
+importSimulation.addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) {
     return;
-  }
-  const text = await file.text();
+  }  
+  const simulation = JSON.parse(await file.text());
+  const simulationAnimation = await new SimulationAnimation(simulation, scene, engine);
+  simulationLoaded = true;
+  simulationsList.push(simulationAnimation);
+  simulationAnimation.setLineColor(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b);
+  colorCounter++;
+});
 
-  engine.displayLoadingUI();
-  BABYLON.SceneLoader.ImportMeshAsync("", "", file, scene)
-  .then(result => {
-    engine.hideLoadingUI(); 
 
-    trackMeshes.forEach(m => {
-      m.dispose();
+const runSimulationButton = document.querySelector('#runSimulation');
+runSimulationButton.addEventListener('click', () => {
+    simulationsList.forEach(simulation => {
+        simulation.startAnimation();
     });
+});
 
-    trackMeshes = result.meshes.filter(m => m.isPickable);
-      
-    document.querySelector("#importSimulationBtn").removeAttribute("disabled");
-    document.querySelector("#importSimulation").removeAttribute("disabled");
-
-    const importSimulation = document.querySelector('#importSimulation');
-
-    importSimulation.addEventListener('change', async (event) => {
-      const file = event.target.files[0];
-      if (!file) {
-        return;
-      }  
-      const simulation = JSON.parse(await file.text());
-      simulationsList.push(simulation);
-
-      //clearLines();
-
-      // Rebuild line meshes from simulation nodes
-      const points = simulation.nodes.map(n => new BABYLON.Vector3(n.x, n.y, n.z));
-
-      const lineMesh = BABYLON.MeshBuilder.CreateLines(
-        "simulationPath",
-        {
-          points: points,
-          updatable: false
-        },
-        scene
-      );
-      lineMesh.renderingGroupId = 1;
-      lineMesh.color = new BABYLON.Color3(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b); 
-      lineMeshes.push(lineMesh);
-
-      colorCounter++;
-      if(colorCounter >= colorList.length) colorCounter = 0;
-
-      document.querySelector("#runSimulation").removeAttribute("disabled");
-
-      const runSimulationButton = document.querySelector('#runSimulation');
-      runSimulationButton.addEventListener('click', () => {
-        simulationsList.forEach(simelationEl => {
-          startSimulation(simelationEl, scene, engine);
-        });
-        
-      });
-    });
-  });  
-});  
 
 engine.runRenderLoop(() => {
   scene.render();
 });
 
 
-function getRandomInt(min, max) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
-}
 
-function clearLines(){
-  lineMeshes.forEach(m => {
-    if (m) {
-      m.dispose();
-    }
-  });
-  lineMeshes = []; // clear the array after disposing
+function checkRunSimulationBtn(){
+  if(trackMesh && simulationLoaded){
+    runSimulationButton.removeAttribute("disabled");
+  }else{
+    runSimulationButton.setAttribute("disabled", true);
+  }
 }
