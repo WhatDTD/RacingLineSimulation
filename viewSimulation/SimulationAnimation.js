@@ -12,12 +12,12 @@ class SimulationAnimation{
         this.lineMesh = BABYLON.MeshBuilder.CreateLines(
         "simulationPath",
         {
-          points: simulatedLap.nodes.map(n => new BABYLON.Vector3(n.x, n.y, n.z)),
+          points: simulatedLap.nodes.map(n => new BABYLON.Vector3(n.x, n.y+0.1, n.z)),
           updatable: false
         },
         scene
         );
-        this.lineMesh.renderingGroupId = 1;
+        //this.lineMesh.renderingGroupId = 1;
 
 
         //Car Mesh
@@ -57,7 +57,7 @@ class SimulationAnimation{
         //Onboards Cameras
 
         scene.useRightHandedSystem = true;
-        function onboardCamera(mesh,carCamera, name){
+        function onboardCamera(mesh,carCamera, name, minZ){
             
             const newCamera = new BABYLON.TargetCamera(
                                 name,
@@ -67,7 +67,7 @@ class SimulationAnimation{
                             );
             newCamera.rotation.set(-carCamera.pitch, carCamera.yaw+Math.PI, carCamera.roll);
             newCamera.fov = carCamera.fov;
-            newCamera.minZ = 0.01;
+            newCamera.minZ = minZ;
 
             newCamera.parent = mesh;
 
@@ -75,27 +75,27 @@ class SimulationAnimation{
         }
 
         const carDriverCam = simulatedLap.car.cameras.driverCam;
-        this.driverCam = onboardCamera(this.carMesh, carDriverCam, "driverCam");
+        this.driverCam = onboardCamera(this.carMesh, carDriverCam, "driverCam", 0.01);
         //scene.activeCamera = this.driverCam;
 
         const carTcam = simulatedLap.car.cameras.Tcam;
-        this.Tcam = onboardCamera(this.carMesh, carTcam, "Tcam");
+        this.Tcam = onboardCamera(this.carMesh, carTcam, "Tcam", 0.01);
         //scene.activeCamera = this.Tcam;
 
         const carBumperCam = simulatedLap.car.cameras.bumperCam;
-        this.bumperCam = onboardCamera(this.carMesh, carBumperCam, "bumperCam");
+        this.bumperCam = onboardCamera(this.carMesh, carBumperCam, "bumperCam", 0.01);
         //scene.activeCamera = this.bumperCam;
 
         const carOnboard1 = simulatedLap.car.cameras.onboard1;
-        this.onboard1 = onboardCamera(this.carMesh, carOnboard1, "onboard1");
+        this.onboard1 = onboardCamera(this.carMesh, carOnboard1, "onboard1", 0.01);
         //scene.activeCamera = this.onboard1;
 
         const carOnboard2 = simulatedLap.car.cameras.onboard2;
-        this.onboard2 = onboardCamera(this.carMesh, carOnboard2, "onboard2");
+        this.onboard2 = onboardCamera(this.carMesh, carOnboard2, "onboard2", 0.01);
         //scene.activeCamera = this.onboard2;
 
         const carOnboard3 = simulatedLap.car.cameras.onboard3;
-        this.onboard3 = onboardCamera(this.carMesh, carOnboard3, "onboard3");
+        this.onboard3 = onboardCamera(this.carMesh, carOnboard3, "onboard3", 0.01);
         //scene.activeCamera = this.onboard3;
 
         const carTopView = {
@@ -107,7 +107,7 @@ class SimulationAnimation{
             roll:0,
             fov: 0.8
         }
-        this.topView = onboardCamera(this.carMesh, carTopView, "topView");
+        this.topView = onboardCamera(this.carMesh, carTopView, "topView", 1);
         scene.activeCamera = this.topView;
 
 
@@ -126,7 +126,7 @@ class SimulationAnimation{
         this.carMesh.rotation = new BABYLON.Vector3(0, rotY, 0);
 
 
-        //scene.useRightHandedSystem = false;
+        scene.useRightHandedSystem = false;
         //Follow Camera
         this.fc = new BABYLON.FollowCamera(
             "FollowCamera",
@@ -141,10 +141,7 @@ class SimulationAnimation{
         this.fc.cameraAcceleration = 0.05;
         this.fc.maxCameraSpeed = 10;
         //scene.activeCamera = this.fc;
-
-        this.currentCamera = this.fc;
-
-
+        scene.useRightHandedSystem = true;
 
         this.calculateAnimations();
 
@@ -156,6 +153,7 @@ class SimulationAnimation{
     }
 
     switchToCamera(id){
+        scene.useRightHandedSystem = true;
         switch(id){
             case "driverCam":
                 this.scene.activeCamera = this.driverCam;
@@ -178,7 +176,16 @@ class SimulationAnimation{
             case "topView":
                 this.scene.activeCamera = this.topView;
                 return;
+            case "chase":
+                scene.useRightHandedSystem = false;
+                this.scene.activeCamera = this.fc;
+                return;
         }
+    }
+
+
+    showLine(condition){
+      this.lineMesh.isVisible = condition;
     }
 
 

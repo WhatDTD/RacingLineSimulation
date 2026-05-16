@@ -7,8 +7,15 @@
   </head>
   <body>
     <canvas id="canvas" tabindex="1"></canvas>
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="camerasUi">
+      <button class="button is-info is-small is-outlined is-inverted is-responsive" id="nextCar">Next Car →</button>
+      <button class="button buttonMargin is-small is-responsive" id="nextCamera">Switch Camera ↑↓</button>
+    </div>
+
+
     <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="buttonsUi">
-      <button class="button is-info is-small is-responsive" id="runSimulation">Run Simulation</button>
+      <button class="button is-info is-small is-responsive" id="runSimulation" disabled>Run Simulation</button>
+      <button class="button buttonMargin is-focus is-small is-responsive" id="clearSimulations">Clear Simulations</button>
 
       <button class="button buttonMargin is-link is-small is-responsive" id="importTrackModelBtn">
         <span>↑ Import Track</span>

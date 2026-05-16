@@ -21,6 +21,17 @@ html, body, canvas {
     bottom: 10px;
 }
 
+#camerasUi {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: fit-content;
+    max-height: 5vh;
+    bottom: 10px;
+    margin-left: 5px;
+}
+
 .buttonMargin{
     margin-left: 2%;
 }
