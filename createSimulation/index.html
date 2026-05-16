@@ -5,15 +5,17 @@
     <title>RLS Simulation Setup</title>
     <link rel="stylesheet" href="style.css"></link>
     <link rel="icon" type="image/x-icon" href="/images/RLSlogo.ico">
-  </head>
-  <body>
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="tabHtml.js"></script>
+    <script src="script.js"></script>
+    <script src="lapCalculation.js"></script>
+    <script src="downloads.js"></script>
+  </head>
+  <body>
     <canvas id="canvas" tabindex="1"></canvas>
 
-
     <div class="columns" id="ui">
-
       <div class="box">
         <div class="title is-5" id="uiTitle">
           Simulation Setup
@@ -47,17 +49,8 @@
               <span id="RunSimulationSpan" title="Select all components to Proceed">Run Simulation</span>
           </button>
         </div>
-
       </div>
-      
-
       <button id="menuToggle" class="button bd-docs-button mt-5">&lt</button>
-
     </div>
-    
-    <script src="tabHtml.js"></script>
-    <script src="script.js"></script>
-    <script src="lapCalculation.js"></script>
-    <script src="downloads.js"></script>
   </body>
 </html>
