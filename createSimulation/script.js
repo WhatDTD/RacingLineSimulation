@@ -209,6 +209,7 @@ carInput.addEventListener("change",async (e) =>{
   simCar.AvrgWheelRadius = car.AvrgWheelRadius;
   simCar.FrC = car.FrC.min;
   simCar.gearBox = car.gearBox;
+  simCar.cameras = car.cameras;
 
   simCar.meshURL = car.meshURL;
 
