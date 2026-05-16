@@ -14,7 +14,7 @@ html, body, canvas {
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: translateX(-50%);
+    justify-self: center;
     translate: 50vw;
     max-width: fit-content;
     max-height: 5vh;
