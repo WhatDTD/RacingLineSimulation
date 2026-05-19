@@ -8,8 +8,9 @@ body {
 
 #content {
   display: flex;
+  background-color: white;
   flex-direction: column;
-  height: calc(100vh - 16px);
+  height: 100vh;
 }
 
 #buttons {
@@ -26,6 +27,18 @@ body {
   transform: translateX(-16.67%);
   font-size: 1.67rem;
   margin-bottom: 10px;
+  border-radius: 30px;
+  background-color: orange;
+  color: white;
+  border: 2px solid orange;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+#buttons button:hover {
+  background: linear-gradient(to right, #d8791b,orange);
 }
 
 #header {
@@ -47,5 +60,14 @@ body {
 
 #downloadExample {
   height: 40px;
-  align-self: flex-end;
+}
+
+#githubLink {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  color: #1b1f22;
+  text-decoration: none;
 }
