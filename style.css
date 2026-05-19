@@ -1,16 +1,35 @@
 :root {
-  --color-background: #ffffff;
+  --color-background: #06061c;
+}
+
+@font-face {
+  font-family: 'monoFont';
+  src: url('./assets/monoFont.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'mediumFont';
+  src: url('./assets/mediumFont.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
-  background-color: var(--color-background);
+  margin: 0;
 }
 
 #content {
   display: flex;
-  background-color: white;
+  background-color: var(--color-background);
   flex-direction: column;
   height: 100vh;
+}
+
+#RLS {
+  padding-top: 110px;
+  padding-bottom: 110px;
 }
 
 #buttons {
@@ -28,17 +47,15 @@ body {
   font-size: 1.67rem;
   margin-bottom: 10px;
   border-radius: 30px;
-  background-color: orange;
+  background-color: #ff8236;
   color: white;
   border: 2px solid orange;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding: 4px 25px 4px 25px;
+  font-family: 'mediumFont', sans-serif;
 }
 
 #buttons button:hover {
-  background: linear-gradient(to right, #d8791b,orange);
+  background: linear-gradient(to right, #ff882d, #ffa309);
 }
 
 #header {
@@ -50,24 +67,25 @@ body {
 #topbar {
   display: flex;
   justify-content: space-between;
+  padding: 10px 10px 10px 10px;
 }
 
 #bottombar {
-  flex: 1;
   display: flex;
-  flex-direction: row;
+  flex: 1;
+  justify-content: center;
+}
+
+#githubIcon {
+  align-self: flex-end;
+  padding-bottom: 10px;
 }
 
 #downloadExample {
   height: 40px;
-}
-
-#githubLink {
-  position: fixed;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8rem;
-  color: #1b1f22;
-  text-decoration: none;
+  border-radius: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'monoFont', sans-serif;
+  color: #06061c;
 }

@@ -26,10 +26,10 @@ window.addEventListener('load', () => {
     } 
 
     const whatdtdIcon = document.querySelector('#whatdtdIcon');
-    whatdtdIcon.src = `${root}/assets/WhatDTD.png`
+    whatdtdIcon.src = `${root}/assets/WhatDTDWhite.svg`
 
     const github = document.querySelector('#githubIcon');
-    github.src = `${root}/assets/github.webp`
+    github.src = `${root}/assets/githubIcon.png`
     github.addEventListener('click', () => {
         window.open('https://github.com/WhatDTD/RacingLineSimulation/');
     });
