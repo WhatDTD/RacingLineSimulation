@@ -36,7 +36,7 @@ class SimulationAnimation{
             this.carMesh = result.meshes[0];
             this.carMesh.renderingGroupId = 2; //so it renders on the track(0) and on line(1)
             this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 2);
-            this.scene.meshes.forEach(mesh => {
+            this.carMesh.getChildMeshes(false).forEach(mesh => {
 
             if (mesh.name.includes("WHEEL_STEERABLE")) {  //adds rolling and steering animation
               this.steerableWheel.push(mesh);
