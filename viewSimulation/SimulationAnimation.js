@@ -209,21 +209,27 @@ class SimulationAnimation{
 
     calculateAnimations(){
         const points = this.simulatedLap.nodes;
-
+        
         //Car
         const carMovement = new BABYLON.Animation(`movement`, "position", this.FRAME_RATE,
-          BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-          BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
         );
+
         const carRotation = new BABYLON.Animation(`rotation`, "rotation", this.FRAME_RATE,
-          BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-          BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+            BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+            BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
         const carMovementKeysFrames = [];
         const carRotationKeysFrames = [];
 
-        let t = 0; 
+        const steerablesKeysFrames = [];
+        const steeringKeysFrames = [];
+
+        const helmetKeysFrames = [];
+
+        let t = 0;
 
         for (let i = 0; i < points.length - 2; i++) {
 
@@ -250,18 +256,109 @@ class SimulationAnimation{
             });
 
 
-            t += this.simulatedLap.nodes[i].t; 
+            //Steerables
+            steerablesKeysFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: new BABYLON.Vector3(Math.PI/2, Math.PI/2, points[i].wheelsAngle * 57.2958 * Math.PI/180)
+            });
+
+
+            //SteeringWheel
+            steeringKeysFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: new BABYLON.Vector3(0, 0, (points[i].wheelsAngle * 57.2958 * Math.PI/180)*this.simulatedLap.car.steeringRatio)
+            });
+
+            //Helmet
+            let lookahead = i+50;
+            if(lookahead > points.length-1) lookahead = points.length-1;
+            let helmetDirection = new BABYLON.Vector3(
+              points[lookahead].x - points[i].x,
+              points[lookahead].y - points[i].y,
+              points[lookahead].z - points[i].z
+            )
+
+            let headAngle = -Math.atan2(helmetDirection.x, helmetDirection.z)+Math.atan2(direction.x, direction.z);
+            if(headAngle > Math.PI/4) headAngle = Math.PI/4;
+
+            helmetKeysFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: new BABYLON.Vector3(0, headAngle, 0)
+            });
+
+            t += this.simulatedLap.nodes[i].t;
         }
+    
+    
+        //Car Movement and Rotation
         carMovement.setKeys(carMovementKeysFrames);
         carRotation.setKeys(carRotationKeysFrames);
         this.carMesh.animations.push(carMovement);
         this.carMesh.animations.push(carRotation);
+
+
+        //Steerables
+        this.steerableWheel.forEach(wheel => {
+          const steerableRotation = new BABYLON.Animation(`wheel`, "rotation", this.FRAME_RATE, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+          steerableRotation.setKeys(steerablesKeysFrames);
+          wheel.animations.push(steerableRotation);
+        });
+
+
+        this.steerables.forEach(steerable => {
+          const steerableRotation = new BABYLON.Animation(`steerable`, "rotation", this.FRAME_RATE, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+          steerableRotation.setKeys(steerablesKeysFrames);
+          steerable.animations.push(steerableRotation);
+        });
+
+
+        //Steering Wheel
+        this.steeringWheel.forEach(stWheelEl => {
+          const steeringWheelRotation = new BABYLON.Animation(`stWheelEl`, "rotation", this.FRAME_RATE, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+          steeringWheelRotation.setKeys(steeringKeysFrames);
+          stWheelEl.animations.push(steeringWheelRotation);
+        });
+
+
+        //Helmet
+        this.helmet.forEach(helmetEl => {
+          const helmetRotation = new BABYLON.Animation(`helmetEl`, "rotation", this.FRAME_RATE, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+          helmetRotation.setKeys(helmetKeysFrames);
+          helmetEl.animations.push(helmetRotation);
+        });
     }
 
 
-    startAnimation(){
-        this.scene.beginAnimation(this.carMesh, 0, this.totalTime * this.FRAME_RATE);
-    }
+
+   startAnimation(){
+     //start Car Animation
+     this.scene.beginAnimation(this.carMesh, 0, this.totalTime * this.FRAME_RATE);
+
+
+     //start Steerables Animation
+     this.steerableWheel.forEach(wheel => {
+       this.scene.beginAnimation(wheel, 0, this.totalTime * this.FRAME_RATE);
+     });
+
+
+     this.steerables.forEach(steerable => {
+       this.scene.beginAnimation(steerable, 0, this.totalTime * this.FRAME_RATE);
+     });
+
+
+     //start Steering Animation
+     this.steeringWheel.forEach(stWheelEl => {
+       this.scene.beginAnimation(stWheelEl, 0, this.totalTime * this.FRAME_RATE);
+     });
+
+
+     //start Helmet Animation
+     this.helmet.forEach(helmetEl => {
+       this.scene.beginAnimation(helmetEl, 0, this.totalTime * this.FRAME_RATE);
+     });
+   }
+
+
 
 
 

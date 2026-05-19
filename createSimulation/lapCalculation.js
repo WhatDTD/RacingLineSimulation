@@ -89,14 +89,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             }
     }
 
-    //radius from Velocity
-    function radiusFromVelocity(m, Fl, V, FrC, roll){
-        return (2*(V**2)*m*(Math.cos(roll)-FrC*Math.sin(roll)))/
-                ((2*m*g+2*Fl)*(Math.sin(roll)+FrC*Math.cos(roll)));
-    }
-
     //wheels angle from radius
-    function wheelsAngleFromR(r, rV, x0, y0, x1, y1, x2, y2){  //x and y in 2d space from top view
+    function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2){  //x and y in 2d space from top view
         let slipAngleMultiplier = 3;
 
         let xA = x1 - x0;
@@ -109,9 +103,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let dir = aB < aA ? 1 : -1;
 
-        let rFinal = rV < r ? rV : r;
-
-        return Math.atan(2/rFinal)*dir * slipAngleMultiplier;
+        return Math.atan(2/r)*dir * slipAngleMultiplier;
     }
 
     //throttle/brake percentage
@@ -168,7 +160,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
                 list[i].t = t;
             }
 
-            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, radiusFromVelocity(m, Fl, simulatedLap.nodes[i].V, FrC, 0), simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
+            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
 
             i--;
             brakingSamples++;
@@ -257,7 +249,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             newVel = V;
         }
 
-        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, radiusFromVelocity(m, Fl, simulatedLap.nodes[i].V, FrC, 0), simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
+        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
 
         if (newVel <= simulatedLap.nodes[i].V){ 
             simulatedLap.nodes[i].V = newVel
@@ -298,7 +290,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
 
-    let tValue = 0.11;  //value between 1- & 0+ (the lower it is the smoother it gets)
+    let tValue = 0.1;  //value between 1- & 0+ (the lower it is the smoother it gets)
     for(let i=2; i < simulatedLap.nodes.length-1; i++){
 
         //steering inputs cleaning and smoothing
