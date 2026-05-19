@@ -297,6 +297,7 @@ class SimulationAnimation{
 
             let headAngle = -Math.atan2(helmetDirection.x, helmetDirection.z)+Math.atan2(direction.x, direction.z);
             if(headAngle > Math.PI/4) headAngle = Math.PI/4;
+            if(headAngle > Math.PI/4) headAngle = Math.PI/4;
 
             helmetKeysFrames.push({
               frame: this.FRAME_RATE * t,
