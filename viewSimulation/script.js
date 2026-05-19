@@ -214,10 +214,16 @@ function nextCar(){
 function nextCamera(){
   if(simulationsList.length){
     if(currentCamera > cameras.length-2){
+      simulationsList.forEach(sim => {
+        sim.carRenderBehind();
+      });
       scene.useRightHandedSystem = false;
       scene.activeCamera = camera;
       currentCamera = -1;
     }else{
+      simulationsList.forEach(sim => {
+        sim.carRenderFront();
+      });
       scene.useRightHandedSystem = true;
       currentCamera++;
       simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
@@ -228,7 +234,7 @@ function nextCamera(){
 
 
 function checkRunSimulationBtn(){
-  if(trackMesh && simulationLoaded){
+  if(simulationLoaded){
     if(runSimulationButton.hasAttribute("disabled")) runSimulationButton.removeAttribute("disabled");
   }else{
     runSimulationButton.setAttribute("disabled", true);

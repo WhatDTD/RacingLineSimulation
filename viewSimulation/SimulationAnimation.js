@@ -154,9 +154,16 @@ class SimulationAnimation{
 
     switchToCamera(id){
         scene.useRightHandedSystem = true;
+        this.helmet.forEach(mesh => {
+            mesh.isVisible = true;
+        });
+
         switch(id){
             case "driverCam":
                 this.scene.activeCamera = this.driverCam;
+                this.helmet.forEach(mesh => {
+                    mesh.isVisible = false;
+                });
                 return;
             case "Tcam":
                 this.scene.activeCamera = this.Tcam;
@@ -204,6 +211,16 @@ class SimulationAnimation{
 
     setLineColor(r,g,b){
         this.lineMesh.color = new BABYLON.Color3(r, g, b);
+    }
+
+    carRenderFront(){
+        this.carMesh.renderingGroupId = 2;
+        this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 2);
+    }
+
+    carRenderBehind(){
+        this.carMesh.renderingGroupId = 0;
+        this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 0);
     }
 
 
