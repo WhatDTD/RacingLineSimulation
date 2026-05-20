@@ -14,7 +14,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
 
-    const timeError = 9/100;
+    const timeError = 8/100;
 
     //Lift Force
     function calculateLiftForce(p, V, Cl, A){

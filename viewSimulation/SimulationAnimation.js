@@ -65,7 +65,7 @@ class SimulationAnimation{
                                 scene,
                                 false
                             );
-            newCamera.rotation.set(-carCamera.pitch, carCamera.yaw+Math.PI, carCamera.roll);
+            newCamera.rotation.set(-carCamera.pitch, -carCamera.yaw+Math.PI, carCamera.roll);
             newCamera.fov = carCamera.fov;
             newCamera.minZ = minZ;
 
@@ -75,27 +75,27 @@ class SimulationAnimation{
         }
 
         const carDriverCam = simulatedLap.car.cameras.driverCam;
-        this.driverCam = onboardCamera(this.carMesh, carDriverCam, "driverCam", 0.01);
+        this.driverCam = onboardCamera(this.carMesh, carDriverCam, "driverCam", 0.05);
         //scene.activeCamera = this.driverCam;
 
         const carTcam = simulatedLap.car.cameras.Tcam;
-        this.Tcam = onboardCamera(this.carMesh, carTcam, "Tcam", 0.01);
+        this.Tcam = onboardCamera(this.carMesh, carTcam, "Tcam", 0.05);
         //scene.activeCamera = this.Tcam;
 
         const carBumperCam = simulatedLap.car.cameras.bumperCam;
-        this.bumperCam = onboardCamera(this.carMesh, carBumperCam, "bumperCam", 0.01);
+        this.bumperCam = onboardCamera(this.carMesh, carBumperCam, "bumperCam", 0.05);
         //scene.activeCamera = this.bumperCam;
 
         const carOnboard1 = simulatedLap.car.cameras.onboard1;
-        this.onboard1 = onboardCamera(this.carMesh, carOnboard1, "onboard1", 0.01);
+        this.onboard1 = onboardCamera(this.carMesh, carOnboard1, "onboard1", 0.05);
         //scene.activeCamera = this.onboard1;
 
         const carOnboard2 = simulatedLap.car.cameras.onboard2;
-        this.onboard2 = onboardCamera(this.carMesh, carOnboard2, "onboard2", 0.01);
+        this.onboard2 = onboardCamera(this.carMesh, carOnboard2, "onboard2", 0.05);
         //scene.activeCamera = this.onboard2;
 
         const carOnboard3 = simulatedLap.car.cameras.onboard3;
-        this.onboard3 = onboardCamera(this.carMesh, carOnboard3, "onboard3", 0.01);
+        this.onboard3 = onboardCamera(this.carMesh, carOnboard3, "onboard3", 0.05);
         //scene.activeCamera = this.onboard3;
 
         const carTopView = {
