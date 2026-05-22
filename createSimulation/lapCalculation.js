@@ -14,7 +14,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
 
-    const timeError = 8/100;
+    const timeError = 6.5/100;
 
     //Lift Force
     function calculateLiftForce(p, V, Cl, A){
@@ -62,7 +62,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let a = aFL < aPL ? aFL : aPL;
         let FLat = Fc < Fr ? Fc : Fr;
         let FLatNorm = FLat/Fr;
-        return Math.sin(Math.cos(FLatNorm))*a;
+        return Math.sin(Math.acos(FLatNorm))*a;
     }
 
     //terminal velocity
@@ -144,13 +144,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             simulatedLap.nodes[i].longitudinalG =-a/g;
             simulatedLap.nodes[i].lateralG =(FLat/m)/g;
 
-            if(simulatedLap.nodes[i].V == simulatedLap.nodes[i-1].V && simulatedLap.nodes[i-1].brake != 100){
-                simulatedLap.nodes[i].brake = 0;
-                simulatedLap.nodes[i].throttle = calculatePedalInput(m, Fd, aBL, a);
-            }else{
-                simulatedLap.nodes[i].throttle = 0;
-                simulatedLap.nodes[i].brake = calculatePedalInput(m, Fd, aBL, a);
-            }
+            simulatedLap.nodes[i].throttle = 0;
+            simulatedLap.nodes[i].brake = calculatePedalInput(m, Fd, aBL, a);
 
             let t = list[i].d/V;
             t = t-t*timeError; //to account for the time error
