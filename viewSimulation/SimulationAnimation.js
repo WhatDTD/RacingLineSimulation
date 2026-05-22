@@ -5,6 +5,11 @@ class SimulationAnimation{
         this.scene = scene;
         this.FRAME_RATE = 60;
         this.totalTime = simulatedLap.totalTime;
+        this.totalDistance = simulatedLap.lengthInMeters;
+        this.animations = [];
+        this.currentNode = 0;
+        this.distanceTravelled = 0;
+        this.time = 0;
 
         scene.useRightHandedSystem = false;
 
@@ -238,6 +243,28 @@ class SimulationAnimation{
             BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
+
+        //Current Node
+        const currentNodeAnim = new BABYLON.Animation(`currentNode`, "currentNode", this.FRAME_RATE,
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+
+        //Distance Travelled
+        const distanceTravelledAnim = new BABYLON.Animation(`distanceTravelled`, "distanceTravelled", this.FRAME_RATE,
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+
+        //Time
+        const timeAnim = new BABYLON.Animation(`time`, "time", this.FRAME_RATE,
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+
         const carMovementKeysFrames = [];
         const carRotationKeysFrames = [];
 
@@ -246,9 +273,14 @@ class SimulationAnimation{
 
         const helmetKeysFrames = [];
 
-        let t = 0;
+        const currentNodeKeysFrames = [];
+        const distanceTravelledKeysFrames = [];
+        const timeKeysFrames = [];
 
-        for (let i = 0; i < points.length - 2; i++) {
+        let t = 0;
+        let d = 0;
+
+        for (let i = 0; i < points.length - 1; i++) {
 
             //Car Movement
             carMovementKeysFrames.push({
@@ -304,7 +336,27 @@ class SimulationAnimation{
               value: new BABYLON.Vector3(0, headAngle, 0)
             });
 
+
+            //Current Node
+            currentNodeKeysFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: i
+            });
+
+            //Distance
+            distanceTravelledKeysFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: d
+            });
+
+            //Time
+            timeKeysFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: t
+            });
+
             t += this.simulatedLap.nodes[i].t;
+            d += this.simulatedLap.nodes[i].d;
         }
     
     
@@ -344,37 +396,59 @@ class SimulationAnimation{
           helmetRotation.setKeys(helmetKeysFrames);
           helmetEl.animations.push(helmetRotation);
         });
+
+
+        //Current Node
+        currentNodeAnim.setKeys(currentNodeKeysFrames);
+        this.animations.push(currentNodeAnim);
+
+
+        //Distance Travelled
+        distanceTravelledKeysFrames.push({
+          frame: this.FRAME_RATE * this.totalTime,
+          value: this.totalDistance
+        });
+        distanceTravelledAnim.setKeys(distanceTravelledKeysFrames);
+        this.animations.push(distanceTravelledAnim);
+
+
+        //Time
+        timeAnim.setKeys(timeKeysFrames);
+        this.animations.push(timeAnim);
     }
 
 
 
-   startAnimation(){
-     //start Car Animation
-     this.scene.beginAnimation(this.carMesh, 0, this.totalTime * this.FRAME_RATE);
+    startAnimation(){
+      //start Car Animation
+      this.scene.beginAnimation(this.carMesh, 0, this.totalTime * this.FRAME_RATE);
 
 
-     //start Steerables Animation
-     this.steerableWheel.forEach(wheel => {
-       this.scene.beginAnimation(wheel, 0, this.totalTime * this.FRAME_RATE);
-     });
+      //start Steerables Animation
+      this.steerableWheel.forEach(wheel => {
+        this.scene.beginAnimation(wheel, 0, this.totalTime * this.FRAME_RATE);
+      });
 
 
-     this.steerables.forEach(steerable => {
-       this.scene.beginAnimation(steerable, 0, this.totalTime * this.FRAME_RATE);
-     });
+      this.steerables.forEach(steerable => {
+        this.scene.beginAnimation(steerable, 0, this.totalTime * this.FRAME_RATE);
+      });
 
 
-     //start Steering Animation
-     this.steeringWheel.forEach(stWheelEl => {
-       this.scene.beginAnimation(stWheelEl, 0, this.totalTime * this.FRAME_RATE);
-     });
+      //start Steering Animation
+      this.steeringWheel.forEach(stWheelEl => {
+        this.scene.beginAnimation(stWheelEl, 0, this.totalTime * this.FRAME_RATE);
+      });
 
 
-     //start Helmet Animation
-     this.helmet.forEach(helmetEl => {
-       this.scene.beginAnimation(helmetEl, 0, this.totalTime * this.FRAME_RATE);
-     });
-   }
+      //start Helmet Animation
+      this.helmet.forEach(helmetEl => {
+        this.scene.beginAnimation(helmetEl, 0, this.totalTime * this.FRAME_RATE);
+      });
+
+      //start Current Node Animation
+      this.scene.beginAnimation(this, 0, this.totalTime * this.FRAME_RATE);
+    }
 
 
 
