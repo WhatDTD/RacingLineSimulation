@@ -35,3 +35,120 @@ html, body, canvas {
 .buttonMargin{
     margin-left: 2%;
 }
+
+
+#telemetryBox{
+    padding: 1%;
+    position: absolute;
+    translate: 100vw;
+    transform: translate(-105%);
+    bottom: 10px;
+
+    display: grid;
+    grid-template-columns: 2vw 2vw 2vw 2vw;
+    grid-template-rows: 2vh 2vh 3vh 5vh 2vh 3vh 2vh;
+    justify-content: space-between;
+    align-content: space-between;
+}
+
+#carName{
+    margin-top: 5%;
+    grid-column-start: 1;
+    grid-column-end: 5;
+    justify-self: center;
+    align-self: center;
+}
+
+
+#brakeBar{
+    transform: rotate(-90deg);
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 6;
+    min-width: 240%;
+    justify-self: center;
+    align-self: center;
+    margin: 0;
+    margin-top: 70%;
+    align-self: center;
+}
+
+#RPMbar{
+    grid-column-start: 2;
+    grid-column-end: 4;
+    margin: 0;
+}
+
+#RPM{
+    grid-column-start: 2;
+    grid-column-end: 4;
+    align-self: center;
+    justify-self: center;
+    margin: 0;
+}
+
+#throttleBar{
+    transform: rotate(-90deg);
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 6;
+    min-width: 240%;
+    justify-self: center;
+    align-self: center;
+    margin: 0;
+    margin-top: 70%;
+    align-self: center;
+}
+
+#gear{
+    grid-column-start: 2;
+    grid-column-end: 4;
+    align-content: center;
+    justify-content: center;
+    align-self: center;
+    justify-self: center;
+    margin: 0;
+    margin-bottom: 3%;
+}
+
+#speed{
+    grid-column-start: 2;
+    grid-column-end: 4;
+    align-self: center;
+    justify-self: center;
+    margin: 0;
+}
+
+#division{
+    grid-column-start: 1;
+    grid-column-end: 5;
+}
+
+#deltaLabel{
+    grid-column-start: 1;
+    grid-column-end: 3;
+    color: white;
+}
+
+#delta{
+    grid-column-start: 3;
+    grid-column-end: 5;
+    justify-self: end;
+    color: white;
+}
+
+#simulationInfoBox{
+    position: absolute;
+    transform: translateY(-100.5vh) translateX(-0.5vw);
+    max-height: fit-content;
+    max-width: fit-content;
+    padding: 0;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
+#simulationInfo{
+    justify-self: center;
+}

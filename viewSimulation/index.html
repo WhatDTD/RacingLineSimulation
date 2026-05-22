@@ -28,10 +28,26 @@
       </button>
       
     </div>
+
+    <div class="box" id="telemetryBox">
+      <div class="title is-6" id="carName">No Car</div>
+      <progress class="progress is-danger" id="brakeBar" value="0" max="100"></progress>
+      <progress class="progress is-info" id="RPMbar" value="0" max="0"></progress>
+      <progress class="progress is-success" id="throttleBar" value="0" max="100"></progress>
+      <div id="RPM">0</div>
+      <div class="title is-3" id="gear">N</div>
+      <div class="title is-4" id="speed">0</div>
+      <hr id="division">
+      <div id="deltaLabel">Delta:</div>
+      <div id="delta">+0.000</div>
+    </div>
+
+    <div class="box" id="simulationInfoBox"><div id="simulationInfo">No Simulation Selected Yet</div></div>
     
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
     <script src="SimulationAnimation.js"></script>
     <script src="script.js"></script>
+    <script src="telemetry.js"></script>
   </body>
 </html>

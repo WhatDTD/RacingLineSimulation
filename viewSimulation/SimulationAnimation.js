@@ -1,6 +1,7 @@
 class SimulationAnimation{
-    constructor(simulatedLap, scene, engine){
+    constructor(simulatedLap, name, scene, engine){
         this.simulatedLap = simulatedLap;
+        this.name = name
         this.engine = engine;
         this.scene = scene;
         this.FRAME_RATE = 60;

@@ -90,6 +90,7 @@ let colorCounter = 0;
 
 let trackMesh;
 let simulationsList = [];
+let bestSimulation;
 
 
 let trackMeshLoaded = false;
@@ -151,7 +152,8 @@ importSimulation.addEventListener('change', async (event) => {
     return;
   }  
   const simulation = JSON.parse(await file.text());
-  const simulationAnimation = await new SimulationAnimation(simulation, scene, engine);
+  const simulationAnimation = await new SimulationAnimation(simulation, file.name, scene, engine);
+  if(!bestSimulation || await simulationAnimation.simulatedLap.totalTime < bestSimulation.simulatedLap.totalTime) bestSimulation = await simulationAnimation;
   simulationLoaded = true;
   simulationsList.push(simulationAnimation);
   simulationAnimation.setLineColor(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b);
@@ -181,7 +183,9 @@ clearSimulationsButton.addEventListener('click', () => {
   colorCounter = 0;
   currentCar = 0;
   simulationsList = [];
+  bestSimulation = null;
   simulationLoaded = false;
+  simulationInfoDefault();
   checkRunSimulationBtn();
 });
 
@@ -197,17 +201,13 @@ nextCameraButton.addEventListener("click", () =>{
 });
 
 
-engine.runRenderLoop(() => {
-  scene.render();
-});
-
-
 function nextCar(){
   if(simulationsList.length != 0){
     scene.useRightHandedSystem = true;
     currentCar++;
     if(currentCar >= simulationsList.length) currentCar = 0;
     simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
+    if(scene.activeCamera == camera) scene.useRightHandedSystem = false;
   }
 }
 
