@@ -91,7 +91,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //wheels angle from radius
     function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2){  //x and y in 2d space from top view
-        let slipAngleMultiplier = 3;
+        let slipAngleMultiplier = 2;
 
         let xA = x1 - x0;
         let yA = y1 - y0;
@@ -136,7 +136,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let Fr = calculateFrictionForce(FrC, 0, N);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
             let Fd = calculateDragForce(airDens, V, Cd, A);
-            let aFL = N*FrC/m;
+            let aFL = calculateAccelerationFL(m,Fr);
             let aBL = calculateAccelerationPL(m, Bp, -Fd, V);
             let a = calculateAccelerationForR(m, aFL, aBL, Fr, Fc);
             let FLat = Fc < Fr ? Fc : Fr;
@@ -294,6 +294,10 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         }
 
         simulatedLap.nodes[i-1].wheelsAngle = bezierCurveSmoothing3(simulatedLap.nodes[i-2].wheelsAngle, simulatedLap.nodes[i-1].wheelsAngle, simulatedLap.nodes[i].wheelsAngle, tValue);
+
+        //Throttle and brake smoothing
+        if(simulatedLap.nodes[i].brake == 0) simulatedLap.nodes[i-1].throttle = bezierCurveSmoothing3(simulatedLap.nodes[i-2].throttle, simulatedLap.nodes[i-1].throttle, simulatedLap.nodes[i].throttle, 0.2);
+        if(simulatedLap.nodes[i].throttle == 0) simulatedLap.nodes[i-1].brake = bezierCurveSmoothing3(simulatedLap.nodes[i-2].brake, simulatedLap.nodes[i-1].brake, simulatedLap.nodes[i].brake, tValue);
     }
 
     //Lateral G force direction
