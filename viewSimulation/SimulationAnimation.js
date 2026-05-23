@@ -281,6 +281,8 @@ class SimulationAnimation{
         let t = 0;
         let d = 0;
 
+        let precRotY;
+
         for (let i = 0; i < points.length - 1; i++) {
 
             //Car Movement
@@ -295,7 +297,17 @@ class SimulationAnimation{
               points[i+1].y - points[i].y,
               points[i+1].z - points[i].z
             )
-            const rotY = Math.atan2(direction.x, direction.z) + Math.PI;
+
+            //To fix the change of direction when passing trought the 0
+            //otherwise it would go from 0.01 to 6.2 wich its correct
+            //but the animation would do the whole rotation creating visual glitches
+            //this fixes the rotation making the transition smooth
+            let rotY = Math.atan2(direction.x, direction.z) + Math.PI;
+            if(precRotY){
+              if(rotY > Math.PI && precRotY < Math.PI/2) rotY = rotY-Math.PI*2;
+            }
+            precRotY = rotY;
+
             const rotX = Math.asin(direction.y);
             const rotZ = 0;
 
@@ -309,14 +321,14 @@ class SimulationAnimation{
             //Steerables
             steerablesKeysFrames.push({
               frame: this.FRAME_RATE * t,
-              value: new BABYLON.Vector3(Math.PI/2, Math.PI/2, points[i].wheelsAngle * 57.2958 * Math.PI/180)
+              value: new BABYLON.Vector3(Math.PI/2, Math.PI/2, points[i].wheelsAngle)
             });
 
 
             //SteeringWheel
             steeringKeysFrames.push({
               frame: this.FRAME_RATE * t,
-              value: new BABYLON.Vector3(0, 0, (points[i].wheelsAngle * 57.2958 * Math.PI/180)*this.simulatedLap.car.steeringRatio)
+              value: new BABYLON.Vector3(0, 0, (points[i].wheelsAngle)*this.simulatedLap.car.steeringRatio)
             });
 
             //Helmet
@@ -328,7 +340,7 @@ class SimulationAnimation{
               points[lookahead].z - points[i].z
             )
 
-            let headAngle = -Math.atan2(helmetDirection.x, helmetDirection.z)+Math.atan2(direction.x, direction.z);
+            let headAngle = -Math.atan2(helmetDirection.x, helmetDirection.z)+(rotY-Math.PI);
             if(headAngle > Math.PI/4) headAngle = Math.PI/4;
             if(headAngle > Math.PI/4) headAngle = Math.PI/4;
 
