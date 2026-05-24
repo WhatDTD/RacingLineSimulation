@@ -38,16 +38,8 @@ window.addEventListener('load', () => {
     const downloadExample = document.querySelector('#downloadExample');
     downloadExample.addEventListener('click', () => {
         const slowSim = document.createElement('a');
-        slowSim.href = `${root}/assets/slow.RLSsim`;
+        slowSim.href = `${root}/assets/example.zip`;
         slowSim.download = '';
         slowSim.click();
-
-        //delay for the second one because some browsers would otherwise block it
-        setTimeout(() => {
-            const fastStim = document.createElement('a');
-            fastStim.href = `${root}/assets/fast.RLSsim`;
-            fastStim.download = '';
-            fastStim.click();
-        }, 500);
     });
 });
