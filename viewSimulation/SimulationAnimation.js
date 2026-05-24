@@ -282,6 +282,7 @@ class SimulationAnimation{
         let d = 0;
 
         let precRotY;
+        let helmetPrecRotY;
 
         for (let i = 0; i < points.length - 1; i++) {
 
@@ -303,12 +304,28 @@ class SimulationAnimation{
             //but the animation would do the whole rotation creating visual glitches
             //this fixes the rotation making the transition smooth
             let rotY = Math.atan2(direction.x, direction.z) + Math.PI;
-            if(precRotY){
-              if(rotY > Math.PI && precRotY < Math.PI/2) rotY = rotY-Math.PI*2;
+
+            if (precRotY) {
+              let delta = rotY - precRotY;
+              if (delta > Math.PI) {
+                rotY -= Math.PI * 2;
+              } 
+              else if (delta < -Math.PI) {
+                rotY += Math.PI * 2;
+              }
             }
             precRotY = rotY;
 
-            const rotX = Math.asin(direction.y);
+
+            const elevationLookAhead = Math.min(i + 3, points.length - 1);
+
+            const smoothElevation = new BABYLON.Vector3(
+              points[elevationLookAhead].x - points[i].x,
+              points[elevationLookAhead].y - points[i].y,
+              points[elevationLookAhead].z - points[i].z
+            ).normalize();
+            const rotX = Math.asin(smoothElevation.y);
+            
             const rotZ = 0;
 
             //Car Rotation
@@ -332,17 +349,31 @@ class SimulationAnimation{
             });
 
             //Helmet
-            let lookahead = i+50;
-            if(lookahead > points.length-1) lookahead = points.length-1;
+            let lookahead = i + 50;
+            lookahead = Math.min(lookahead, points.length - 1);
             let helmetDirection = new BABYLON.Vector3(
               points[lookahead].x - points[i].x,
               points[lookahead].y - points[i].y,
               points[lookahead].z - points[i].z
             )
 
-            let headAngle = -Math.atan2(helmetDirection.x, helmetDirection.z)+(rotY-Math.PI);
-            if(headAngle > Math.PI/4) headAngle = Math.PI/4;
-            if(headAngle > Math.PI/4) headAngle = Math.PI/4;
+            let helmetRotY = Math.atan2(helmetDirection.x, helmetDirection.z);
+            if (helmetPrecRotY) {
+              let helmetDelta = helmetRotY - helmetPrecRotY;
+              while (helmetDelta < -Math.PI) helmetDelta += Math.PI * 2;
+              while (helmetDelta > Math.PI) helmetDelta -= Math.PI * 2;
+              helmetRotY = helmetPrecRotY + helmetDelta;
+            }
+            helmetPrecRotY = helmetRotY;
+
+            let headAngle = -Math.atan2(helmetDirection.x, helmetDirection.z) + (rotY - Math.PI);
+
+            while (headAngle < -Math.PI) headAngle += Math.PI * 2;
+            while (headAngle > Math.PI) headAngle -= Math.PI * 2;
+
+            //helmet movement limitations, otherwise the driver could have a serious neck injury
+            if (headAngle > Math.PI / 4) headAngle = Math.PI / 4;
+            if (headAngle < -Math.PI / 4) headAngle = -Math.PI / 4;
 
             helmetKeysFrames.push({
               frame: this.FRAME_RATE * t,

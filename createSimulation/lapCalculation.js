@@ -91,7 +91,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //wheels angle from radius
     function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2){  //x and y in 2d space from top view
-        let slipAngleMultiplier = 2;
+        let slipAngleMultiplier = 1.4;
 
         let xA = x1 - x0;
         let yA = y1 - y0;
