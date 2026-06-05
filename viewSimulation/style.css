@@ -9,6 +9,44 @@ html, body, canvas {
     overflow-y: hidden;
 }
 
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 8px;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 25px;
+  background: #06061c;
+  cursor: pointer;
+  border-radius: 30%;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 25px;
+  background: #06061c;
+  cursor: pointer;
+  border-radius: 30%;
+}
+
 #buttonsUi {
     position: absolute;
     display: flex;
@@ -21,16 +59,62 @@ html, body, canvas {
     bottom: 10px;
 }
 
-#camerasUi {
+#nextCamera{
+    padding: 20%;
+}
+
+#animationUi {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: fit-content;
-    max-height: 5vh;
     bottom: 10px;
     margin-left: 5px;
+
+
+    display: grid;
+    grid-template-columns: 2vw 2vw 2vw 2vw 2vw;
+    grid-template-rows: 3vh 3vh 3vh;
+    justify-content: space-between;
+    align-content: space-between;
+    row-gap:10%;
+    min-height: 15vh;
 }
+
+
+#playPause{
+    padding: 30%;
+    grid-column: 3;
+}
+
+
+.slidecontainer{
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: 6;
+
+
+    min-width: fit-content;
+    max-height: fit-content;
+}
+
+
+#prevCar{
+    padding: 30%;
+    grid-row: 3;
+    grid-column: 1;
+}
+
+
+#nextCar{
+    padding: 30%;
+    grid-row: 3;
+    grid-column: 3;
+}
+
+
+#nextCamera{
+    grid-row: 3;
+    grid-column: 5;
+}
+
 
 .buttonMargin{
     margin-left: 2%;

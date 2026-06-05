@@ -12,6 +12,15 @@ class SimulationAnimation{
         this.distanceTravelled = 0;
         this.time = 0;
 
+        //animatable
+        this.carAnim;
+        this.steerableAnim = [];
+        this.steerableWheelAnim = [];
+        this.wheelsAnim = [];
+        this.steeringWheelAnim = [];
+        this.helmetAnim = [];
+        this.simualationSecificAnim;
+
         scene.useRightHandedSystem = false;
 
         //Line Mesh
@@ -130,6 +139,12 @@ class SimulationAnimation{
         const rotY = Math.atan2(direction.x, direction.z) + Math.PI;
 
         this.carMesh.rotation = new BABYLON.Vector3(0, rotY, 0);
+        this.steerables.forEach(element => {
+          element.rotation = new BABYLON.Vector3(Math.PI/2, Math.PI/2, 0);
+        });
+        this.steerableWheel.forEach(element => {
+          element.rotation = new BABYLON.Vector3(Math.PI/2, Math.PI/2, 0);
+        });
 
 
         scene.useRightHandedSystem = false;
@@ -463,39 +478,116 @@ class SimulationAnimation{
 
 
 
-    startAnimation(){
+    startAnimation(startTime){
+      this.steerableAnim = [];
+      this.steerableWheelAnim = [];
+      this.steeringWheelAnim = [];
+      this.helmetAnim = [];
       //start Car Animation
-      this.scene.beginAnimation(this.carMesh, 0, this.totalTime * this.FRAME_RATE);
-
+      this.carAnim = this.scene.beginAnimation(this.carMesh, startTime*this.FRAME_RATE, this.totalTime * this.FRAME_RATE);
 
       //start Steerables Animation
       this.steerableWheel.forEach(wheel => {
-        this.scene.beginAnimation(wheel, 0, this.totalTime * this.FRAME_RATE);
+        this.steerableWheelAnim.push(this.scene.beginAnimation(wheel, startTime*this.FRAME_RATE, this.totalTime * this.FRAME_RATE));
       });
-
 
       this.steerables.forEach(steerable => {
-        this.scene.beginAnimation(steerable, 0, this.totalTime * this.FRAME_RATE);
+        this.steerableAnim.push(this.scene.beginAnimation(steerable, startTime*this.FRAME_RATE, this.totalTime * this.FRAME_RATE));
       });
-
 
       //start Steering Animation
       this.steeringWheel.forEach(stWheelEl => {
-        this.scene.beginAnimation(stWheelEl, 0, this.totalTime * this.FRAME_RATE);
+        this.steeringWheelAnim.push(this.scene.beginAnimation(stWheelEl, startTime*this.FRAME_RATE, this.totalTime * this.FRAME_RATE));
       });
-
 
       //start Helmet Animation
       this.helmet.forEach(helmetEl => {
-        this.scene.beginAnimation(helmetEl, 0, this.totalTime * this.FRAME_RATE);
+        this.helmetAnim.push(this.scene.beginAnimation(helmetEl, startTime*this.FRAME_RATE, this.totalTime * this.FRAME_RATE));
       });
 
       //start Current Node Animation
-      this.scene.beginAnimation(this, 0, this.totalTime * this.FRAME_RATE);
+      this.simualationSecificAnim = this.scene.beginAnimation(this, startTime*this.FRAME_RATE, this.totalTime * this.FRAME_RATE);
     }
 
 
+    pauseAnimation(){
+      this.carAnim.pause();
+
+      this.steerableAnim.forEach(element => {
+        element.pause();
+      });
+
+      this.steerableWheelAnim.forEach(element =>{
+        element.pause();
+      });
+
+      this.wheelsAnim.forEach(element =>{
+        element.pause();
+      });
+
+      this.steeringWheelAnim.forEach(element =>{
+        element.pause();
+      });
+
+      this.helmetAnim.forEach(element =>{
+        element.pause();
+      });
+
+      this.simualationSecificAnim.pause();
+    }
 
 
+    resumeAnimation(){
+      this.carAnim.restart();
+
+      this.steerableAnim.forEach(element => {
+        element.restart();
+      });
+
+      this.steerableWheelAnim.forEach(element =>{
+        element.restart();
+      });
+
+      this.wheelsAnim.forEach(element =>{
+        element.restart();
+      });
+
+      this.steeringWheelAnim.forEach(element =>{
+        element.restart();
+      });
+
+      this.helmetAnim.forEach(element =>{
+        element.restart();
+      });
+
+      this.simualationSecificAnim.restart();
+    }
+
+
+    resetAnimation(){
+      this.carAnim.reset();
+
+      this.steerableAnim.forEach(element => {
+        element.reset();
+      });
+
+      this.steerableWheelAnim.forEach(element =>{
+        element.reset();
+      });
+
+      this.wheelsAnim.forEach(element =>{
+        element.reset();
+      });
+
+      this.steeringWheelAnim.forEach(element =>{
+        element.reset();
+      });
+
+      this.helmetAnim.forEach(element =>{
+        element.reset();
+      });
+
+      this.simualationSecificAnim.reset();
+    }
 
 }

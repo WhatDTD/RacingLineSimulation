@@ -91,10 +91,14 @@ let colorCounter = 0;
 let trackMesh;
 let simulationsList = [];
 let bestSimulation;
+let worstSimulation;
 
 
 let trackMeshLoaded = false;
 let simulationLoaded = false;
+
+let isAnimationPaused = true;
+let timeLineUpdateAvailable = true;
 
 
 
@@ -136,7 +140,6 @@ importTrackModel.addEventListener("change", async (e) =>{
 
         trackMesh = result.meshes[0];
         trackMeshLoaded = true;
-        checkRunSimulationBtn();
     });
 });
 
@@ -150,26 +153,24 @@ importSimulation.addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) {
     return;
-  }  
+  }
+
+  resetAnimations();
+  pauseAnimations();
+
   const simulation = JSON.parse(await file.text());
   const simulationAnimation = await new SimulationAnimation(simulation, file.name, scene, engine);
   if(!bestSimulation || await simulationAnimation.simulatedLap.totalTime < bestSimulation.simulatedLap.totalTime) bestSimulation = await simulationAnimation;
+  if(!worstSimulation || await simulationAnimation.simulatedLap.totalTime > worstSimulation.simulatedLap.totalTime) worstSimulation = await simulationAnimation;
+  updateTimeLineValues();
   simulationLoaded = true;
   simulationsList.push(simulationAnimation);
+  beginAnimations(0);
+  pauseAnimations();
   simulationAnimation.setLineColor(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b);
   simulationAnimation.showLine(showLines);
   if(simulationsList) currentCar = simulationsList.length-1;
   colorCounter++;
-
-  checkRunSimulationBtn();
-});
-
-
-const runSimulationButton = document.querySelector('#runSimulation');
-runSimulationButton.addEventListener('click', () => {
-  simulationsList.forEach(simulation => {
-      simulation.startAnimation();
-  });
 });
 
 
@@ -184,9 +185,10 @@ clearSimulationsButton.addEventListener('click', () => {
   currentCar = 0;
   simulationsList = [];
   bestSimulation = null;
+  worstSimulation = null;
   simulationLoaded = false;
+  resetTimeLine();
   simulationInfoDefault();
-  checkRunSimulationBtn();
 });
 
 
@@ -195,10 +197,92 @@ nextCarButton.addEventListener("click", () =>{
   nextCar();
 });
 
+const prevCarButton = document.querySelector("#prevCar");
+prevCarButton.addEventListener("click", () =>{
+  prevCar();
+});
+
 const nextCameraButton = document.querySelector("#nextCamera");
 nextCameraButton.addEventListener("click", () =>{
   nextCamera();
 });
+
+
+const playPauseButton = document.querySelector("#playPause");
+playPauseButton.addEventListener("click", () => {
+  if(worstSimulation){
+    if(isAnimationPaused){
+      resumeAnimations();
+    }else{
+      pauseAnimations();
+    }
+  }
+});
+
+const timeLine = document.querySelector("#timeLine");
+
+timeLine.addEventListener('mouseenter', (e)=>{
+  timeLineUpdateAvailable = false;
+});
+timeLine.addEventListener('mouseleave', (e)=>{
+  timeLineUpdateAvailable = true;
+});
+timeLine.addEventListener("change", (e) =>{
+  beginAnimations(timeLine.value);
+  if(isAnimationPaused){
+    setTimeout(() => {
+      pauseAnimations();
+    }, 1);
+  }
+});
+
+function updateTimeLine(){
+  if(!isAnimationPaused && timeLineUpdateAvailable && worstSimulation) timeLine.value = worstSimulation.time * 60;
+}
+
+function updateTimeLineValues(){
+  timeLine.max = Math.trunc(worstSimulation.totalTime*worstSimulation.FRAME_RATE);
+  timeLine.value = 0;
+}
+
+function resetTimeLine(){
+  timeLine.max = 0;
+  timeLine.value = 0;
+}
+
+function beginAnimations(startFrame){
+  simulationsList.forEach(simulation => {
+    simulation.startAnimation(startFrame/60);
+  });
+}
+
+function pauseAnimations(){
+  if(playPauseButton){
+    playPauseButton.innerHTML = "<img src='./resources/playIcon.svg' alt='Play/Pause'/>";
+    isAnimationPaused = true;
+  }
+  simulationsList.forEach(simulation => {
+    simulation.pauseAnimation();
+  });
+}
+
+
+function resumeAnimations(){
+  if(playPauseButton){
+    playPauseButton.innerHTML = "<img src='./resources/pauseIcon.svg' alt='Play/Pause'/>";
+    isAnimationPaused = false;
+  }
+  simulationsList.forEach(simulation => {
+    simulation.resumeAnimation();
+  });
+}
+
+
+function resetAnimations(){
+  simulationsList.forEach(simulation => {
+    simulation.resetAnimation();
+  });
+}
 
 
 function nextCar(){
@@ -206,6 +290,16 @@ function nextCar(){
     scene.useRightHandedSystem = true;
     currentCar++;
     if(currentCar >= simulationsList.length) currentCar = 0;
+    simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
+    if(scene.activeCamera == camera) scene.useRightHandedSystem = false;
+  }
+}
+
+function prevCar(){
+  if(simulationsList.length != 0){
+    scene.useRightHandedSystem = true;
+    currentCar--;
+    if(currentCar < 0) currentCar = simulationsList.length-1;
     simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
     if(scene.activeCamera == camera) scene.useRightHandedSystem = false;
   }
@@ -228,15 +322,5 @@ function nextCamera(){
       currentCamera++;
       simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
     }
-  }
-}
-
-
-
-function checkRunSimulationBtn(){
-  if(simulationLoaded){
-    if(runSimulationButton.hasAttribute("disabled")) runSimulationButton.removeAttribute("disabled");
-  }else{
-    runSimulationButton.setAttribute("disabled", true);
   }
 }

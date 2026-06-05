@@ -126,5 +126,6 @@ function secondsToTimeString(time, decimals){
 
 engine.runRenderLoop(() => {
     updateTelemetry();
-  scene.render();
+    updateTimeLine();
+    scene.render();
 });

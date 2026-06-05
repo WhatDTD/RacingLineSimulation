@@ -7,14 +7,18 @@
   </head>
   <body>
     <canvas id="canvas" tabindex="1"></canvas>
-    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="camerasUi">
-      <button class="button is-info is-small is-outlined is-inverted is-responsive" id="nextCar">Next Car →</button>
-      <button class="button buttonMargin is-small is-responsive" id="nextCamera">Switch Camera ↑↓</button>
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="animationUi">
+      <button class="button is-small is-responsive" id="playPause"><img src='./resources/playIcon.svg' alt='Play/Pause'/></button>
+      <div class='slidecontainer'>
+        <input type='range' min='0' max='0' value='0' class='slider' id='timeLine'>
+      </div>
+      <button class="button is-small is-responsive" id="prevCar"><img src='./resources/leftArrowIcon.svg' alt='Previous Car'/></button>
+      <button class="button is-small is-responsive" id="nextCar"><img src='./resources/rightArrowIcon.svg' alt='Next Car'/></button>
+      <button class="button is-info is-small is-responsive" id="nextCamera"><img src='./resources/cameraIcon.svg' alt='Change Camera'/></button>
     </div>
 
 
     <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="buttonsUi">
-      <button class="button is-info is-small is-responsive" id="runSimulation" disabled>Run Simulation</button>
       <button class="button buttonMargin is-focus is-small is-responsive" id="clearSimulations">Clear Simulations</button>
 
       <button class="button buttonMargin is-link is-small is-responsive" id="importTrackModelBtn">
