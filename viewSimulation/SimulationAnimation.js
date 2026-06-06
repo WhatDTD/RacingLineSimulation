@@ -12,6 +12,15 @@ class SimulationAnimation{
         this.distanceTravelled = 0;
         this.time = 0;
 
+        //Gmeter related stuff
+        this.maxG = Math.max(Math.abs(simulatedLap.nodes[0].longitudinalG), Math.abs(simulatedLap.nodes[0].lateralG));
+        this.simulatedLap.nodes.forEach(node => {
+          if(this.maxG && node.longitudinalG && node.lateralG){
+            this.maxG = Math.max(this.maxG, Math.abs(node.longitudinalG));
+            this.maxG = Math.max(this.maxG, Math.abs(node.lateralG));
+          }
+        });
+
         //animatable
         this.carAnim;
         this.steerableAnim = [];

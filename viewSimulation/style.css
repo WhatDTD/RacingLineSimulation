@@ -1,6 +1,6 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
 
-html, body, canvas {
+html, body, #canvas {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -235,4 +235,22 @@ html, body, canvas {
 
 #simulationInfo{
     justify-self: center;
+}
+
+
+#Gmeter{
+    padding: 1%;
+    position: absolute;
+    translate: 100vw;
+    transform: translate(-105%);
+    bottom: 27svh;
+    justify-items: center;
+}
+
+#Gmeter div{
+    margin: 0;
+}
+
+#GmeterCanvas{
+    width: 8vw;
 }

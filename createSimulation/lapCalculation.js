@@ -305,6 +305,12 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         simulatedLap.nodes[i].lateralG *= simulatedLap.nodes[i].wheelsAngle <= 0 ? 1 : -1;
     }
 
+    //G smoothing
+    for(let i=2; i < simulatedLap.nodes.length-1; i++){
+        simulatedLap.nodes[i-1].longitudinalG = bezierCurveSmoothing3(simulatedLap.nodes[i-2].longitudinalG, simulatedLap.nodes[i-1].longitudinalG, simulatedLap.nodes[i].longitudinalG, tValue);
+        simulatedLap.nodes[i-1].lateralG = bezierCurveSmoothing3(simulatedLap.nodes[i-2].lateralG, simulatedLap.nodes[i-1].lateralG, simulatedLap.nodes[i].lateralG, tValue);
+    }
+
     simulatedLap.totalTime = 0;
 
     for(let i=0; i < simulatedLap.nodes.length-2; i++){

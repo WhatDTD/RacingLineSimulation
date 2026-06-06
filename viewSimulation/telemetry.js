@@ -122,10 +122,11 @@ function secondsToTimeString(time, decimals){
     if(s < 10) str += "0";
     mill = String(mill).padEnd(3, "0");
     return str+s+"."+mill;
-  }
+}
 
 engine.runRenderLoop(() => {
     updateTelemetry();
     updateTimeLine();
+    drawGmeter();
     scene.render();
 });
