@@ -51,7 +51,7 @@ function drawGmeter(){
         peakG = 0;
         peakGcounter = currentSimulation.currentNode;
         simulationChecker = currentSimulation;
-    }else if(currentSimulation.currentNode - peakGcounter >= 130){
+    }else if(currentSimulation.currentNode < peakGcounter || currentSimulation.currentNode - peakGcounter >= 130){
         peakG = 0;
         peakGcounter = currentSimulation.currentNode;
     }

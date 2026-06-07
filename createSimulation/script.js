@@ -364,11 +364,13 @@ function activateSimSetup(){
   massInput.addEventListener("change", (e) =>{
     updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, Number(massInput.value));
     simCar.mass = Number(massInput.value);
+    checkStartSpeed();
   });
 
   massSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(massInput, massSlider, 1, car.mass.min, car.mass.max, Number(massSlider.value));
     simCar.mass = Number(massInput.value);
+    checkStartSpeed();
   });
 
 
@@ -392,12 +394,14 @@ function activateSimSetup(){
     updateSlider(ClSlider, ClSliderPrecision, -car.Cl.max, -car.Cl.min, Number(-ClInput.value));
     if(car.bindedAero) updateBindedAero((-ClInput.value + car.Cl.max)/ClRange);
     simCar.Cl = Number(ClInput.value);
+    checkStartSpeed();
   });
 
   ClSlider.addEventListener("change", (e) =>{
     updateInput(ClInput, car.Cl.min, car.Cl.max, Number(-ClSlider.value)/ClSliderPrecision);
     if(car.bindedAero) updateBindedAero((-ClInput.value + car.Cl.max)/ClRange);
     simCar.Cl = Number(ClInput.value);
+    checkStartSpeed();
   });
 
 
@@ -426,12 +430,14 @@ function activateSimSetup(){
     updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, Number(CdInput.value));
     if(car.bindedAero) updateBindedAero((Number(CdInput.value) - car.Cd.min)/CdRange);
     simCar.Cd = Number(CdInput.value);
+    checkStartSpeed();
   });
 
   CdSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(CdInput, CdSlider, CdSliderPrecision, car.Cd.min, car.Cd.max, Number(CdSlider.value)/CdSliderPrecision);
     if(car.bindedAero) updateBindedAero((Number(CdInput.value) - car.Cd.min)/CdRange);
     simCar.Cd = Number(CdInput.value);
+    checkStartSpeed();
   });
 
 
@@ -459,12 +465,14 @@ function activateSimSetup(){
     updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, Number(areaInput.value));
     if(car.bindedAero) updateBindedAero((Number(areaInput.value) - car.A.min)/areaRange);
     simCar.A = Number(areaInput.value);
+    checkStartSpeed();
   });
 
   areaSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, Number(areaSlider.value)/areaSliderPrecision);
     if(car.bindedAero) updateBindedAero((Number(areaInput.value) - car.A.min)/areaRange);
     simCar.A = Number(areaInput.value);
+    checkStartSpeed();
   });
 
 
@@ -480,6 +488,7 @@ function activateSimSetup(){
     updateClChange(change);
     updateCdChange(change);
     updateAreaChange(change);
+    checkStartSpeed();
   }
 
 
@@ -499,11 +508,13 @@ function activateSimSetup(){
   powerInput.addEventListener("change", (e) =>{
     updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, Number(powerInput.value));
     simCar.Power = Number(powerInput.value);
+    checkStartSpeed();
   });
 
   powerSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, Number(powerSlider.value));
     simCar.Power = Number(powerInput.value);
+    checkStartSpeed();
   });
 
 
@@ -550,11 +561,13 @@ function activateSimSetup(){
   FrCInput.addEventListener("change", (e) =>{
     updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCInput.value));
     simCar.FrC = Number(FrCInput.value);
+    checkStartSpeed();
   });
 
   FrCSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCSlider.value)/FrCSliderPrecision);
     simCar.FrC = Number(FrCInput.value);
+    checkStartSpeed();
   });
 
 
@@ -571,6 +584,7 @@ function activateSimSetup(){
   airDensityInput.addEventListener("change", (e) =>{
     if(!Number(airDensityInput.value) > 0) airDensityInput.value = airDensity;
     airDensity = Number(airDensityInput.value);
+    checkStartSpeed();
   });
 
 
@@ -584,6 +598,7 @@ function activateSimSetup(){
   gInput.addEventListener("change", (e) =>{
     if(!Number(gInput.value) > 0) gInput.value = g;
     g = Number(gInput.value);
+    checkStartSpeed();
   });
 
 
@@ -601,11 +616,13 @@ function activateSimSetup(){
   trackGripInput.addEventListener("change", (e) =>{
     updateInputAndSlider(trackGripInput, trackGripSlider, trackGripSliderPrecision, trackGripSlider.min, trackGripSlider.max, Number(trackGripInput.value));
     trackGrip = Number(trackGripInput.value)/100;
+    checkStartSpeed();
   });
 
   trackGripSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(trackGripInput, trackGripSlider, trackGripSliderPrecision, trackGripSlider.min, trackGripSlider.max, Number(trackGripSlider.value)/trackGripSliderPrecision);
     trackGrip = Number(trackGripInput.value)/100;
+    checkStartSpeed();
   });
 
 
@@ -622,7 +639,38 @@ function activateSimSetup(){
   startSpeedInput.addEventListener("change", (e) =>{
     if(!Number(startSpeedInput.value) > 0) startSpeedInput.value = simulationStartVelocity;
     simulationStartVelocity = Number(startSpeedInput.value);
+    checkStartSpeed();
   });
+
+  function checkStartSpeed(){
+    let termVel = calculateTerminalVel(powerInput.value, airDensityInput.value, CdInput.value, areaInput.value);
+    let maxStartVel = maxVelforR(massInput.value, gInput.value, line[0].r, FrCInput.value, ClInput.value, areaInput.value, airDensityInput.value, 0, termVel)*3.6;
+
+    startSpeedInput.value = Math.min(startSpeedInput.value, Math.trunc(maxStartVel));
+
+
+    function calculateTerminalVel(P, p, Cd, A){
+        return Math.cbrt(
+                        (2*(P*1000))/   //*1000 to convert from Kw to W
+                        (p*Cd*A));
+    }
+
+    function maxVelforR(m, g, r, FrC, Cl, A, p, roll, AltSpeed){
+
+        Cl *= -1;
+        
+        let den = (2*m*(Math.cos(roll) - FrC * Math.sin(roll)) - p*Cl*A*r*(Math.sin(roll) + FrC * Math.cos(roll)));
+
+        if(den == 0 || (2*r*m*g*(Math.sin(roll) + FrC * Math.cos(roll)))/den < 0){
+            return AltSpeed;
+        }else{
+            let res = Math.sqrt(
+                            (2*r*m*g*(Math.sin(roll) + FrC * Math.cos(roll)))/den
+                        );
+            return res < terminalVel ? res : terminalVel;
+            }
+    }
+  }
 
 
 

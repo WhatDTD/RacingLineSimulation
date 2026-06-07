@@ -33,9 +33,3 @@ here we have all the things that are currently in the making or things we're pla
 - Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low priority}}$
 
 - Add a simple menu on the top of the screen that enables the user to <b>Hide Ui Elements</b> in <b>View Simulation</b> ${\color{orange}\textsf{Mid priority}}$
-
-- Fix simulation <b>Start Speed</b> when its higher than terminal velocity in <b>Create Simulation</b> ${\color{red}\textsf{High priority}}$
-
-|Currently Working On|
-|--|
-`createSimulation/script.js`
