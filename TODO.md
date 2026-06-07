@@ -4,15 +4,16 @@ here we have all the things that are currently in the making or things we're pla
 ## Standards
 
 ### Priority Marks
-- ${\color{red}\textsf{High\ priority}}$
-- ${\color{orangered}\textsf{Mid-High\ priority}}$
-- ${\color{orange}\textsf{Mid\ priority}}$
-- ${\color{yellow}\textsf{Low-Mid\ priority}}$
-- ${\color{green}\textsf{Low\ priority}}$
+- ${\color{red}\textsf{High priority}}$
+- ${\color{orangered}\textsf{Mid-High priority}}$
+- ${\color{orange}\textsf{Mid priority}}$
+- ${\color{yellow}\textsf{Low-Mid priority}}$
+- ${\color{green}\textsf{Low priority}}$
+- ${\color{purple}\textsf{Nice To Have}}$
 
 ### Files Currently Beeing Modified
 
-- thing to do ${\color{pink}\textsf{No\ priority}}$
+- thing to do ${\color{pink}\textsf{No priority}}$
 
 |Currently Working On|
 |--|
@@ -21,14 +22,20 @@ here we have all the things that are currently in the making or things we're pla
 
 
 ## To Do List
-- Remove Gizmo in <b>Create Line</b> ${\color{red}\textsf{High\ priority}}$
+- Remove Gizmo in <b>Create Line</b> ${\color{red}\textsf{High priority}}$
 
-- Add additional camera movement options in <b>Create Line</b> such as movement speed and zoom ${\color{yellow}\textsf{Low-Mid\ priority}}$
+- Add additional camera movement options in <b>Create Line</b> such as movement speed and zoom ${\color{yellow}\textsf{Low-Mid priority}}$
 
-- Add simple <b>Icons</b> for the import buttons instead of the current arrows ${\color{green}\textsf{Low\ priority}}$
+- Add simple <b>Icons</b> for the import buttons instead of the current arrows ${\color{green}\textsf{Low priority}}$
 
-- Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low\ priority}}$
+- Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low priority}}$
 
-- Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low\ priority}}$
+- Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low priority}}$
 
-- Add a simple menu on the top of the screen that enables the user to <b>Hide Ui Elements</b> in <b>View Simulation</b> ${\color{orange}\textsf{Mid\ priority}}$
+- Add a simple menu on the top of the screen that enables the user to <b>Hide Ui Elements</b> in <b>View Simulation</b> ${\color{orange}\textsf{Mid priority}}$
+
+- Fix simulation <b>Start Speed</b> when its higher than terminal velocity in <b>Create Simulation</b> ${\color{red}\textsf{High priority}}$
+
+|Currently Working On|
+|--|
+`createSimulation/script.js`
