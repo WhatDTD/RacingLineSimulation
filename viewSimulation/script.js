@@ -167,6 +167,7 @@ importSimulation.addEventListener('change', async (event) => {
   simulationsList.push(simulationAnimation);
   beginAnimations(0);
   pauseAnimations();
+  drawTrackMap();
   simulationAnimation.setLineColor(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b);
   simulationAnimation.showLine(showLines);
   if(simulationsList) currentCar = simulationsList.length-1;
@@ -188,6 +189,7 @@ clearSimulationsButton.addEventListener('click', () => {
   worstSimulation = null;
   simulationLoaded = false;
   resetTimeLine();
+  clearTrackMap();
   simulationInfoDefault();
 });
 

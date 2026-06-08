@@ -128,5 +128,6 @@ engine.runRenderLoop(() => {
     updateTelemetry();
     updateTimeLine();
     drawGmeter();
+    drawTrackMapPoints();
     scene.render();
 });

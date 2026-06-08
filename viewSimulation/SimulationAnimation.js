@@ -11,6 +11,7 @@ class SimulationAnimation{
         this.currentNode = 0;
         this.distanceTravelled = 0;
         this.time = 0;
+        this.color = "rgb(0 0 0)";
 
         //Gmeter related stuff
         this.maxG = Math.max(Math.abs(simulatedLap.nodes[0].longitudinalG), Math.abs(simulatedLap.nodes[0].lateralG));
@@ -241,6 +242,7 @@ class SimulationAnimation{
 
     setLineColor(r,g,b){
         this.lineMesh.color = new BABYLON.Color3(r, g, b);
+        this.color = `rgb(${Math.trunc(r*255)} ${Math.trunc(g*255)} ${Math.trunc(b*255)})`;
     }
 
     carRenderFront(){

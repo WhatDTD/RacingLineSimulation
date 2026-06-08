@@ -59,6 +59,19 @@ html, body, #canvas {
     bottom: 10px;
 }
 
+#trackMap, #trackMapPoints {
+    position: absolute;
+    top: 10px;
+    margin-left: 5px;
+    padding: 1%;
+    justify-items: center;
+    display: flex;
+}
+
+#trackMapCanvas, #trackMapPointsCanvas{
+    width: 10vw;
+}
+
 #nextCamera{
     padding: 20%;
 }

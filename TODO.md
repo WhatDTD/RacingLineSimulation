@@ -28,8 +28,10 @@ here we have all the things that are currently in the making or things we're pla
 
 - Add simple <b>Icons</b> for the import buttons instead of the current arrows ${\color{green}\textsf{Low priority}}$
 
-- Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low priority}}$
-
-- Add <b>Track Map</b> in <b>View Simulation</b> ${\color{green}\textsf{Low priority}}$
-
 - Add a simple menu on the top of the screen that enables the user to <b>Hide Ui Elements</b> in <b>View Simulation</b> ${\color{orange}\textsf{Mid priority}}$
+
+- Change pages browser tab name to cooler names ${\color{green}\textsf{Low priority}}$
+
+- Add tabs icons with <b>Favicons</b> ${\color{green}\textsf{Low priority}}$
+
+- Add <b>Sync on Track</b> button in <b>View Simulation</b>; when the button is clicked all the simulations should be at the same normalized position on track ${\color{yellow}\textsf{Low-Mid priority}}$

@@ -19,7 +19,7 @@
 
 
     <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="buttonsUi">
-      <button class="button buttonMargin is-focus is-small is-responsive" id="clearSimulations">Clear Simulations</button>
+      <button class="button is-focus is-small is-responsive" id="clearSimulations">Clear Simulations</button>
 
       <button class="button buttonMargin is-link is-small is-responsive" id="importTrackModelBtn">
         <span>↑ Import Track</span>
@@ -52,6 +52,14 @@
       <div id="peakGLabel">peak: No data</div>
     </div>
 
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="trackMap">
+      <canvas id="trackMapCanvas"></canvas>
+    </div>
+
+    <div class="box" style="background-color: rgba(0, 3, 30, 0);" id="trackMapPoints">
+      <canvas id="trackMapPointsCanvas"></canvas>
+    </div>
+
     <div class="box" id="simulationInfoBox"><div id="simulationInfo">No Simulation Selected Yet</div></div>
     
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
@@ -59,6 +67,7 @@
     <script src="SimulationAnimation.js"></script>
     <script src="script.js"></script>
     <script src="Gmeter.js"></script>
+    <script src="trackMap.js"></script>
     <script src="telemetry.js"></script>
   </body>
 </html>
