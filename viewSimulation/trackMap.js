@@ -86,8 +86,6 @@ function drawTrackMap(){
         zero.y = height*norm;
     }
 
-    console.log(zero)
-
     TMctx.beginPath();
     TMctx.clearRect(0, 0, trackMapCanvas.width, trackMapCanvas.height);
     TMctx.closePath();
@@ -122,7 +120,6 @@ function drawTrackMapPoints(){
     if(!simulationsList[currentCar]) return;
     TMPctx.beginPath();
     let sim = simulationsList[currentCar];
-    console.log(sim.color);
     TMPctx.fillStyle = sim.color;
     let node = sim.simulatedLap.nodes[Math.trunc(sim.currentNode)];
     TMPctx.arc(zero.x-node.x+currentPointRadiusPc*width/2+gap, zero.y+node.z+currentPointRadiusPc*width/2+gap, trackMapCanvas.width*currentPointRadiusPc, 0, Math.PI*2);
