@@ -73,6 +73,7 @@ function drawTrackMap(){
     if(Math.abs(maxX) < Math.abs(minX)){
         norm = Math.abs(maxX)/width;
         zero.x = width*norm;
+        if(maxX < 0) zero.x *= -1;
     }else{
         norm = Math.abs(minX)/width;
         zero.x = width - width*norm;
