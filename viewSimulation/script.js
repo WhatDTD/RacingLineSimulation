@@ -169,6 +169,7 @@ importSimulation.addEventListener('change', async (event) => {
   pauseAnimations();
   drawTrackMap();
   simulationAnimation.setLineColor(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b);
+  calculateSectors();
   simulationAnimation.showLine(showLines);
   if(simulationsList) currentCar = simulationsList.length-1;
   colorCounter++;

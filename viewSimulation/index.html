@@ -53,11 +53,20 @@
     </div>
 
     <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="trackMap">
-      <canvas id="trackMapCanvas"></canvas>
+      <div class="mapZoomButtonsDiv"></div>
+      <canvas id="trackMapCanvas" style="width: 12vw;"></canvas>
+    </div>
+
+    <div class="box" style="background-color: rgba(0, 3, 30, 0);" id="trackMapSectors">
+      <div class="mapZoomButtonsDiv"></div>
+      <canvas id="trackMapSectorsCanvas" style="width: 12vw;"></canvas>
     </div>
 
     <div class="box" style="background-color: rgba(0, 3, 30, 0);" id="trackMapPoints">
-      <canvas id="trackMapPointsCanvas"></canvas>
+      <div class="mapZoomButtonsDiv">
+        <button class="button is-small" id="decreaseSize">-</button>&nbsp;&nbsp;&nbsp;<button class="button is-small" id="increaseSize">+</button>
+      </div>
+      <canvas id="trackMapPointsCanvas" style="width: 12vw;"></canvas>
     </div>
 
     <div class="box" id="simulationInfoBox"><div id="simulationInfo">No Simulation Selected Yet</div></div>
