@@ -10,7 +10,10 @@ if (hostname !== "localhost" && hostname !== "127.0.0.1") {
 } 
 scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(`${folder}/assets/environment.env`, scene);
 
+//--- Free Camera ---
 const defaultSpeed = 3;
+let speed = defaultSpeed;
+
 let fovChange = 0.0005;
 
 let freeCamera = new BABYLON.FreeCamera(
@@ -18,10 +21,107 @@ let freeCamera = new BABYLON.FreeCamera(
   new BABYLON.Vector3(1409.1058060557475, 1881.39279522408, 259.716450140158),
   scene
 );
+freeCamera.inputs.clear();
+freeCamera.inputs.add({
+  _keys: [],
+  _onKeyDown: null,
+  _onKeyUp: null,
+  _onLostFocus: null,
+
+  getClassName() { return "CustomCameraWasdInput"; },
+  getSimpleName() { return "wasd"; },
+
+  attachControl(noPreventDefault) {
+    const _this = this;
+    this._onKeyDown = (evt) => {
+      if (!_this._keys.includes(evt.code)) _this._keys.push(evt.code);
+    };
+    this._onKeyUp = (evt) => {
+      const i = _this._keys.indexOf(evt.code);
+      if (i >= 0) _this._keys.splice(i, 1);
+    };
+    window.addEventListener("keydown", this._onKeyDown);
+    window.addEventListener("keyup", this._onKeyUp);
+  },
+
+  detachControl() {
+    const engine = this.camera.getEngine();
+    const element = engine.getInputElement();
+    if (this._onKeyDown) {
+      element.removeEventListener("keydown", this._onKeyDown);
+      element.removeEventListener("keyup", this._onKeyUp);
+      BABYLON.Tools.UnregisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
+      this._keys = [];
+      this._onKeyDown = null;
+      this._onKeyUp = null;
+    }
+  },
+
+  checkInputs() {
+    if (!this._keys.length) return;
+    const camera = this.camera; 
+    const forward = camera.getDirection(BABYLON.Vector3.Forward());
+    const right = camera.getDirection(BABYLON.Vector3.Right());
+    if (this._keys.includes("ArrowUp")) camera.position.addInPlace(forward.scale(speed));
+    if (this._keys.includes("ArrowDown")) camera.position.addInPlace(forward.scale(-speed));
+    if (this._keys.includes("ArrowLeft")) camera.position.addInPlace(right.scale(-speed));
+    if (this._keys.includes("ArrowRight")) camera.position.addInPlace(right.scale(speed));
+  }
+});
+
+freeCamera.inputs.add({
+  _onPointerDown: null,
+  _onPointerMove: null,
+  _onPointerUp: null,
+  _isPointerDown: false,
+  _previousX: 0,
+  _previousY: 0,
+  sensibility: 0.003,
+
+  getClassName() { return "CustomCameraMouseInput"; },
+  getSimpleName() { return "mouse"; },
+
+  attachControl(noPreventDefault) {
+    const _this = this;
+
+    this._onPointerDown = (evt) => {
+      _this._isPointerDown = true;
+      _this._previousX = evt.clientX;
+      _this._previousY = evt.clientY;
+    };
+
+    this._onPointerMove = (evt) => {
+      if (!_this._isPointerDown) return;
+      const dx = evt.clientX - _this._previousX;
+      const dy = evt.clientY - _this._previousY;
+      _this.camera.rotation.y += dx * _this.sensibility;
+      _this.camera.rotation.x += dy * _this.sensibility;
+      _this._previousX = evt.clientX;
+      _this._previousY = evt.clientY;
+    };
+
+    this._onPointerUp = () => {
+      _this._isPointerDown = false;
+    };
+
+    window.addEventListener("pointerdown", this._onPointerDown);
+    window.addEventListener("pointermove", this._onPointerMove);
+    window.addEventListener("pointerup", this._onPointerUp);
+  },
+
+  detachControl() {
+    window.removeEventListener("pointerdown", this._onPointerDown);
+    window.removeEventListener("pointermove", this._onPointerMove);
+    window.removeEventListener("pointerup", this._onPointerUp);
+    this._isPointerDown = false;
+  },
+
+  checkInputs() {}
+});
 freeCamera.attachControl(canvas, true);
 freeCamera.rotation.x = 0.7935088533067846;
 freeCamera.rotation.y = -1.7741211144033804;
-freeCamera.speed = defaultSpeed;
+speed = defaultSpeed;
 
 
 const light = new BABYLON.PointLight("light", new BABYLON.Vector3(10, 10, 0), scene);
@@ -62,13 +162,13 @@ function mouseMoveHandler(e){
 //Camera Speed while holding Shift
 window.addEventListener("keydown", (e) => {
   if (e.shiftKey) {
-    freeCamera.speed = 1;
+    speed = 1;
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.shiftKey) {
-    freeCamera.speed = defaultSpeed;
+    speed = defaultSpeed;
   }
 });
 
@@ -76,13 +176,13 @@ window.addEventListener("keyup", (e) => {
 //Camera Speed while holding Ctrl
 window.addEventListener("keydown", (e) => {
   if (e.ctrlKey) {
-    freeCamera.speed = 15;
+    speed = 15;
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.ctrlKey) {
-    freeCamera.speed = defaultSpeed;
+    speed = defaultSpeed;
   }
 });
 

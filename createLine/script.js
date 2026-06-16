@@ -12,6 +12,9 @@ if (hostname !== "localhost" && hostname !== "127.0.0.1") {
 } 
 scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(`${folder}/assets/environment.env`, scene);
 
+const defaultSpeed = 3;
+let speed = defaultSpeed;
+
 const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(-320, 1262, 409), scene);
 
 camera.inputs.clear();
@@ -53,13 +56,12 @@ camera.inputs.add({
   checkInputs() {
     if (!this._keys.length) return;
     const camera = this.camera;
-    const speed = 5; 
     const forward = camera.getDirection(BABYLON.Vector3.Forward());
     const right = camera.getDirection(BABYLON.Vector3.Right());
-    if (this._keys.includes("KeyW")) camera.position.addInPlace(forward.scale(speed));
-    if (this._keys.includes("KeyS")) camera.position.addInPlace(forward.scale(-speed));
-    if (this._keys.includes("KeyA")) camera.position.addInPlace(right.scale(-speed));
-    if (this._keys.includes("KeyD")) camera.position.addInPlace(right.scale(speed));
+    if (this._keys.includes("ArrowUp")) camera.position.addInPlace(forward.scale(speed));
+    if (this._keys.includes("ArrowDown")) camera.position.addInPlace(forward.scale(-speed));
+    if (this._keys.includes("ArrowLeft")) camera.position.addInPlace(right.scale(-speed));
+    if (this._keys.includes("ArrowRight")) camera.position.addInPlace(right.scale(speed));
   }
 });
 
@@ -114,6 +116,53 @@ camera.inputs.add({
 });
 camera.attachControl(canvas, true);
 camera.rotation = new BABYLON.Vector3(1.42, 1.5185, 0);
+
+
+//Free Camera Keyboard inputs
+//Camera Speed while holding Shift
+window.addEventListener("keydown", (e) => {
+  if (e.shiftKey) {
+    speed = 1;
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (!e.shiftKey) {
+    speed = defaultSpeed;
+  }
+});
+
+
+//Camera Speed while holding Ctrl
+window.addEventListener("keydown", (e) => {
+  if (e.ctrlKey) {
+    speed = 15;
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (!e.ctrlKey) {
+    speed = defaultSpeed;
+  }
+});
+
+window.addEventListener("wheel", (e)=>{
+  camera.fov += e.deltaY * fovChange;
+  if(camera.fov < 0.08){
+    camera.fov = 0.08;
+  }
+
+    if(camera.fov > 2.9){
+    camera.fov = 2.9;
+  }
+});
+
+//camera fov reset: Shift+f
+window.addEventListener("keydown", (e)=>{
+  if(e.key === "F") camera.fov = 0.8;
+});
+
+
 
 const light = new BABYLON.PointLight("light", new BABYLON.Vector3(10, 10, 0), scene);
 

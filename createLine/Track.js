@@ -155,7 +155,7 @@ class Track {
     if(!radius) radius = 10000;
 
     document.querySelector("#radius").innerHTML = `Radius: ${Math.trunc(radius)} m`;
-    console.log(radius);
+    //console.log(radius);
 
     const numPoints = Math.floor(2*Math.PI*radius/6);
     //console.log("C: "+2*Math.PI*radius, "P: "+numPoints);
