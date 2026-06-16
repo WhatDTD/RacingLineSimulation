@@ -59,20 +59,16 @@ freeCamera.inputs.add({
   },
 
   detachControl() {
-    const engine = this.camera.getEngine();
-    const element = engine.getInputElement();
-    if (this._onKeyDown) {
-      element.removeEventListener("keydown", this._onKeyDown);
-      element.removeEventListener("keyup", this._onKeyUp);
-      BABYLON.Tools.UnregisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
-      this._keys = [];
-      this._onKeyDown = null;
-      this._onKeyUp = null;
-    }
+    window.removeEventListener("keydown", this._onKeyDown);
+    window.removeEventListener("keyup", this._onKeyUp);
+    this._keys = [];
+    this._onKeyDown = null;
+    this._onKeyUp = null;
   },
 
   checkInputs() {
     if (!this._keys.length) return;
+    console.log(this._keys);
     const camera = this.camera; 
     const forward = camera.getDirection(BABYLON.Vector3.Forward());
     const right = camera.getDirection(BABYLON.Vector3.Right());
