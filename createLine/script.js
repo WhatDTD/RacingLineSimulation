@@ -1,6 +1,6 @@
 let path = new Track();
 
-const canvas = document.querySelector("canvas");
+const canvas = document.querySelector("#canvas");
 const engine = new BABYLON.Engine(canvas);
 const scene = new BABYLON.Scene(engine);
 
@@ -12,13 +12,107 @@ if (hostname !== "localhost" && hostname !== "127.0.0.1") {
 } 
 scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(`${folder}/assets/environment.env`, scene);
 
-const camera = new BABYLON.FreeCamera(
-  "camera",
-  new BABYLON.Vector3(-320, 1262, 409),
-  scene
-);
+const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(-320, 1262, 409), scene);
+
+camera.inputs.clear();
+camera.inputs.add({
+  _keys: [],
+  _onKeyDown: null,
+  _onKeyUp: null,
+  _onLostFocus: null,
+
+  getClassName() { return "CustomCameraWasdInput"; },
+  getSimpleName() { return "wasd"; },
+
+  attachControl(noPreventDefault) {
+    const _this = this;
+    this._onKeyDown = (evt) => {
+      if (!_this._keys.includes(evt.code)) _this._keys.push(evt.code);
+    };
+    this._onKeyUp = (evt) => {
+      const i = _this._keys.indexOf(evt.code);
+      if (i >= 0) _this._keys.splice(i, 1);
+    };
+    window.addEventListener("keydown", this._onKeyDown);
+    window.addEventListener("keyup", this._onKeyUp);
+  },
+
+  detachControl() {
+    const engine = this.camera.getEngine();
+    const element = engine.getInputElement();
+    if (this._onKeyDown) {
+      element.removeEventListener("keydown", this._onKeyDown);
+      element.removeEventListener("keyup", this._onKeyUp);
+      BABYLON.Tools.UnregisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
+      this._keys = [];
+      this._onKeyDown = null;
+      this._onKeyUp = null;
+    }
+  },
+
+  checkInputs() {
+    if (!this._keys.length) return;
+    const camera = this.camera;
+    const speed = 5; 
+    const forward = camera.getDirection(BABYLON.Vector3.Forward());
+    const right = camera.getDirection(BABYLON.Vector3.Right());
+    if (this._keys.includes("KeyW")) camera.position.addInPlace(forward.scale(speed));
+    if (this._keys.includes("KeyS")) camera.position.addInPlace(forward.scale(-speed));
+    if (this._keys.includes("KeyA")) camera.position.addInPlace(right.scale(-speed));
+    if (this._keys.includes("KeyD")) camera.position.addInPlace(right.scale(speed));
+  }
+});
+
+camera.inputs.add({
+  _onPointerDown: null,
+  _onPointerMove: null,
+  _onPointerUp: null,
+  _isPointerDown: false,
+  _previousX: 0,
+  _previousY: 0,
+  sensibility: 0.003,
+
+  getClassName() { return "CustomCameraMouseInput"; },
+  getSimpleName() { return "mouse"; },
+
+  attachControl(noPreventDefault) {
+    const _this = this;
+
+    this._onPointerDown = (evt) => {
+      _this._isPointerDown = true;
+      _this._previousX = evt.clientX;
+      _this._previousY = evt.clientY;
+    };
+
+    this._onPointerMove = (evt) => {
+      if (!_this._isPointerDown) return;
+      const dx = evt.clientX - _this._previousX;
+      const dy = evt.clientY - _this._previousY;
+      _this.camera.rotation.y += dx * _this.sensibility;
+      _this.camera.rotation.x += dy * _this.sensibility;
+      _this._previousX = evt.clientX;
+      _this._previousY = evt.clientY;
+    };
+
+    this._onPointerUp = () => {
+      _this._isPointerDown = false;
+    };
+
+    window.addEventListener("pointerdown", this._onPointerDown);
+    window.addEventListener("pointermove", this._onPointerMove);
+    window.addEventListener("pointerup", this._onPointerUp);
+  },
+
+  detachControl() {
+    window.removeEventListener("pointerdown", this._onPointerDown);
+    window.removeEventListener("pointermove", this._onPointerMove);
+    window.removeEventListener("pointerup", this._onPointerUp);
+    this._isPointerDown = false;
+  },
+
+  checkInputs() {}
+});
 camera.attachControl(canvas, true);
-camera.speed = 12;
 camera.rotation = new BABYLON.Vector3(1.42, 1.5185, 0);
 
 const light = new BABYLON.PointLight("light", new BABYLON.Vector3(10, 10, 0), scene);

@@ -1,4 +1,4 @@
-const canvas = document.querySelector("canvas");
+const canvas = document.querySelector("#canvas");
 const engine = new BABYLON.Engine(canvas);
 const scene = new BABYLON.Scene(engine);
 
@@ -22,8 +22,6 @@ const defaultSpeed = 3;
 camera.speed = defaultSpeed;
 camera.rotation = new BABYLON.Vector3(1.42, 1.5185, 0);
 let fovChange = 0.0005;
-
-
 
 //Free Camera Keyboard inputs
 //Camera Speed while holding Shift
