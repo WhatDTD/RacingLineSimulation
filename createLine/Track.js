@@ -71,14 +71,7 @@ class Track {
       meshesAdded: [nodeMesh]
     };
     
-    if (this.nodes.length === 1) {
-      this.history.push(action); 
-      return node;
-    }
-    
-    if (this.nodes.length === 2) {
-      this.arrowController = this.createArrow(this.nodes[0]);
-      action.meshesAdded.push(this.arrowController.mesh);
+    if (this.nodes.length < 3) {
       this.history.push(action); 
       return node;
     }
@@ -86,14 +79,14 @@ class Track {
     if (this.nodes.length === 3) {
       const firstArc = this.connect(
         this.nodes[0],
-        this.arrowController,
-        this.nodes[1]
+        this.nodes[1],
+        this.nodes[2]
       );
       action.meshesAdded.push(firstArc.mesh);
       action.nodesAdded.push(...firstArc.insertedNodes);
-      this.arrowController.dispose();
-      delete this.arrowController;
+      return node;
     }
+    
     let len = this.nodes.length;
     const arc = this.connect(
       this.nodes[len-3],
@@ -123,13 +116,6 @@ class Track {
         m.dispose();
       }
     });
-    if (this.nodes.length === 1) {
-      this.arrowController.dispose();
-      delete this.arrowController;
-    }
-    if (this.nodes.length === 2) {
-      this.arrowController = this.createArrow(this.nodes[0]);
-    }
   }
 
   calculateRadius(p1,p2,p3){
@@ -155,7 +141,7 @@ class Track {
     if(!radius) radius = 10000;
 
     document.querySelector("#radius").innerHTML = `Radius: ${Math.trunc(radius)} m`;
-    //console.log(radius);
+    console.log(radius);
 
     const numPoints = Math.floor(2*Math.PI*radius/6);
     //console.log("C: "+2*Math.PI*radius, "P: "+numPoints);
@@ -198,24 +184,40 @@ class Track {
 
     points[points.length-1].r = lastR ? lastR : points[points.length-2].r;
 
-    if (this.nodes.length > 2) {
-      let beforeP2Index = 0;
-      let dx = points[0].x - p2.x;
-      let dy = points[0].y - p2.y;
-      let dz = points[0].z - p2.z;
-      let minDist = dx*dx + dy*dy + dz*dz;
-      for (let i = 1; i < points.length; i++) {
-        dx = points[i].x - p2.x;
-        dy = points[i].y - p2.y;
-        dz = points[i].z - p2.z;
-        const dist = dx*dx + dy*dy + dz*dz;
-        if (dist < minDist) {
-          minDist = dist;
-          beforeP2Index = i;
-        }
-      }
-      points = points.slice(beforeP2Index+1);
+    if (this.nodes.length === 3) {
+      this.nodes = points.map(p => {
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        node.projectOntoTrack();
+        //node.render();
+        return node;  
+      });
+      const arcMesh = BABYLON.MeshBuilder.CreateLines("arcDebug", {
+        points: points,
+        updatable: false
+      });
+      arcMesh.color = new BABYLON.Color3(0, 0, 1);
+      this.meshesLines.push(arcMesh);
+      arc.mesh = arcMesh; //adding mesh field
+      arc.insertedNodes = this.nodes; //adding inserted nodes field
+      return arc;
     }
+
+    let beforeP2Index = 0;
+    let dx = points[0].x - p2.x;
+    let dy = points[0].y - p2.y;
+    let dz = points[0].z - p2.z;
+    let minDist = dx*dx + dy*dy + dz*dz;
+    for (let i = 1; i < points.length; i++) {
+      dx = points[i].x - p2.x;
+      dy = points[i].y - p2.y;
+      dz = points[i].z - p2.z;
+      const dist = dx*dx + dy*dy + dz*dz;
+      if (dist < minDist) {
+        minDist = dist;
+        beforeP2Index = i;
+      }
+    }
+    points = points.slice(beforeP2Index+1);
     
     const insertPoints = points.slice(1, -1);
     
@@ -223,12 +225,12 @@ class Track {
     const insertNodes = insertPoints.map(p => {
       const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
       node.projectOntoTrack();
-      node.render
+      //node.render();
       return node;  
     });
     this.nodes.splice(p3Index, 0, ...insertNodes);
 
-    points.unshift(p2);
+    points.unshift(p2.toVector());
     const arcMesh = BABYLON.MeshBuilder.CreateLines("arcDebug", {
       points: points,
       updatable: false
@@ -242,67 +244,6 @@ class Track {
     return arc;
   }
 
-  createArrow(node) {
-    const pos = node.toVector();
-
-    const sphere = BABYLON.MeshBuilder.CreateSphere("gizmoSphere", { diameter: 1 }, scene);
-    sphere.position.copyFrom(pos);
-
-    const mat = new BABYLON.StandardMaterial("gizmoMat", scene);
-    mat.diffuseColor = new BABYLON.Color3(0, 1, 0);
-    sphere.material = mat;
-
-    const gizmo = new BABYLON.PositionGizmo();
-    gizmo.attachedMesh = sphere;
-    gizmo.yGizmo.isEnabled = false;
-
-    gizmo.onDragObservable.add(() => {
-      if (!trackMeshes.length) {
-        return;
-      }
-
-      const origin = new BABYLON.Vector3(
-        sphere.position.x,
-        1000,
-        sphere.position.z
-      );
-
-      const ray = new BABYLON.Ray(origin, BABYLON.Vector3.Down(), 2000);
-      const hit = scene.pickWithRay(ray, m => trackMeshes.includes(m));
-
-      if (hit && hit.pickedPoint) {
-        sphere.position.y = hit.pickedPoint.y;
-      }
-
-      gizmo.position = new BABYLON.Vector3(
-        sphere.position.x,
-        sphere.position.y,
-        sphere.position.z
-      );
-    });
-
-    const arrowController = {
-      mesh: sphere,
-      gizmo: gizmo,
-      toVector() {
-        return gizmo.position;
-      },
-      dispose() {
-        if (this.gizmo) {
-          this.gizmo.attachedMesh = null;
-          this.gizmo.dispose();
-          this.gizmo = null;
-        }
-        if (this.mesh) {
-          this.mesh.dispose();
-          this.mesh = null;
-        }
-      }
-    }
-
-    return arrowController;
-  }
-
   getPoints() {
     return this.nodes.map(node => new BABYLON.Vector3(node.x, node.y, node.z));
   }
@@ -314,7 +255,6 @@ class Track {
   }
 
   exportJSON() {
-
     this.calculateAndAssignDistanceBetweenPoints();
 
     const data = this.nodes.map(node => ({
