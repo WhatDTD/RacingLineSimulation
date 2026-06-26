@@ -16,7 +16,7 @@ const defaultSpeed = 3;
 let speed = defaultSpeed;
 
 const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(-320, 1262, 409), scene);
-
+/*
 camera.inputs.clear();
 camera.inputs.add({
   _keys: [],
@@ -114,7 +114,9 @@ camera.inputs.add({
 
   checkInputs() {}
 });
+*/
 camera.attachControl(canvas, true);
+camera.speed = 12;
 camera.rotation = new BABYLON.Vector3(1.42, 1.5185, 0);
 
 

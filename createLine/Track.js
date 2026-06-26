@@ -84,6 +84,7 @@ class Track {
       );
       action.meshesAdded.push(firstArc.mesh);
       action.nodesAdded.push(...firstArc.insertedNodes);
+      this.history.push(action);  
       return node;
     }
     
@@ -119,7 +120,6 @@ class Track {
   }
 
   calculateRadius(p1,p2,p3){
-
     if(p2.mesh) p2 = p2.mesh.position;
 
     let a = distance(p1,p2);
@@ -141,7 +141,6 @@ class Track {
     if(!radius) radius = 10000;
 
     document.querySelector("#radius").innerHTML = `Radius: ${Math.trunc(radius)} m`;
-    console.log(radius);
 
     const numPoints = Math.floor(2*Math.PI*radius/6);
     //console.log("C: "+2*Math.PI*radius, "P: "+numPoints);
@@ -167,7 +166,7 @@ class Track {
       p.r = radius;
 
       //distance between points tests
-      if(lastP) lastP.d = distance(p,lastP);
+      if(lastP) lastP.d = distance(p, lastP);
     
       lastP = p;
 
@@ -182,25 +181,7 @@ class Track {
       }
     });
 
-    points[points.length-1].r = lastR ? lastR : points[points.length-2].r;
-
-    if (this.nodes.length === 3) {
-      this.nodes = points.map(p => {
-        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
-        node.projectOntoTrack();
-        //node.render();
-        return node;  
-      });
-      const arcMesh = BABYLON.MeshBuilder.CreateLines("arcDebug", {
-        points: points,
-        updatable: false
-      });
-      arcMesh.color = new BABYLON.Color3(0, 0, 1);
-      this.meshesLines.push(arcMesh);
-      arc.mesh = arcMesh; //adding mesh field
-      arc.insertedNodes = this.nodes; //adding inserted nodes field
-      return arc;
-    }
+    points[points.length - 1].r = lastR ? lastR : points[points.length - 2].r;
 
     let beforeP2Index = 0;
     let dx = points[0].x - p2.x;
@@ -217,20 +198,40 @@ class Track {
         beforeP2Index = i;
       }
     }
-    points = points.slice(beforeP2Index+1);
-    
-    const insertPoints = points.slice(1, -1);
-    
-    const p3Index = this.nodes.indexOf(p3);
-    const insertNodes = insertPoints.map(p => {
-      const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
-      node.projectOntoTrack();
-      //node.render();
-      return node;  
-    });
-    this.nodes.splice(p3Index, 0, ...insertNodes);
 
-    points.unshift(p2.toVector());
+    //inserting nodes and saving them 
+    let insertNodes = []; 
+    if (this.nodes.length === 3) {
+      const beforeP2 = points.slice(1, beforeP2Index + 1).map(p => {
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        node.projectOntoTrack();
+        //node.render();
+        return node;  
+      });
+      const afterP2 = points.slice(beforeP2Index, - 1).map(p => {
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        node.projectOntoTrack();
+        //node.render();
+        return node;  
+      });
+      this.nodes.splice(1, 0, ...beforeP2);
+      this.nodes.splice(2, 0, ...afterP2);
+      insertNodes.push(...beforeP2);
+      insertNodes.push(...afterP2);
+    } else {
+      points = points.slice(beforeP2Index + 1);
+      const insertPoints = points.slice(1, -1);
+      const p3Index = this.nodes.indexOf(p3);
+      insertNodes = insertPoints.map(p => {
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        node.projectOntoTrack();
+        //node.render();
+        return node;  
+      });
+      this.nodes.splice(p3Index, 0, ...insertNodes);
+      points.unshift(p2.toVector());
+    }
+
     const arcMesh = BABYLON.MeshBuilder.CreateLines("arcDebug", {
       points: points,
       updatable: false
@@ -239,7 +240,6 @@ class Track {
     this.meshesLines.push(arcMesh);
     arc.mesh = arcMesh; //adding mesh field
     arc.insertedNodes = insertNodes; //adding inserted nodes field
-    points.shift();
 
     return arc;
   }
