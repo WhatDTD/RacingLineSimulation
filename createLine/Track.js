@@ -202,20 +202,21 @@ class Track {
     //inserting nodes and saving them 
     let insertNodes = []; 
     if (this.nodes.length === 3) {
-      const beforeP2 = points.slice(1, beforeP2Index + 1).map(p => {
+      const beforeP2 = points.slice(1, beforeP2Index).map(p => {
         const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
         node.projectOntoTrack();
         //node.render();
         return node;  
       });
-      const afterP2 = points.slice(beforeP2Index, - 1).map(p => {
+      const afterP2 = points.slice(beforeP2Index + 1, -1).map(p => {
         const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
         node.projectOntoTrack();
         //node.render();
         return node;  
       });
-      this.nodes.splice(1, 0, ...beforeP2);
+      //DONT CHANGE THE ORDER OF THESE 2 SPLICES
       this.nodes.splice(2, 0, ...afterP2);
+      this.nodes.splice(1, 0, ...beforeP2);
       insertNodes.push(...beforeP2);
       insertNodes.push(...afterP2);
     } else {
