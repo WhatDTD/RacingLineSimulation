@@ -12,7 +12,6 @@ scene.environmentTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(`${fold
 
 //--- Free Camera ---
 const defaultSpeed = 3;
-let speed = defaultSpeed;
 
 let fovChange = 0.0005;
 
@@ -21,6 +20,7 @@ let freeCamera = new BABYLON.FreeCamera(
   new BABYLON.Vector3(1409.1058060557475, 1881.39279522408, 259.716450140158),
   scene
 );
+/*
 freeCamera.inputs.clear();
 freeCamera.inputs.add({
   _keys: [],
@@ -118,10 +118,11 @@ freeCamera.inputs.add({
 
   checkInputs() {}
 });
+*/
 freeCamera.attachControl(canvas, true);
 freeCamera.rotation.x = 0.7935088533067846;
 freeCamera.rotation.y = -1.7741211144033804;
-speed = defaultSpeed;
+freeCamera.speed = defaultSpeed;
 
 
 const light = new BABYLON.PointLight("light", new BABYLON.Vector3(10, 10, 0), scene);
@@ -162,13 +163,13 @@ function mouseMoveHandler(e){
 //Camera Speed while holding Shift
 window.addEventListener("keydown", (e) => {
   if (e.shiftKey) {
-    speed = 1;
+    freeCamera.speed = 1;
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.shiftKey) {
-    speed = defaultSpeed;
+    freeCamera.speed = defaultSpeed;
   }
 });
 
@@ -176,13 +177,13 @@ window.addEventListener("keyup", (e) => {
 //Camera Speed while holding Ctrl
 window.addEventListener("keydown", (e) => {
   if (e.ctrlKey) {
-    speed = 15;
+    freeCamera.speed = 15;
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.ctrlKey) {
-    speed = defaultSpeed;
+    freeCamera.speed = defaultSpeed;
   }
 });
 
@@ -747,6 +748,7 @@ function activateSimSetup(){
     let maxStartVel = maxVelforR(massInput.value, gInput.value, line[0].r, FrCInput.value, ClInput.value, areaInput.value, airDensityInput.value, 0, termVel)*3.6;
 
     startSpeedInput.value = Math.min(startSpeedInput.value, Math.trunc(maxStartVel));
+    simulationStartVelocity = Number(startSpeedInput.value);
 
 
     function calculateTerminalVel(P, p, Cd, A){
@@ -767,7 +769,7 @@ function activateSimSetup(){
             let res = Math.sqrt(
                             (2*r*m*g*(Math.sin(roll) + FrC * Math.cos(roll)))/den
                         );
-            return res < terminalVel ? res : terminalVel;
+            return res < termVel ? res : termVel;
             }
     }
   }
@@ -814,9 +816,10 @@ function activateSimSetup(){
 
     let mill = Math.trunc((time - Math.trunc(time))*(10**decimals));
 
-    if(s < 10) str += "0";
+    s = String(s).padStart(2, "0");
 
-    mill = String(mill).padEnd(3, "0");
+    console.log(mill);
+    mill = String(mill).padStart(3, "0");
 
     return str+s+"."+mill;
   }
