@@ -156,7 +156,7 @@ html, body, #canvas {
     padding: 1%;
     position: absolute;
     translate: 100vw;
-    transform: translate(-105%);
+    transform: translate(-100%) translate(-0.5vw);
     bottom: 10px;
 
     display: grid;
@@ -273,7 +273,7 @@ html, body, #canvas {
     padding: 1%;
     position: absolute;
     translate: 100vw;
-    transform: translate(-105%);
+    transform: translate(-100%) translate(-0.5vw);
     bottom: 27vh;
     justify-items: center;
 }
@@ -290,7 +290,7 @@ html, body, #canvas {
     padding: 1%;
     position: absolute;
     translate: 100vw;
-    transform: translate(-103.5%);
+    transform: translate(-100%) translate(-0.5vw);
     top: 1vh;
     justify-items: center;
 }
@@ -306,9 +306,24 @@ html, body, #canvas {
     margin-bottom: 4%;
 }
 
+.flex{
+    display: flex;
+    white-space: nowrap;
+}
+
+.flexStart{
+    align-self: flex-start;
+    width: 100%;
+}
+
+.flexEnd{
+    align-self: flex-end;
+    width: 100%;
+}
+
 #tyreStressTitle{
-    margin-top: 5%;
-    margin-bottom: 7%;
+    margin-top: 4%;
+    margin-bottom: 4%;
 }
 
 #tyreStressGrid{

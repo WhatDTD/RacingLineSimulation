@@ -44,12 +44,23 @@
 
     <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="simulationStats">
       <div class="title is-5" id="simulationStatsTitle">Simulation Stats</div>
-      <div>Lap Time: <span class="statsData" id="statsLapTime">0:00.000</span></div>
-      <div>Max speed: <span class="statsData" id="statsMaxSpeed">0 km/h</span></div>
-      <div>Avrg speed: <span class="statsData" id="statsAvrgSpeed">0 km/h</span></div>
-      <div>Full Throttle percentage: <span class="statsData" id="statsFullThrottlePc">0%</span></div>
-      <div>Throttle percentage: <span class="statsData" id="statsThrottlePc">0%</span></div>
-      <div>Brake percentage: <span class="statsData" id="statsBrakePc">0%</span></div>
+      <div class="flex">
+        <div class="flexStart">
+          <div>Lap Time: <span class="statsData" id="statsLapTime">0:00.000</span></div>
+          <div>Max speed: <span class="statsData" id="statsMaxSpeed">0 km/h</span></div>
+          <div>Avrg speed: <span class="statsData" id="statsAvrgSpeed">0 km/h</span></div>
+        </div>
+
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+
+        <div class="flexEnd">
+          <div>Full Throttle percentage: <span class="statsData" id="statsFullThrottlePc">0%</span></div>
+          <div>Throttle percentage: <span class="statsData" id="statsThrottlePc">0%</span></div>
+          <div>Brake percentage: <span class="statsData" id="statsBrakePc">0%</span></div>
+        </div>
+      </div>
       
       <div class="title is-5" id="tyreStressTitle">Tyre Stress</div>
       <div id="tyreStressGrid">
