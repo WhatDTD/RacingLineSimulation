@@ -1,5 +1,17 @@
 const telemetryBox = document.querySelector("#telemetryBox");
 
+const telemetryElement = {html: telemetryBox, visible: true};
+
+function hideShowTelemetry(){
+    if(telemetryElement.visible){
+        telemetryElement.html.style.display = 'none';
+        telemetryElement.visible = false;
+    }else{
+        telemetryElement.html.style.display = 'grid';
+        telemetryElement.visible = true;
+    }
+}
+
 const simulationInfoBox = document.querySelector("#simulationInfoBox");
 const simulationInfo = document.querySelector("#simulationInfo");
 simulationInfoBox.style.display = 'none';
@@ -119,8 +131,8 @@ function secondsToTimeString(time, decimals){
     str = m +":"
     let s = Math.trunc((time/60 - m)*60);
     let mill = Math.trunc((time - Math.trunc(time))*(10**decimals));
-    if(s < 10) str += "0";
-    mill = String(mill).padEnd(3, "0");
+    s = String(s).padStart(2, "0");
+    mill = String(mill).padStart(decimals, "0");
     return str+s+"."+mill;
 }
 

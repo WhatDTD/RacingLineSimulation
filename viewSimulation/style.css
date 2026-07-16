@@ -59,6 +59,22 @@ html, body, #canvas {
     bottom: 10px;
 }
 
+#uiElementsMenu {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(-50%);
+    translate: 50vw;
+    min-width: fit-content;
+    max-height: 5vh;
+    top: 10px;
+}
+
+#uiElementsMenu button {
+    min-width: 10%;
+}
+
 #trackMap, #trackMapSectors, #trackMapPoints {
     position: absolute;
     top: 10px;
@@ -258,7 +274,7 @@ html, body, #canvas {
     position: absolute;
     translate: 100vw;
     transform: translate(-105%);
-    bottom: 27svh;
+    bottom: 27vh;
     justify-items: center;
 }
 
@@ -268,4 +284,53 @@ html, body, #canvas {
 
 #GmeterCanvas{
     width: 8vw;
+}
+
+#simulationStats{
+    padding: 1%;
+    position: absolute;
+    translate: 100vw;
+    transform: translate(-103.5%);
+    top: 1vh;
+    justify-items: center;
+}
+#simulationStats div{
+    color: white;
+}
+
+.statsData{
+    color: #d3d3d3;
+}
+
+#simulationStatsTitle{
+    margin-bottom: 4%;
+}
+
+#tyreStressTitle{
+    margin-top: 5%;
+    margin-bottom: 7%;
+}
+
+#tyreStressGrid{
+    display: grid;
+    grid-template-columns: 2vw 3vw 3vw 2vw;
+    grid-template-rows: 5vh 5vh;
+    justify-content: center;
+    align-content: center;
+    row-gap: 2vh;
+    column-gap: 0.7vw;
+}
+
+#FL, #FR, #RL, #RR{
+    display: flex;
+    justify-content: center;
+    min-width: 100%;
+    min-height: 100%;
+    padding: 0;
+    padding-top: 23%;
+}
+
+#FLlabel, #FRlabel, #RLlabel, #RRlabel{
+    align-self: center;
+    justify-self: center;
 }

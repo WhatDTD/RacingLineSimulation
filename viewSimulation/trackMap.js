@@ -1,3 +1,23 @@
+const trackMapElement = {
+    trackMapHtml: document.querySelector("#trackMap"),
+    trackMapSectorsHtml: document.querySelector("#trackMapSectors"),
+    trackMapPointsHtml: document.querySelector("#trackMapPoints"),
+    visible: true};
+
+function hideShowTrackMap(){
+    if(trackMapElement.visible){
+        trackMapElement.trackMapHtml.style.display = 'none';
+        trackMapElement.trackMapSectorsHtml.style.display = 'none';
+        trackMapElement.trackMapPointsHtml.style.display = 'none';
+        trackMapElement.visible = false;
+    }else{
+        trackMapElement.trackMapHtml.style.display = 'block';
+        trackMapElement.trackMapSectorsHtml.style.display = 'block';
+        trackMapElement.trackMapPointsHtml.style.display = 'block';
+        trackMapElement.visible = true;
+    }
+}
+
 const trackMapCanvas = document.querySelector("#trackMapCanvas");
 const trackMapPointsCanvas = document.querySelector("#trackMapPointsCanvas");
 const trackMapSectorsCanvas = document.querySelector("#trackMapSectorsCanvas");

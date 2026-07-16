@@ -1,3 +1,15 @@
+const GmeterElement = {html: document.querySelector("#Gmeter"), visible: true};
+
+function hideShowGmeter(){
+    if(GmeterElement.visible){
+        GmeterElement.html.style.display = 'none';
+        GmeterElement.visible = false;
+    }else{
+        GmeterElement.html.style.display = 'block';
+        GmeterElement.visible = true;
+    }
+}
+
 const GmeterCanvas = document.querySelector("#GmeterCanvas");
 const GmeterLabel = document.querySelector("#GmeterLabel");
 const peakGLabel = document.querySelector("#peakGLabel");

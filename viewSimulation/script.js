@@ -20,6 +20,7 @@ const camera = new BABYLON.FreeCamera(
   new BABYLON.Vector3(-320, 1262, 409),
   scene
 );
+/*
 camera.inputs.clear();
 camera.inputs.add({
   _keys: [],
@@ -117,6 +118,7 @@ camera.inputs.add({
 
   checkInputs() {}
 });
+*/
 camera.attachControl(canvas, true);
 camera.rotation = new BABYLON.Vector3(1.42, 1.5185, 0);
 let fovChange = 0.0005;
@@ -125,13 +127,13 @@ let fovChange = 0.0005;
 //Camera Speed while holding Shift
 window.addEventListener("keydown", (e) => {
   if (e.shiftKey) {
-    speed = 0.5;
+    camera.speed = 0.5;
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.shiftKey) {
-    speed = defaultSpeed;
+    camera.speed = defaultSpeed;
   }
 });
 
@@ -139,13 +141,13 @@ window.addEventListener("keyup", (e) => {
 //Camera Speed while holding Ctrl
 window.addEventListener("keydown", (e) => {
   if (e.ctrlKey) {
-    speed = 15;
+    camera.speed = 15;
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.ctrlKey) {
-    speed = defaultSpeed;
+    camera.speed = defaultSpeed;
   }
 });
 
@@ -270,6 +272,7 @@ importSimulation.addEventListener('change', async (event) => {
   calculateSectors();
   simulationAnimation.showLine(showLines);
   if(simulationsList) currentCar = simulationsList.length-1;
+  calculateLapStats(await simulationAnimation);
   colorCounter++;
 });
 
@@ -290,17 +293,32 @@ clearSimulationsButton.addEventListener('click', () => {
   resetTimeLine();
   clearTrackMap();
   simulationInfoDefault();
+  defaultStats();
 });
+
+const animationUiElement = {html: document.querySelector("#animationUi"), visible: true};
+
+function hideShowAnimationUiPlayer(){
+    if(animationUiElement.visible){
+        animationUiElement.html.style.display = 'none';
+        animationUiElement.visible = false;
+    }else{
+        animationUiElement.html.style.display = 'grid';
+        animationUiElement.visible = true;
+    }
+}
 
 
 const nextCarButton = document.querySelector("#nextCar");
 nextCarButton.addEventListener("click", () =>{
   nextCar();
+  updateStats();
 });
 
 const prevCarButton = document.querySelector("#prevCar");
 prevCarButton.addEventListener("click", () =>{
   prevCar();
+  updateStats();
 });
 
 const nextCameraButton = document.querySelector("#nextCamera");

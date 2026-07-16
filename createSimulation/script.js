@@ -817,9 +817,8 @@ function activateSimSetup(){
     let mill = Math.trunc((time - Math.trunc(time))*(10**decimals));
 
     s = String(s).padStart(2, "0");
-
-    console.log(mill);
-    mill = String(mill).padStart(3, "0");
+    
+    mill = String(mill).padStart(decimals, "0");
 
     return str+s+"."+mill;
   }

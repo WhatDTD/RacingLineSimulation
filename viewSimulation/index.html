@@ -2,7 +2,7 @@
 <html lang="en-GB">
   <head>
     <meta charset="utf-8" />
-    <title>Simulator</title>
+    <title>RLS View Simulation</title>
     <link rel="stylesheet" href="style.css"></link>
   </head>
   <body>
@@ -31,6 +31,39 @@
         <input class="file-input" type="file" accept=".RLSsim" id="importSimulation"/>
       </button>
       
+    </div>
+
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="uiElementsMenu">
+      <button class="button  is-small is-responsive" style="color: rgba(255, 255, 255, 1); border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">1 to Hide</button>
+      <button class="button buttonMargin is-small is-responsive" id="hideMap">Map</button>
+      <button class="button buttonMargin is-small is-responsive" id="hidePlayer">Player</button>
+      <button class="button buttonMargin is-small is-responsive" id="hideStats">Stats</button>
+      <button class="button buttonMargin is-small is-responsive" id="hideGmeter">Gmeter</button>
+      <button class="button buttonMargin is-small is-responsive" id="hideTelemetry">Telemetry</button>
+    </div>
+
+    <div class="box" style="background-color: rgba(0, 3, 30, 0.4);" id="simulationStats">
+      <div class="title is-5" id="simulationStatsTitle">Simulation Stats</div>
+      <div>Lap Time: <span class="statsData" id="statsLapTime">0:00.000</span></div>
+      <div>Max speed: <span class="statsData" id="statsMaxSpeed">0 km/h</span></div>
+      <div>Avrg speed: <span class="statsData" id="statsAvrgSpeed">0 km/h</span></div>
+      <div>Full Throttle percentage: <span class="statsData" id="statsFullThrottlePc">0%</span></div>
+      <div>Throttle percentage: <span class="statsData" id="statsThrottlePc">0%</span></div>
+      <div>Brake percentage: <span class="statsData" id="statsBrakePc">0%</span></div>
+      
+      <div class="title is-5" id="tyreStressTitle">Tyre Stress</div>
+      <div id="tyreStressGrid">
+
+        <div id="FLlabel">0%</div>
+        <div class="box" id="FL">0G</div>
+        <div class="box" id="FR">0G</div>
+        <div id="FRlabel">0%</div>
+
+        <div id="RLlabel">0%</div>
+        <div class="box" id="RL">0G</div>
+        <div class="box" id="RR">0G</div>
+        <div id="RRlabel">0%</div>
+      </div>
     </div>
 
     <div class="box" id="telemetryBox">
@@ -78,5 +111,7 @@
     <script src="Gmeter.js"></script>
     <script src="trackMap.js"></script>
     <script src="telemetry.js"></script>
+    <script src="stats.js"></script>
+    <script src="uiMenu.js"></script>
   </body>
 </html>
