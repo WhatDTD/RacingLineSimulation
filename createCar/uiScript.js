@@ -22,6 +22,7 @@ let car={
     Cl: {min: 0, max: 0},
     Cd: {min: 0, max: 0},
     bindedAero: false,
+    constantLoad:{min: 0, max: 0},
 
     steeringRatio: 1,
 
@@ -31,6 +32,7 @@ let car={
     Power: {min: 0, max: 0},
 
     FrC: {min: 0, max: 0},
+    tls: {min: 1, max: 1},
 
 
     gearBox:{

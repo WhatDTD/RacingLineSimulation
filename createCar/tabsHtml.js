@@ -92,6 +92,15 @@ const carSetpHtml = `
 <input class="mt-5" type="checkbox" id="bindedAero"/><span class="ml-3">Binded Aero</span>
 <div>(Not Raccomended for Cars that produce Lift)</div>
 
+<div class="title is-6 minMaxTitle">Constant Load (N):</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='constantLoadMinIn'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='constantLoadMaxIn'/>
+</div>
+
 
 <div class="title is-5 mt-6">PU</div>
 
@@ -126,6 +135,15 @@ const carSetpHtml = `
 
     <span class="ml-3">max: </span>
     <input class='input' type='number' placeholder='max' id='FrCMaxIn'/>
+</div>
+
+<div class="title is-6 minMaxTitle">Tyres Load Resistance (0-1):</div>
+<div class="minMaxIn">
+    <span>min: </span>
+    <input class='input mr-3' type='number' placeholder='min' id='tlsMinIn' min='0' max='1'/>
+
+    <span class="ml-3">max: </span>
+    <input class='input' type='number' placeholder='max' id='tlsMaxIn' min='0' max='1'/>
 </div>
 
 

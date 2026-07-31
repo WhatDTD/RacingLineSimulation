@@ -2,7 +2,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     const initialCarGrip = SimCar.FrC;
     SimCar.FrC *= trackGrip;
-    let tls = 0.78 //temporary Tyre load sensitivity
+    let tls = SimCar.tls;
+    let constantLoad = SimCar.constantLoad;
 
 
     //FORMULAS
@@ -18,8 +19,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     const timeError = 6.5/100;
 
     //Lift Force
-    function calculateLiftForce(p, V, Cl, A){
-        return p/2 * (V**2) *(Cl * -1) * A;
+    function calculateLiftForce(p, V, Cl, A, constantLoad){
+        return p/2 * (V**2) *(Cl * -1) * A + constantLoad;
     }
 
 
@@ -60,10 +61,10 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //Maximum acceleration trought a turn of radius r
     function calculateAccelerationForR(m, aFL, aPL, Fr, Fc){
-        let a = aFL < aPL ? aFL : aPL;
-        let FLat = Fc < Fr ? Fc : Fr;
+        let a = aFL < aPL ? aFL : aPL; //the lowest acceleration is maximum possible
+        let FLat = Fc < Fr ? Fc : Fr; //the lowest between the Friction force and the Centripetal force is the maximum possible
         let FLatNorm = FLat/Fr;
-        return Math.sin(Math.acos(FLatNorm))*a;
+        return Math.sin(Math.acos(FLatNorm))*a; //calculation of the grip circle
     }
 
     //terminal velocity
@@ -74,7 +75,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
     //Maximum Velocity trought a turn af radius r with tyre load sensitivity
-    function maxVelforR(m, g, r, FrC, tls, Cl, A, p, roll, AltSpeed){
+    function maxVelforR(m, g, r, FrC, tls, Cl, A, p, constantLoad, roll, AltSpeed){
         let V = 1;
         for(let i = 0; i < 50; i++){
             V = calculateVel(V);
@@ -86,7 +87,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let a = m/r;
             let b = Math.sin(roll)/(r*g)+(p * (Cl*-1) * A)/(2 * m * g);
             let c = (FrC * m * g)/a;
-            let d = (Math.cos(roll) + b*V**2)**tls;
+            let d = (Math.cos(roll) + constantLoad/(m * g) + b*V**2)**tls;
             return Math.sqrt(c*d)
         }
     }
@@ -114,6 +115,10 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //throttle/brake percentage
     function calculatePedalInput(m, Fd, aPL, a){
+        //compare the maximum acceleration that the power
+        //can give us and than we compare it with the actual acceleration
+        //taking acount drag
+        //this will give us the pedal input whether it is the throttle or the brake
         if(aPL <= a) return 100;
         let t = a/aPL*100+(Fd/m)/aPL*100;
         if(t > 100) return 100;
@@ -137,7 +142,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         while (list[i].V > list[i+1].V) {
             let V = list[i+1].V;
-            let Fl = calculateLiftForce(airDens, V, Cl, A);
+            let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
             let N = calculateNormalForce(m, g, Fl, Fc, 0);
             let realFrC = calculateFrictionCoefficientOnLoad(m, g, N, FrC, tls);
@@ -196,7 +201,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //limits pass
     const limitSpeed = [];
     for(let i=0; i < data.length; i++){
-        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.FrC, tls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, 0, terminalVel);
+        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.FrC, tls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 0, terminalVel);
         limitSpeed.push(simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V;
     }
@@ -221,7 +226,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let Cl = simulatedLap.car.Cl;
         let p = simulatedLap.airDensity;
         let A = simulatedLap.car.A;
-        let Fl = calculateLiftForce(p, V, Cl, A);
+        let Fl = calculateLiftForce(p, V, Cl, A, constantLoad);
 
         let Fc = calculateCentripetalForce(m, V, simulatedLap.nodes[i].r);
 

@@ -304,11 +304,13 @@ carInput.addEventListener("change",async (e) =>{
   simCar.Cl = car.Cl.max;
   simCar.Cd = car.Cd.min;
   simCar.A = car.A.min;
+  simCar.constantLoad = car.constantLoad.min;
   simCar.steeringRatio = car.steeringRatio;
   simCar.Power = car.Power.min;
   simCar.brakingPower = car.brakingPower.min;
   simCar.AvrgWheelRadius = car.AvrgWheelRadius;
   simCar.FrC = car.FrC.min;
+  simCar.tls = car.tls.min;
   simCar.gearBox = car.gearBox;
   simCar.cameras = car.cameras;
 
@@ -593,6 +595,27 @@ function activateSimSetup(){
   }
 
 
+  //Constant Load
+  const constantLoadInput = document.querySelector("#constantLoadInput");
+  const constantLoadSlider = document.querySelector("#constantLoadSlider");
+
+  constantLoadInput.value = simCar.constantLoad;
+  constantLoadSlider.value = car.constantLoad.min;
+  constantLoadSlider.min = car.constantLoad.min;
+  constantLoadSlider.max = car.constantLoad.max;
+
+  constantLoadInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(constantLoadInput, constantLoadSlider, 1, car.constantLoad.min, car.constantLoad.max, Number(constantLoadInput.value));
+    simCar.constantLoad = Number(constantLoadInput.value);
+    checkStartSpeed();
+  });
+
+  constantLoadSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(constantLoadInput, constantLoadSlider, 1, car.constantLoad.min, car.constantLoad.max, Number(constantLoadSlider.value));
+    simCar.constantLoad = Number(constantLoadInput.value);
+    checkStartSpeed();
+  });
+
 
   //PU
 
@@ -668,6 +691,31 @@ function activateSimSetup(){
   FrCSlider.addEventListener("change", (e) =>{
     updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCSlider.value)/FrCSliderPrecision);
     simCar.FrC = Number(FrCInput.value);
+    checkStartSpeed();
+  });
+
+
+  //Tyre Load Resistence/Sensitivity
+
+  const tlsInput = document.querySelector("#tlsInput");
+  const tlsSlider = document.querySelector("#tlsSlider");
+
+  const tlsSliderPrecision = 100;
+
+  tlsInput.value = simCar.tls;
+  tlsSlider.value = car.tls.min * tlsSliderPrecision;
+  tlsSlider.min = car.tls.min * tlsSliderPrecision;
+  tlsSlider.max = car.tls.max * tlsSliderPrecision;
+
+  tlsInput.addEventListener("change", (e) =>{
+    updateInputAndSlider(tlsInput, tlsSlider, tlsSliderPrecision, car.tls.min, car.tls.max, Number(tlsInput.value));
+    simCar.tls = Number(tlsInput.value);
+    checkStartSpeed();
+  });
+
+  tlsSlider.addEventListener("change", (e) =>{
+    updateInputAndSlider(tlsInput, tlsSlider, tlsSliderPrecision, car.tls.min, car.tls.max, Number(tlsSlider.value)/tlsSliderPrecision);
+    simCar.tls = Number(tlsInput.value);
     checkStartSpeed();
   });
 
@@ -841,11 +889,15 @@ function activateSimSetup(){
 
     updateInputAndSlider(areaInput, areaSlider, areaSliderPrecision, car.A.min, car.A.max, simCar.A);
 
+    updateInputAndSlider(constantLoadInput, constantLoadSlider, 1, car.constantLoad.min, car.constantLoad.max, simCar.constantLoad);
+
     updateInputAndSlider(powerInput, powerSlider, 1, car.Power.min, car.Power.max, simCar.Power);
 
     updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, simCar.brakingPower);
 
     updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, simCar.FrC);
+
+    updateInputAndSlider(tlsInput, tlsSlider, tlsSliderPrecision, car.tls.min, car.tls.max, simCar.tls);
 
     airDensityInput.value = airDensity
 

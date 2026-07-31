@@ -28,13 +28,13 @@ BABYLON.SceneLoader.ImportMeshAsync("", "./resources/", "Showroom.glb", scene);
 
 //--- Free Camera ---
 const defaultSpeed = 0.2;
-let speed = defaultSpeed;
 
 let freeCamera = new BABYLON.FreeCamera(
   "camera",
   new BABYLON.Vector3(-5.6334244397982065, 4.714844991974612, 13.893594048703429),
   scene
 );
+/*
 freeCamera.inputs.clear();
 freeCamera.inputs.add({
   _keys: [],
@@ -128,6 +128,7 @@ freeCamera.inputs.add({
 
   checkInputs() {}
 });
+*/
 freeCamera.attachControl(canvas, true);
 freeCamera.speed = defaultSpeed;
 freeCamera.rotation = new BABYLON.Vector3(0.297601403656662, 2.5303772749927615, 0);
@@ -139,13 +140,13 @@ const light = new BABYLON.PointLight("light", new BABYLON.Vector3(10, 10, 0), sc
 //keys related controls
 window.addEventListener("keydown", (e) => {
   if (e.shiftKey) {
-    speed = 0.05
+    freeCamera.speed = 0.05
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (!e.shiftKey) {
-    speed = defaultSpeed;
+    freeCamera.speed = defaultSpeed;
   }
 });
 

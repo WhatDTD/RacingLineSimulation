@@ -83,6 +83,25 @@ const simulationSetupHtml = `
     </div>
 </div>
 
+<br><br><br>
+
+
+
+<!--Constant Load-->
+<div>
+    <div class="setupIn">
+        <span>Constant Load (N): </span>
+        <input class='input mr-3' type='number' placeholder='Load' id='constantLoadInput'/>
+    </div>
+
+    <br>
+
+    <div class='slidecontainer'>
+        <input type='range' min='0' max='0' value='0' class='slider' id='constantLoadSlider'>
+    </div>
+</div>
+
+
 <br><br><hr>
 
 
@@ -139,6 +158,22 @@ const simulationSetupHtml = `
 
     <div class='slidecontainer'>
         <input type='range' min='0' max='0' value='0' class='slider' id='FrCSlider'>
+    </div>
+</div>
+
+<br><br><br>
+
+<!--Tyres Load Sensitivity-->
+<div>
+    <div class="setupIn">
+        <span>Tyres Load Resistence: </span>
+        <input class='input mr-3' type='number' placeholder='Resistence' id='tlsInput'/>
+    </div>
+
+    <br>
+
+    <div class='slidecontainer'>
+        <input type='range' min='0' max='0' value='0' class='slider' id='tlsSlider'>
     </div>
 </div>
 

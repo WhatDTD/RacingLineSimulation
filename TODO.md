@@ -23,6 +23,8 @@ here we have all the things that are currently in the making or things we're pla
 
 ## To Do List
 
+- Update Example Cars and Simulation to the latest version (tyre load sensitivity, constant load) ${\color{red}\textsf{High priority}}$
+
 - Add additional camera movement options in <b>Create Line</b> such as movement speed and zoom ${\color{yellow}\textsf{Low-Mid priority}}$
 
 - Add simple <b>Icons</b> for the import buttons instead of the current arrows ${\color{green}\textsf{Low priority}}$

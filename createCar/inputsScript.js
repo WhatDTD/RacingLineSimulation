@@ -23,6 +23,7 @@ function activateCarSetup(){
 
     //Aero
 
+    //Cl
     const ClMin = document.querySelector("#clMinIn");
     const ClMax = document.querySelector("#clMaxIn");
 
@@ -39,6 +40,7 @@ function activateCarSetup(){
 
 
 
+    //Cd
     const CdMin = document.querySelector("#cdMinIn");
     const CdMax = document.querySelector("#cdMaxIn");
 
@@ -55,6 +57,7 @@ function activateCarSetup(){
 
 
 
+    //A
     const areaMin = document.querySelector("#areaMinIn");
     const areaMax = document.querySelector("#areaMaxIn");
 
@@ -72,6 +75,7 @@ function activateCarSetup(){
 
 
 
+    //Binded aero checkbox
     const bindedAero = document.querySelector("#bindedAero");
 
     if(car.bindedAero) bindedAero.setAttribute("checked","true");
@@ -80,6 +84,22 @@ function activateCarSetup(){
         car.bindedAero = !car.bindedAero;
 
         if(car.bindedAero == false) bindedAero.setAttribute("checked","false");
+    });
+
+
+    //Constant Load
+    const constantLoadMin = document.querySelector("#constantLoadMinIn");
+    const constantLoadMax = document.querySelector("#constantLoadMaxIn");
+
+    constantLoadMin.value = car.constantLoad ? car.constantLoad.min : 0;
+    constantLoadMax.value = car.constantLoad ? car.constantLoad.max : 0;
+
+    constantLoadMin.addEventListener("change", (e) => {
+        car.constantLoad.min = Number(constantLoadMin.value);
+    });
+
+    constantLoadMax.addEventListener("change", (e) => {
+        car.constantLoad.max = Number(constantLoadMax.value);
     });
 
 
@@ -131,6 +151,31 @@ function activateCarSetup(){
 
     frictionMaxIn.addEventListener("change", (e) =>{
         car.FrC.max = Number(frictionMaxIn.value);
+    });
+
+    //Tyres Load Sensitivity
+    const tlsMinIn = document.querySelector("#tlsMinIn");
+    const tlsMaxIn = document.querySelector("#tlsMaxIn");
+
+    tlsMinIn.value = car.tls ? car.tls.min : 1;
+    tlsMaxIn.value = car.tls ? car.tls.max : 1;
+
+    tlsMinIn.addEventListener("change", (e) =>{
+        if(Number(tlsMinIn.value) > 1){
+            tlsMinIn.value = 1;
+        }else if(Number(tlsMinIn.value) < 0){
+            tlsMinIn.value = 0;
+        }
+        car.tls.min = tlsMinIn.value;
+    });
+
+    tlsMaxIn.addEventListener("change", (e) =>{
+        if(Number(tlsMaxIn.value) > 1){
+            tlsMaxIn.value = 1;
+        }else if(Number(tlsMaxIn.value) < 0){
+            tlsMaxIn.value = 0;
+        }
+        car.tls.max = tlsMaxIn.value;
     });
 
     //RPM
@@ -535,6 +580,13 @@ selectCarDataFileIn.addEventListener("change", async (event) => {
     }  
     const text = await file.text();   
     car = JSON.parse(text);
+    if(!car.constantLoad){
+        car.constantLoad = {min: 0, max: 0}
+    }
+
+    if(!car.tls){
+        car.tls = {min: 1, max: 1}
+    }
 
     loadMesh(car.meshURL);
 
