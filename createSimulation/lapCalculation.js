@@ -2,6 +2,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     const initialCarGrip = SimCar.FrC;
     SimCar.FrC *= trackGrip;
+    let tls = 0.78 //temporary Tyre load sensitivity
 
 
     //FORMULAS
@@ -23,8 +24,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
 
     //Normal Force
-    function calculateNormalForce(m, g, Fl, FrC, roll){
-        return (m*g+Fl)/(Math.cos(roll) - FrC * Math.sin(roll));
+    function calculateNormalForce(m, g, Fl, Fc, roll){
+        return m*g*Math.cos(roll) + Fc * Math.sin(roll) + Fl;
     }
 
 
@@ -35,8 +36,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
 
     //Friction Force
-    function calculateFrictionForce(FrC, roll, N){
-        return N*(Math.sin(roll) + FrC * Math.cos(roll));
+    function calculateFrictionForce(FrC, N){
+        return N*FrC;
     }
 
 
@@ -72,21 +73,26 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
                         (p*Cd*A));
     }
 
-    //Maximum Velocity trought a turn af radius r
-    function maxVelforR(m, g, r, FrC, Cl, A, p, roll, AltSpeed){
+    //Maximum Velocity trought a turn af radius r with tyre load sensitivity
+    function maxVelforR(m, g, r, FrC, tls, Cl, A, p, roll, AltSpeed){
+        let V = 1;
+        for(let i = 0; i < 50; i++){
+            V = calculateVel(V);
+        }
 
-        Cl *= -1;
-        
-        let den = (2*m*(Math.cos(roll) - FrC * Math.sin(roll)) - p*Cl*A*r*(Math.sin(roll) + FrC * Math.cos(roll)));
+        return V < AltSpeed ? V : AltSpeed;
 
-        if(den == 0 || (2*r*m*g*(Math.sin(roll) + FrC * Math.cos(roll)))/den < 0){
-            return AltSpeed;
-        }else{
-            let res = Math.sqrt(
-                            (2*r*m*g*(Math.sin(roll) + FrC * Math.cos(roll)))/den
-                        );
-            return res < terminalVel ? res : terminalVel;
-            }
+        function calculateVel(V){
+            let a = m/r;
+            let b = Math.sin(roll)/(r*g)+(p * (Cl*-1) * A)/(2 * m * g);
+            let c = (FrC * m * g)/a;
+            let d = (Math.cos(roll) + b*V**2)**tls;
+            return Math.sqrt(c*d)
+        }
+    }
+
+    function calculateFrictionCoefficientOnLoad(m, g, N, FrC, tls){
+        return FrC * (N/(m*g))**(tls-1);
     }
 
     //wheels angle from radius
@@ -129,12 +135,13 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let Cl = car.Cl;
         let A = car.A;
 
-        while (list[i].V >= list[i+1].V) {
+        while (list[i].V > list[i+1].V) {
             let V = list[i+1].V;
             let Fl = calculateLiftForce(airDens, V, Cl, A);
-            let N = calculateNormalForce(m, g, Fl, FrC, 0);
-            let Fr = calculateFrictionForce(FrC, 0, N);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
+            let N = calculateNormalForce(m, g, Fl, Fc, 0);
+            let realFrC = calculateFrictionCoefficientOnLoad(m, g, N, FrC, tls);
+            let Fr = calculateFrictionForce(realFrC, N);
             let Fd = calculateDragForce(airDens, V, Cd, A);
             let aFL = calculateAccelerationFL(m,Fr);
             let aBL = calculateAccelerationPL(m, Bp, -Fd, V);
@@ -189,7 +196,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //limits pass
     const limitSpeed = [];
     for(let i=0; i < data.length; i++){
-        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.FrC, simulatedLap.car.Cl, simulatedLap.car.A, airDens, 0, terminalVel);
+        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.FrC, tls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, 0, terminalVel);
         limitSpeed.push(simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V;
     }
@@ -216,15 +223,17 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let A = simulatedLap.car.A;
         let Fl = calculateLiftForce(p, V, Cl, A);
 
-        let N = calculateNormalForce(m, g, Fl, FrC, roll);
+        let Fc = calculateCentripetalForce(m, V, simulatedLap.nodes[i].r);
+
+        let N = calculateNormalForce(m, g, Fl, Fc, roll);
 
         let Fd = calculateDragForce(p, V, Cd, A);
 
-        let Fr = calculateFrictionForce(FrC, roll, N);
+        let realFrC = calculateFrictionCoefficientOnLoad(m, g, N, FrC, tls);
+
+        let Fr = calculateFrictionForce(realFrC, N);
 
         let aFL = calculateAccelerationFL(m, Fr);
-
-        let Fc = calculateCentripetalForce(m, V, simulatedLap.nodes[i].r);
 
         let aPL = calculateAccelerationPL(m, P, Fd, V);
 
@@ -246,8 +255,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
 
-        if (newVel <= simulatedLap.nodes[i].V){ 
-            simulatedLap.nodes[i].V = newVel
+        if (newVel <= simulatedLap.nodes[i].V){
+            simulatedLap.nodes[i].V = newVel;
         }else if(simulatedLap.nodes[i].V != terminalVel && newVel > simulatedLap.nodes[i].V){
             calculateDeceleration(simulatedLap.car, simulatedLap.car.FrC, simulatedLap.nodes, i);
         }
