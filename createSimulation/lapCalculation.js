@@ -16,7 +16,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
 
-    const timeError = 6.5/100;
+    const timeError = 0/100;
 
     //Lift Force
     function calculateLiftForce(p, V, Cl, A, constantLoad){
@@ -56,7 +56,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //Power Limited Acceleration
     function calculateAccelerationPL(m, P, Fd, V){
         let f = ((P * 1000) - Fd * V)/(m * V);
-        return f < 0 ? (P/(m*V)) : f;
+        return f;
     }
 
     //Maximum acceleration trought a turn of radius r
@@ -97,21 +97,26 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
     //wheels angle from radius
-    function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2){  //x and y in 2d space from top view
-        let slipAngleMultiplier = 1.4;
+function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2, Fr, Fc, slipAngleLimit){
 
-        let xA = x1 - x0;
-        let yA = y1 - y0;
-        let aA = Math.atan(yA/xA);
+    let xA = x1 - x0;
+    let yA = y1 - y0;
+    let aA = Math.atan2(yA, xA);
 
-        let xB = x2 - x1;
-        let yB = y2 - y1;
-        let aB = Math.atan(yB/xB);
+    let xB = x2 - x1;
+    let yB = y2 - y1;
+    let aB = Math.atan2(yB, xB);
 
-        let dir = aB < aA ? 1 : -1;
+    let diff = aB - aA;
+    while (diff > Math.PI) diff -= 2 * Math.PI;
+    while (diff < -Math.PI) diff += 2 * Math.PI;
 
-        return Math.atan(2/r)*dir * slipAngleMultiplier;
-    }
+    let dir = diff < 0 ? 1 : -1;
+    let x = Fr == 0 ? 0 : Fc/Fr;
+    x = Math.min(Math.max(x, 0), 1);
+
+    return (Math.atan(3/r)+(x**2)*(slipAngleLimit*(Math.PI/180))*0.5)*dir;
+}
 
     //throttle/brake percentage
     function calculatePedalInput(m, Fd, aPL, a){
@@ -167,7 +172,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
                 list[i].t = t;
             }
 
-            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
+            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, Fr, Fc, car.slipAngleLimit);
 
             i--;
             brakingSamples++;
@@ -258,7 +263,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             newVel = V;
         }
 
-        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
+        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, Fr, Fc, simulatedLap.car.slipAngleLimit);
 
         if (newVel <= simulatedLap.nodes[i].V){
             simulatedLap.nodes[i].V = newVel;

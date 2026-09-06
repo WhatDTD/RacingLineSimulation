@@ -33,6 +33,7 @@ let car={
 
     FrC: {min: 0, max: 0},
     tls: {min: 1, max: 1},
+    slipAngleLimit: 5,
 
 
     gearBox:{

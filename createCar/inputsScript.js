@@ -166,7 +166,7 @@ function activateCarSetup(){
         }else if(Number(tlsMinIn.value) < 0){
             tlsMinIn.value = 0;
         }
-        car.tls.min = tlsMinIn.value;
+        car.tls.min = Number(tlsMinIn.value);
     });
 
     tlsMaxIn.addEventListener("change", (e) =>{
@@ -175,7 +175,7 @@ function activateCarSetup(){
         }else if(Number(tlsMaxIn.value) < 0){
             tlsMaxIn.value = 0;
         }
-        car.tls.max = tlsMaxIn.value;
+        car.tls.max = Number(tlsMaxIn.value);
     });
 
     //RPM

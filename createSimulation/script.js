@@ -313,6 +313,7 @@ carInput.addEventListener("change",async (e) =>{
   simCar.tls = car.tls.min;
   simCar.gearBox = car.gearBox;
   simCar.cameras = car.cameras;
+  simCar.slipAngleLimit = car.slipAngleLimit;
 
   simCar.meshURL = car.meshURL;
 
