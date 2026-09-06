@@ -97,26 +97,26 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
     //wheels angle from radius
-function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2, Fr, Fc, slipAngleLimit){
-
-    let xA = x1 - x0;
-    let yA = y1 - y0;
-    let aA = Math.atan2(yA, xA);
-
-    let xB = x2 - x1;
-    let yB = y2 - y1;
-    let aB = Math.atan2(yB, xB);
-
-    let diff = aB - aA;
-    while (diff > Math.PI) diff -= 2 * Math.PI;
-    while (diff < -Math.PI) diff += 2 * Math.PI;
-
-    let dir = diff < 0 ? 1 : -1;
-    let x = Fr == 0 ? 0 : Fc/Fr;
-    x = Math.min(Math.max(x, 0), 1);
-
-    return (Math.atan(3/r)+(x**2)*(slipAngleLimit*(Math.PI/180))*0.5)*dir;
-}
+    function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2, Fr, Fc, slipAngleLimit){
+    
+        let xA = x1 - x0;
+        let yA = y1 - y0;
+        let aA = Math.atan2(yA, xA);
+    
+        let xB = x2 - x1;
+        let yB = y2 - y1;
+        let aB = Math.atan2(yB, xB);
+    
+        let diff = aB - aA;
+        while (diff > Math.PI) diff -= 2 * Math.PI;
+        while (diff < -Math.PI) diff += 2 * Math.PI;
+    
+        let dir = diff < 0 ? 1 : -1;
+        let x = Fr == 0 ? 0 : Fc/Fr;
+        x = Math.min(Math.max(x, 0), 1);
+    
+        return (Math.atan(3/r)+(x**2)*(slipAngleLimit*(Math.PI/180))*0.5)*dir;
+    }
 
     //throttle/brake percentage
     function calculatePedalInput(m, Fd, aPL, a){

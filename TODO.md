@@ -27,6 +27,8 @@ here we have all the things that are currently in the making or things we're pla
 
 - Add additional camera movement options in <b>Create Line</b> such as movement speed and zoom ${\color{yellow}\textsf{Low-Mid priority}}$
 
+- Add <b>Import Reference Line</b> in <b>Create Line</b> ${\color{yellow}\textsf{Low-Mid priority}}$
+
 - Add simple <b>Icons</b> for the import buttons instead of the current arrows ${\color{green}\textsf{Low priority}}$
 
 - Change pages browser tab name to cooler names ${\color{green}\textsf{Low priority}}$
