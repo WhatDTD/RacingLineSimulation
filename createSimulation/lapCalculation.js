@@ -1,8 +1,6 @@
 function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip){
 
-    const initialCarGrip = SimCar.FrC;
-    SimCar.FrC *= trackGrip;
-    let tls = SimCar.tls;
+    let tls = SimCar.tyre.tls;
     let constantLoad = SimCar.constantLoad;
 
 
@@ -133,13 +131,12 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     let terminalVel = calculateTerminalVel(SimCar.Power, airDens, SimCar.Cd, SimCar.A);
     
     //deceleration function
-    function calculateDeceleration(car, tyreFrC, list, endPoint) {
+    function calculateDeceleration(car, latFrC, longFrC, list, endPoint) {
         let i = endPoint - 1;
         let brakingSamples = 0;
         let brakingDistance = 0;
 
         let m = car.mass;
-        let FrC = tyreFrC;
         let Bp = car.brakingPower;
         let Cd = car.Cd;
         let Cl = car.Cl;
@@ -150,13 +147,15 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
             let N = calculateNormalForce(m, g, Fl, Fc, 0);
-            let realFrC = calculateFrictionCoefficientOnLoad(m, g, N, FrC, tls);
-            let Fr = calculateFrictionForce(realFrC, N);
+            let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, tls);
+            let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, tls);
+            let longFr = calculateFrictionForce(realLongFrC, N);
+            let latFr = calculateFrictionForce(realLatFrC, N);
             let Fd = calculateDragForce(airDens, V, Cd, A);
-            let aFL = calculateAccelerationFL(m,Fr);
+            let aFL = calculateAccelerationFL(m, longFr);
             let aBL = calculateAccelerationPL(m, Bp, -Fd, V);
-            let a = calculateAccelerationForR(m, aFL, aBL, Fr, Fc);
-            let FLat = Fc < Fr ? Fc : Fr;
+            let a = calculateAccelerationForR(m, aFL, aBL, latFr, Fc);
+            let FLat = Fc < latFr ? Fc : latFr;
 
             simulatedLap.nodes[i].longitudinalG =-a/g;
             simulatedLap.nodes[i].lateralG =(FLat/m)/g;
@@ -172,7 +171,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
                 list[i].t = t;
             }
 
-            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, Fr, Fc, car.slipAngleLimit);
+            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, latFr, Fc, car.tyre.slipAngleLimit);
 
             i--;
             brakingSamples++;
@@ -198,7 +197,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         airDensity: airDens,
         trackGrip: trackGrip,
         simulationStartVelocity: simulationStartVelocity,
-        lengthInMeters: totalDistance
+        lengthInMeters: totalDistance,
+        g: g
     }
 
     if(simulatedLap.car.gearBox.gears[simulatedLap.car.gearBox.gears.length-1]/3.6 < terminalVel) terminalVel = simulatedLap.car.gearBox.gears[simulatedLap.car.gearBox.gears.length-1]/3.6;
@@ -206,15 +206,15 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //limits pass
     const limitSpeed = [];
     for(let i=0; i < data.length; i++){
-        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.FrC, tls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 0, terminalVel);
+        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, tls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 0, terminalVel);
         limitSpeed.push(simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V;
     }
 
     //actual lap simulation
-    simulatedLap.nodes[0].V = simulationStartVelocity ? simulationStartVelocity/3.6 : simulatedLap.car.FrC * g / simulatedLap.nodes[0].d;
+    simulatedLap.nodes[0].V = simulationStartVelocity ? simulationStartVelocity/3.6 : simulatedLap.car.tyre.longFrC*trackGrip * g / simulatedLap.nodes[0].d;
     simulatedLap.nodes[0].lateralG = 0;
-    simulatedLap.nodes[0].longitudinalG = simulatedLap.car.FrC;
+    simulatedLap.nodes[0].longitudinalG = simulatedLap.car.tyre.longFrC*trackGrip;
     simulatedLap.nodes[0].throttle = 100;
     simulatedLap.nodes[0].brake = 0;
     simulatedLap.nodes[0].wheelsAngle = 0;
@@ -225,7 +225,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let m = simulatedLap.car.mass;
         let P = simulatedLap.car.Power;
-        let FrC = simulatedLap.car.FrC;
+        let latFrC = simulatedLap.car.tyre.latFrC*trackGrip;
+        let longFrC = simulatedLap.car.tyre.longFrC*trackGrip;
         let roll = 0;
         let Cd = simulatedLap.car.Cd;
         let Cl = simulatedLap.car.Cl;
@@ -239,19 +240,23 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let Fd = calculateDragForce(p, V, Cd, A);
 
-        let realFrC = calculateFrictionCoefficientOnLoad(m, g, N, FrC, tls);
+        let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, tls);
 
-        let Fr = calculateFrictionForce(realFrC, N);
+        let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, tls);
 
-        let aFL = calculateAccelerationFL(m, Fr);
+        let latFr = calculateFrictionForce(realLatFrC, N);
+
+        let longFr = calculateFrictionForce(realLongFrC, N);
+
+        let aFL = calculateAccelerationFL(m, longFr);
 
         let aPL = calculateAccelerationPL(m, P, Fd, V);
 
-        let a = calculateAccelerationForR(m, aFL, aPL, Fr, Fc);
+        let a = calculateAccelerationForR(m, aFL, aPL, latFr, Fc);
 
         let newVel = V+a*simulatedLap.nodes[i-1].t; //to account for the time error
 
-        let FLat = Fc < Fr ? Fc : Fr;
+        let FLat = Fc < latFr ? Fc : latFr;
 
         simulatedLap.nodes[i].longitudinalG =a/g;
         simulatedLap.nodes[i].lateralG =(FLat/m)/g;
@@ -263,12 +268,12 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             newVel = V;
         }
 
-        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, Fr, Fc, simulatedLap.car.slipAngleLimit);
+        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, latFr, Fc, simulatedLap.car.tyre.slipAngleLimit);
 
         if (newVel <= simulatedLap.nodes[i].V){
             simulatedLap.nodes[i].V = newVel;
         }else if(simulatedLap.nodes[i].V != terminalVel && newVel > simulatedLap.nodes[i].V){
-            calculateDeceleration(simulatedLap.car, simulatedLap.car.FrC, simulatedLap.nodes, i);
+            calculateDeceleration(simulatedLap.car, simulatedLap.car.tyre.latFrC*trackGrip, simulatedLap.car.tyre.longFrC*trackGrip, simulatedLap.nodes, i);
         }
     }
 
@@ -338,6 +343,5 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //console.log("Time: "+simulatedLap.totalTime);
 
-    SimCar.FrC = initialCarGrip;
     return simulatedLap;
 }

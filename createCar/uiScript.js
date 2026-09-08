@@ -31,10 +31,17 @@ let car={
 
     Power: {min: 0, max: 0},
 
-    FrC: {min: 0, max: 0},
-    tls: {min: 1, max: 1},
-    slipAngleLimit: 5,
-
+    tyres: [
+        {
+            name:"D",
+            bgColor: "#000000",
+            txtColor: "#ffffff",
+            latFrC: 1,
+            longFrC: 1,
+            tls: 1,
+            slipAngleLimit: 5
+        }
+    ],
 
     gearBox:{
         RPM:{

@@ -1,4 +1,5 @@
 //you can find activateCarUi at the end of uiScript
+let selectedTyre = 0;
 
 function activateCarSetup(){
     content.innerHTML = carSetpHtml;
@@ -138,45 +139,143 @@ function activateCarSetup(){
 
 
 
-    //Tyres Friction
-    const frictionMinIn = document.querySelector("#FrCMinIn");
-    const frictionMaxIn = document.querySelector("#FrCMaxIn");
+    //Tyres
+    const tyresList = document.querySelector("#tyresList");
 
-    frictionMinIn.value = car.FrC.min;
-    frictionMaxIn.value = car.FrC.max;
+    updateTyresList();
 
-    frictionMinIn.addEventListener("change", (e) =>{
-        car.FrC.min = Number(frictionMinIn.value);
+    const addTyreBtn = document.querySelector("#addTyreBtn");
+
+    addTyreBtn.addEventListener("click", (e) => {
+        car.tyres.push({
+            name:"D",
+            bgColor: "#000000",
+            txtColor: "#ffffff",
+            latFrC: 1,
+            longFrC: 1,
+            tls: 1,
+            slipAngleLimit: 5
+        });
+        selectedTyre = car.tyres.length-1;
+        updateTyresList();
+        updateTyreData();
     });
 
-    frictionMaxIn.addEventListener("change", (e) =>{
-        car.FrC.max = Number(frictionMaxIn.value);
+
+    const bgColorIn = document.querySelector("#bgColorIn");
+    bgColorIn.value = car.tyres[selectedTyre].bgColor;
+
+    bgColorIn.addEventListener("change", (e)=>{
+        let tyre = car.tyres[selectedTyre];
+        document.querySelector(`#${"tyre"+selectedTyre}`).style.backgroundColor = bgColorIn.value;
+        tyre.bgColor = bgColorIn.value;
     });
 
-    //Tyres Load Sensitivity
-    const tlsMinIn = document.querySelector("#tlsMinIn");
-    const tlsMaxIn = document.querySelector("#tlsMaxIn");
 
-    tlsMinIn.value = car.tls ? car.tls.min : 1;
-    tlsMaxIn.value = car.tls ? car.tls.max : 1;
+    const txtColorIn = document.querySelector("#txtColorIn");
+    txtColorIn.value = car.tyres[selectedTyre].txtColor;
 
-    tlsMinIn.addEventListener("change", (e) =>{
-        if(Number(tlsMinIn.value) > 1){
-            tlsMinIn.value = 1;
-        }else if(Number(tlsMinIn.value) < 0){
-            tlsMinIn.value = 0;
+    txtColorIn.addEventListener("change", (e)=>{
+        let tyre = car.tyres[selectedTyre];
+        document.querySelector(`#${"tyre"+selectedTyre}`).style.color = txtColorIn.value;
+        tyre.txtColor = txtColorIn.value;
+    });
+
+
+    const tyreNameIn = document.querySelector("#tyreNameIn");
+    tyreNameIn.value = car.tyres[selectedTyre].name;
+
+    tyreNameIn.addEventListener("change",(e)=>{
+        let tyre = car.tyres[selectedTyre];
+        tyreNameIn.value = tyreNameIn.value.substring(0, 2);
+        tyre.name = tyreNameIn.value;
+        document.querySelector(`#${"tyre"+selectedTyre}`).innerHTML = tyre.name;
+    });
+
+
+    const latFrCin = document.querySelector("#latFrCin");
+    latFrCin.value = car.tyres[selectedTyre].latFrC;
+
+    latFrCin.addEventListener("change",(e)=>{
+        let tyre = car.tyres[selectedTyre];
+        tyre.latFrC = Number(latFrCin.value);
+    });
+
+
+    const longFrCin = document.querySelector("#longFrCin");
+    longFrCin.value = car.tyres[selectedTyre].longFrC;
+
+    longFrCin.addEventListener("change",(e)=>{
+        let tyre = car.tyres[selectedTyre];
+        tyre.longFrC = Number(longFrCin.value);
+    });
+
+    const tlsIn = document.querySelector("#tlsIn");
+    tlsIn.value = car.tyres[selectedTyre].tls;
+
+    tlsIn.addEventListener("change",(e)=>{
+        let tyre = car.tyres[selectedTyre];
+        tlsIn.value = Math.min(Math.max(Number(tlsIn.value), 0), 1);
+        tyre.tls = Number(tlsIn.value);
+    });
+
+
+    const slipAngleLimitIn = document.querySelector("#slipAngleLimitIn");
+    slipAngleLimitIn.value = car.tyres[selectedTyre].slipAngleLimit;
+
+    slipAngleLimitIn.addEventListener("change",(e)=>{
+        let tyre = car.tyres[selectedTyre];
+        tyre.slipAngleLimit = Number(slipAngleLimitIn.value);
+    });
+
+    const deleteTyreBtn = document.querySelector("#deleteTyreBtn");
+
+    deleteTyreBtn.addEventListener("click", (e)=>{
+        if(car.tyres.length > 1){
+            car.tyres.splice(selectedTyre, 1);
+            selectedTyre = Math.max(0, selectedTyre-1);
+            updateTyresList();
+            updateTyreData();
         }
-        car.tls.min = Number(tlsMinIn.value);
     });
 
-    tlsMaxIn.addEventListener("change", (e) =>{
-        if(Number(tlsMaxIn.value) > 1){
-            tlsMaxIn.value = 1;
-        }else if(Number(tlsMaxIn.value) < 0){
-            tlsMaxIn.value = 0;
+
+    function updateTyresList(){
+        tyresList.innerHTML = "";
+        for(let i = 0; i < car.tyres.length; i++){
+            let tyre = car.tyres[i];
+            tyresList.innerHTML += `
+            <button class="button ${i == selectedTyre ? "selectedTyre" : "tyre"}" id="${"tyre"+i}">
+            ${tyre.name}
+            </button>`;
+
+            document.querySelector(`#${"tyre"+i}`).style.backgroundColor = tyre.bgColor;
+            document.querySelector(`#${"tyre"+i}`).style.color = tyre.txtColor;
         }
-        car.tls.max = Number(tlsMaxIn.value);
-    });
+        addTyreButtonsFunctions();
+    }
+
+    function addTyreButtonsFunctions(){
+        for(let i = 0; i < car.tyres.length; i++){
+            let element = document.querySelector(`#${"tyre"+i}`);
+            element.addEventListener("click", (e)=>{
+                selectedTyre = i;
+                updateTyresList();
+                updateTyreData();
+            });
+        }
+    }
+
+    function updateTyreData(){
+        let tyre = car.tyres[selectedTyre];
+        bgColorIn.value = tyre.bgColor;
+        txtColorIn.value = tyre.txtColor;
+        tyreNameIn.value = tyre.name;
+        latFrCin.value = tyre.latFrC;
+        longFrCin.value = tyre.longFrC;
+        tlsIn.value = tyre.tls;
+        slipAngleLimitIn.value = tyre.slipAngleLimit;
+    }
 
     //RPM
     const RPMidleIn = document.querySelector("#RPMidleIn");

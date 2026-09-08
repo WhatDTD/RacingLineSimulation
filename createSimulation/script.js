@@ -309,11 +309,9 @@ carInput.addEventListener("change",async (e) =>{
   simCar.Power = car.Power.min;
   simCar.brakingPower = car.brakingPower.min;
   simCar.AvrgWheelRadius = car.AvrgWheelRadius;
-  simCar.FrC = car.FrC.min;
-  simCar.tls = car.tls.min;
+  simCar.tyre = car.tyres[0];
   simCar.gearBox = car.gearBox;
   simCar.cameras = car.cameras;
-  simCar.slipAngleLimit = car.slipAngleLimit;
 
   simCar.meshURL = car.meshURL;
 
@@ -671,55 +669,50 @@ function activateSimSetup(){
 
   //Tyres
 
-  //Friction Coefficient
+  const tyresList = document.querySelector("#tyresList");
+  let selectedTyre = 0;
 
-  const FrCInput = document.querySelector("#FrCInput");
-  const FrCSlider = document.querySelector("#FrCSlider");
+  updateTyresList();
+  addTyreButtonsFunctions();
+  updateTyreData();
 
-  const FrCSliderPrecision = 100;
+  function updateTyresList(){
+    tyresList.innerHTML = "";
+    for(let i = 0; i < car.tyres.length; i++){
+        let tyre = car.tyres[i];
+        tyresList.innerHTML += `
+        <button class="button ${i == selectedTyre ? "selectedTyre" : "tyre"}" id="${"tyre"+i}">
+        ${tyre.name}
+        </button>`;
 
-  FrCInput.value = simCar.FrC;
-  FrCSlider.value = car.FrC.min * FrCSliderPrecision;
-  FrCSlider.min = car.FrC.min * FrCSliderPrecision;
-  FrCSlider.max = car.FrC.max * FrCSliderPrecision;
+        document.querySelector(`#${"tyre"+i}`).style.backgroundColor = tyre.bgColor;
+        document.querySelector(`#${"tyre"+i}`).style.color = tyre.txtColor;
+    }
+    addTyreButtonsFunctions();
+  }
 
-  FrCInput.addEventListener("change", (e) =>{
-    updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCInput.value));
-    simCar.FrC = Number(FrCInput.value);
-    checkStartSpeed();
-  });
+  function addTyreButtonsFunctions(){
+    for(let i = 0; i < car.tyres.length; i++){
+      let element = document.querySelector(`#${"tyre"+i}`);
+      element.addEventListener("click", (e)=>{
+          selectedTyre = i;
+          updateTyresList();
+          updateTyreData();
+          checkStartSpeed();
+      });
+    }
+  }
 
-  FrCSlider.addEventListener("change", (e) =>{
-    updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, Number(FrCSlider.value)/FrCSliderPrecision);
-    simCar.FrC = Number(FrCInput.value);
-    checkStartSpeed();
-  });
+  function updateTyreData(){
+    simCar.tyre = car.tyres[selectedTyre];
 
-
-  //Tyre Load Resistence/Sensitivity
-
-  const tlsInput = document.querySelector("#tlsInput");
-  const tlsSlider = document.querySelector("#tlsSlider");
-
-  const tlsSliderPrecision = 100;
-
-  tlsInput.value = simCar.tls;
-  tlsSlider.value = car.tls.min * tlsSliderPrecision;
-  tlsSlider.min = car.tls.min * tlsSliderPrecision;
-  tlsSlider.max = car.tls.max * tlsSliderPrecision;
-
-  tlsInput.addEventListener("change", (e) =>{
-    updateInputAndSlider(tlsInput, tlsSlider, tlsSliderPrecision, car.tls.min, car.tls.max, Number(tlsInput.value));
-    simCar.tls = Number(tlsInput.value);
-    checkStartSpeed();
-  });
-
-  tlsSlider.addEventListener("change", (e) =>{
-    updateInputAndSlider(tlsInput, tlsSlider, tlsSliderPrecision, car.tls.min, car.tls.max, Number(tlsSlider.value)/tlsSliderPrecision);
-    simCar.tls = Number(tlsInput.value);
-    checkStartSpeed();
-  });
-
+    document.querySelector("#tyreData").innerHTML = `
+      <div>Lateral Friction Coefficient: ${simCar.tyre.latFrC}</div>
+      <div>Longitudinal Friction Coefficient: ${simCar.tyre.longFrC}</div>
+      <div>Tyre Load Resistence: ${simCar.tyre.tls}</div>
+      <div>Slip Angle Limit: ${simCar.tyre.slipAngleLimit}</div>
+    `;
+  }
 
 
 
@@ -794,7 +787,7 @@ function activateSimSetup(){
 
   function checkStartSpeed(){
     let termVel = calculateTerminalVel(powerInput.value, airDensityInput.value, CdInput.value, areaInput.value);
-    let maxStartVel = maxVelforR(massInput.value, gInput.value, line[0].r, FrCInput.value, ClInput.value, areaInput.value, airDensityInput.value, 0, termVel)*3.6;
+    let maxStartVel = maxVelforR(massInput.value, gInput.value, line[0].r, simCar.tyre.latFrC, ClInput.value, areaInput.value, airDensityInput.value, 0, termVel)*3.6;
 
     startSpeedInput.value = Math.min(startSpeedInput.value, Math.trunc(maxStartVel));
     simulationStartVelocity = Number(startSpeedInput.value);

@@ -148,33 +148,13 @@ const simulationSetupHtml = `
 <div class="title is-5 mt-3">Tyres</div>
 
 <!--Tyres-->
-<div>
-    <div class="setupIn">
-        <span>Friction Coefficient: </span>
-        <input class='input mr-3' type='number' placeholder='Friction' id='FrCInput'/>
-    </div>
-
-    <br>
-
-    <div class='slidecontainer'>
-        <input type='range' min='0' max='0' value='0' class='slider' id='FrCSlider'>
-    </div>
-</div>
-
-<br><br><br>
-
-<!--Tyres Load Sensitivity-->
-<div>
-    <div class="setupIn">
-        <span>Tyres Load Resistence: </span>
-        <input class='input mr-3' type='number' placeholder='Resistence' id='tlsInput'/>
-    </div>
-
-    <br>
-
-    <div class='slidecontainer'>
-        <input type='range' min='0' max='0' value='0' class='slider' id='tlsSlider'>
-    </div>
+<div class="flexList" id="tyresList"></div>
+<br>
+<div id="tyreData">
+    <div>Lateral Friction Coefficient: </div>
+    <div>Longitudinal Friction Coefficient: </div>
+    <div>Tyre Load Resistence: </div>
+    <div>Slip Angle Limit: </div>
 </div>
 
 <br><br><hr>

@@ -127,25 +127,41 @@ const carSetpHtml = `
 
 
 <div class="title is-5 mt-6">Tyres</div>
+<div class="flexList">
+    <span id="tyresList">
+        <button class="button tyre">D</button>
+        <button class="button selectedTyre">Dd</button>
+    </span>
+    <button id="addTyreBtn"><img src="./resources/addTyre.svg" style="width:50px; height:50px;"></button>
+</div>
+<hr>
 
-<div class="title is-6 minMaxTitle">Tyres Friction Coefficient:</div>
+<button class="button" id="deleteTyreBtn">Delete Tyre</button>
+
+<div class="title is-6 minMaxTitle">Tyre Colors</div>
 <div class="minMaxIn">
-    <span>min: </span>
-    <input class='input mr-3' type='number' placeholder='min' id='FrCMinIn'/>
+    <span>BG: </span>
+    <input class='input mr-3' type='color' id='bgColorIn'/>
 
-    <span class="ml-3">max: </span>
-    <input class='input' type='number' placeholder='max' id='FrCMaxIn'/>
+    <span>Text: </span>
+    <input class='input' type='color' id='txtColorIn'/>
+
 </div>
 
-<div class="title is-6 minMaxTitle">Tyres Load Resistance (0-1):</div>
-<div class="minMaxIn">
-    <span>min: </span>
-    <input class='input mr-3' type='number' placeholder='min' id='tlsMinIn' min='0' max='1'/>
+<div class="title is-6 minMaxTitle">Name</div>
+<input class='input' type='text' placeholder='Tyre Compound Name' id='tyreNameIn'/>
 
-    <span class="ml-3">max: </span>
-    <input class='input' type='number' placeholder='max' id='tlsMaxIn' min='0' max='1'/>
-</div>
+<div class="title is-6 minMaxTitle">Lateral Friction Coefficient (μ)</div>
+<input class='input' type='number' placeholder='μ' id='latFrCin'/>
 
+<div class="title is-6 minMaxTitle">Longitudinal Friction Coefficient (μ)</div>
+<input class='input' type='number' placeholder='μ' id='longFrCin'/>
+
+<div class="title is-6 minMaxTitle">Tyre Load Resistence (0-1)</div>
+<input class='input' type='number' placeholder='0-1' id='tlsIn'/>
+
+<div class="title is-6 minMaxTitle">Tyre Slip Angle Limit (deg)</div>
+<input class='input' type='number' placeholder='deg' id='slipAngleLimitIn'/>
 
 <!--GearBox-->
 <div class="title is-5 mt-6">Gear Box</div>
