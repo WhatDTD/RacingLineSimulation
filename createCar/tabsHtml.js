@@ -157,8 +157,11 @@ const carSetpHtml = `
 <div class="title is-6 minMaxTitle">Longitudinal Friction Coefficient (μ)</div>
 <input class='input' type='number' placeholder='μ' id='longFrCin'/>
 
-<div class="title is-6 minMaxTitle">Tyre Load Resistence (0-1)</div>
-<input class='input' type='number' placeholder='0-1' id='tlsIn'/>
+<div class="title is-6 minMaxTitle">Tyre Lateral Load Resistence (0-1)</div>
+<input class='input' type='number' placeholder='0-1' id='latTlsIn'/>
+
+<div class="title is-6 minMaxTitle">Tyre Longitudinal Load Resistence (0-1)</div>
+<input class='input' type='number' placeholder='0-1' id='longTlsIn'/>
 
 <div class="title is-6 minMaxTitle">Tyre Slip Angle Limit (deg)</div>
 <input class='input' type='number' placeholder='deg' id='slipAngleLimitIn'/>

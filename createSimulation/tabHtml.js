@@ -153,7 +153,8 @@ const simulationSetupHtml = `
 <div id="tyreData">
     <div>Lateral Friction Coefficient: </div>
     <div>Longitudinal Friction Coefficient: </div>
-    <div>Tyre Load Resistence: </div>
+    <div>Tyre Lateral Load Resistence: </div>
+    <div>Tyre Longitudinal Load Resistence: </div>
     <div>Slip Angle Limit: </div>
 </div>
 

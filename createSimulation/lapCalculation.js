@@ -1,6 +1,5 @@
 function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip){
 
-    let tls = SimCar.tyre.tls;
     let constantLoad = SimCar.constantLoad;
 
 
@@ -147,8 +146,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
             let N = calculateNormalForce(m, g, Fl, Fc, 0);
-            let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, tls);
-            let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, tls);
+            let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, SimCar.tyre.longTls);
+            let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, SimCar.tyre.latTls);
             let longFr = calculateFrictionForce(realLongFrC, N);
             let latFr = calculateFrictionForce(realLatFrC, N);
             let Fd = calculateDragForce(airDens, V, Cd, A);
@@ -206,7 +205,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //limits pass
     const limitSpeed = [];
     for(let i=0; i < data.length; i++){
-        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, tls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 0, terminalVel);
+        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 0, terminalVel);
         limitSpeed.push(simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V;
     }
@@ -240,9 +239,9 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let Fd = calculateDragForce(p, V, Cd, A);
 
-        let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, tls);
+        let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, SimCar.tyre.latTls);
 
-        let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, tls);
+        let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, SimCar.tyre.longTls);
 
         let latFr = calculateFrictionForce(realLatFrC, N);
 

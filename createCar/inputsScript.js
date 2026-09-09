@@ -210,13 +210,22 @@ function activateCarSetup(){
         tyre.longFrC = Number(longFrCin.value);
     });
 
-    const tlsIn = document.querySelector("#tlsIn");
-    tlsIn.value = car.tyres[selectedTyre].tls;
+    const latTlsIn = document.querySelector("#latTlsIn");
+    latTlsIn.value = car.tyres[selectedTyre].latTls;
 
-    tlsIn.addEventListener("change",(e)=>{
+    latTlsIn.addEventListener("change",(e)=>{
         let tyre = car.tyres[selectedTyre];
-        tlsIn.value = Math.min(Math.max(Number(tlsIn.value), 0), 1);
-        tyre.tls = Number(tlsIn.value);
+        latTlsIn.value = Math.min(Math.max(Number(latTlsIn.value), 0), 1);
+        tyre.latTls = Number(latTlsIn.value);
+    });
+    
+    const longTlsIn = document.querySelector("#longTlsIn");
+    longTlsIn.value = car.tyres[selectedTyre].longTls;
+
+    longTlsIn.addEventListener("change",(e)=>{
+        let tyre = car.tyres[selectedTyre];
+        longTlsIn.value = Math.min(Math.max(Number(longTlsIn.value), 0), 1);
+        tyre.longTls = Number(longTlsIn.value);
     });
 
 
@@ -273,7 +282,8 @@ function activateCarSetup(){
         tyreNameIn.value = tyre.name;
         latFrCin.value = tyre.latFrC;
         longFrCin.value = tyre.longFrC;
-        tlsIn.value = tyre.tls;
+        latTlsIn.value = tyre.latTls;
+        longTlsIn.value = tyre.longTls;
         slipAngleLimitIn.value = tyre.slipAngleLimit;
     }
 

@@ -38,7 +38,8 @@ let car={
             txtColor: "#ffffff",
             latFrC: 1,
             longFrC: 1,
-            tls: 1,
+            latTls: 1,
+            longTls: 1,
             slipAngleLimit: 5
         }
     ],

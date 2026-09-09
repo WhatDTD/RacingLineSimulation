@@ -709,7 +709,8 @@ function activateSimSetup(){
     document.querySelector("#tyreData").innerHTML = `
       <div>Lateral Friction Coefficient: ${simCar.tyre.latFrC}</div>
       <div>Longitudinal Friction Coefficient: ${simCar.tyre.longFrC}</div>
-      <div>Tyre Load Resistence: ${simCar.tyre.tls}</div>
+      <div>Tyre Lateral Load Resistence: ${simCar.tyre.latTls}</div>
+      <div>Tyre Longitudinal Load Resistence: ${simCar.tyre.longTls}</div>
       <div>Slip Angle Limit: ${simCar.tyre.slipAngleLimit}</div>
     `;
   }
@@ -889,9 +890,10 @@ function activateSimSetup(){
 
     updateInputAndSlider(brakingPowerInput, brakingPowerSlider, 1, car.brakingPower.min, car.brakingPower.max, simCar.brakingPower);
 
-    updateInputAndSlider(FrCInput, FrCSlider, FrCSliderPrecision, car.FrC.min, car.FrC.max, simCar.FrC);
+    selectedTyre = car.tyres.findIndex(tyre => JSON.stringify(tyre) === JSON.stringify(simCar.tyre));
 
-    updateInputAndSlider(tlsInput, tlsSlider, tlsSliderPrecision, car.tls.min, car.tls.max, simCar.tls);
+    updateTyresList();
+    updateTyreData();
 
     airDensityInput.value = airDensity
 
@@ -905,7 +907,7 @@ function activateSimSetup(){
 
   simBestResBtn = document.querySelector("#simBestRes");
 
-  simBestRes.addEventListener("click", (e) =>{
+  simBestResBtn.addEventListener("click", (e) =>{
     simCar = deepCopy(bestSimulation.car);
     airDensity = deepCopy(bestSimulation.airDensity);
     trackGrip = deepCopy(bestSimulation.trackGrip);
