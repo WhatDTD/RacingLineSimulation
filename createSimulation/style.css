@@ -6,7 +6,7 @@ html, body, canvas {
     width: 100%;
     height: 100vh;
     position: relative;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 #ui {
@@ -184,4 +184,63 @@ html, body, canvas {
 
 .flexList{
   display: flexbox;
+}
+
+#airDensityCalculator{
+  position: absolute;
+  display: none;
+  padding-top: 1%;
+  top: 50vh;
+  left:50vw;
+  transform: translate(-50%,-50%);
+  width: 15vw;
+}
+
+#airDensityCalculatorHeader {
+  cursor: move;
+  background-color: rgba(200, 200, 200, 0.1);
+  border-radius: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+#airDensityCalculatorTitle{
+  justify-self: center;
+}
+
+#airDensityCalculator a img{
+  height: 5vh;
+}
+
+#airDensityCalculator a{
+  margin-right: 3%
+}
+
+#calculateAirDensBtn{
+	width: 100%;
+}
+
+#calculatedAirDens{
+  justify-self: center;
+  margin-bottom: 5%;
+}
+
+#exitAirDensCalculatorBtn{
+    margin-left: 5%;
+}
+
+.topBar{
+	display: flex;
+}
+
+.airDensInputField{
+  display: flex;
+}
+
+.airDensInputField input, .airDensInputField div{
+  align-self: center;
+}
+
+.airDensInputField div{
+  font-size: 120%;
 }

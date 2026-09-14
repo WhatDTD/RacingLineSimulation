@@ -54,9 +54,48 @@
       <button id="menuToggle" class="button bd-docs-button mt-5">&lt</button>
 
     </div>
+
+    <div class="box" id="airDensityCalculator">
+      <div class="topBar">
+  	    <div id="airDensityCalculatorHeader">⠿</div>
+	      <button class="button is-danger is-small" id="exitAirDensCalculatorBtn">X</button>
+      </div>
+
+      <br>
+      <div class="title is-4" id="airDensityCalculatorTitle">Air Density Calculator</div>
+    
+      <div class="airDensInputField">
+        <a title="Air Temperature (°C)" style="cursor: help;"><img src="resources/TemperatureIcon.svg" class="airDensIcon"></a>
+        <input class='input mr-3' type='number' placeholder='m' id='temperatureInput' value="15"/>
+        <div>°C</div>
+      </div>
+    
+      <div class="airDensInputField">
+        <a title="Height above Sea-level (m)" style="cursor: help;"><img src="resources/HeightIcon.svg" class="airDensIcon"></a>
+        <input class='input mr-3' type='number' placeholder='m' id='heightOnSeaInput' value="0"/>
+        <div>m</div>
+      </div>
+    
+      <div class="airDensInputField">
+        <a title="Humidity (%)" style="cursor: help;"><img src="resources/HumidityIcon.svg" class="airDensIcon"></a>
+        <input class='input mr-3' type='number' placeholder='m' id='humidityInput' value="0"/>
+        <div>%</div>
+      </div>
+
+      <br>
+
+      <button class="button is-warning is-small" id="calculateAirDensBtn">Calculate</button>
+      <hr>
+      <div style="display: flex;">
+        <button class="button mr-4" id="transferAirDensBtn">↩</button><div class="title is-3" id="calculatedAirDens">1.225 Kg/m³</div>
+      </div>
+    </div>
+
+  </div>
     
     <script src="tabHtml.js"></script>
     <script src="script.js"></script>
+    <script src="dragElement.js"></script>
     <script src="lapCalculation.js"></script>
     <script src="downloads.js"></script>
   </body>

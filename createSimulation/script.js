@@ -719,19 +719,6 @@ function activateSimSetup(){
 
   //Track & World Conditions
 
-  //Air Density
-
-  const airDensityInput = document.querySelector("#airDensityInput");
-
-  airDensityInput.value = airDensity;
-
-  airDensityInput.addEventListener("change", (e) =>{
-    if(!Number(airDensityInput.value) > 0) airDensityInput.value = airDensity;
-    airDensity = Number(airDensityInput.value);
-    checkStartSpeed();
-  });
-
-
 
   //Gravity Acceleration
 
@@ -746,6 +733,91 @@ function activateSimSetup(){
   });
 
 
+
+  //Air Density
+
+  const airDensityInput = document.querySelector("#airDensityInput");
+
+  airDensityInput.value = airDensity;
+
+  airDensityInput.addEventListener("change", (e) =>{
+    if(!Number(airDensityInput.value) > 0) airDensityInput.value = airDensity;
+    airDensity = Number(airDensityInput.value);
+    checkStartSpeed();
+  });
+
+
+  const airDensityCalculator = document.querySelector("#airDensityCalculator");
+  const airDensityCalculatorBtn = document.querySelector("#airDensityCalculatorBtn");
+
+  let isAirDensCalcVisible = false;
+  airDensityCalculatorBtn.addEventListener("click", (e)=>{
+    showHideAirDensityCalculator();
+  });
+
+
+  const exitAirDensCalculatorBtn = document.querySelector("#exitAirDensCalculatorBtn");
+  exitAirDensCalculatorBtn.addEventListener("click", (e)=>{
+    showHideAirDensityCalculator();
+  });
+  
+
+  function showHideAirDensityCalculator(){
+    isAirDensCalcVisible = !isAirDensCalcVisible;
+    if(isAirDensCalcVisible){
+      airDensityCalculator.style.display = "block";
+    }else{
+      airDensityCalculator.style.display = "none";
+    }
+  }
+
+
+  dragElement(document.querySelector("#airDensityCalculator"));
+
+
+  //Air Density Calculator inputs and calculation
+
+  let calculatedAirDensity = 1.225;
+
+  const temperatureInput = document.querySelector("#temperatureInput");
+  const heightOnSeaInput = document.querySelector("#heightOnSeaInput");
+  const humidityInput = document.querySelector("#humidityInput");
+  const calculateAirDensBtn = document.querySelector("#calculateAirDensBtn");
+  const calculatedAirDens = document.querySelector("#calculatedAirDens");
+
+  humidityInput.addEventListener("change", (e)=>{
+    humidityInput.value = Math.max(Math.min(100, Number(humidityInput.value)), 0);
+  });
+
+  calculateAirDensBtn.addEventListener("click", (e)=>{
+    let R = 287.058;
+    let T = Number(temperatureInput.value);
+    let h = Number(heightOnSeaInput.value);
+    let HumidityPc = Number(humidityInput.value)/100;
+    let P = calculatePressure(101325, 15, 0.0065, R, Number(gInput.value), h);
+    let pSat = calculateAirDensSat(T);
+    calculatedAirDensity = calculateAirDensity(P, HumidityPc, pSat, R, 461.495, T);
+    calculatedAirDens.innerHTML = calculatedAirDensity.toFixed(3)+" Kg/m³";
+  });
+
+  const transferAirDensBtn = document.querySelector("#transferAirDensBtn");
+  transferAirDensBtn.addEventListener("click",(e)=>{
+    airDensityInput.value = Number(calculatedAirDensity.toFixed(3));
+    airDensity = Number(airDensityInput.value);
+    checkStartSpeed();
+  });
+
+  function calculatePressure(P0, T0, L, R, g, h){
+    return P0*(1-L*h/(T0+273.15))**(g/(R*L));
+  }
+
+  function calculateAirDensSat(T){
+    return 610.78*10**((7.5*T)/(T+237.3));
+  }
+
+  function calculateAirDensity(P, HumidityPc, pSat, R, Rv, T){
+    return (P-(HumidityPc*pSat))/(R*(T+273.15))+(HumidityPc*pSat)/(Rv*(T+273.15))
+  }
 
 
   //Track Grip

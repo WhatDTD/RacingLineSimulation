@@ -168,6 +168,7 @@ const simulationSetupHtml = `
 <div class="setupIn">
     <span>Air Density (Kg/m³): </span>
     <input class='input mr-3' type='number' placeholder='Air Dens' id='airDensityInput' value="1.225"/>
+    <button class="button is-warning" id="airDensityCalculatorBtn">⌨</button>
 </div>
 
 <br>
