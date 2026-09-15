@@ -21,7 +21,7 @@ here we have all the things that are currently in the making or things we're pla
 `file2.js`
 
 
-## To Do List
+## To Do List Lordy_bit
 
 - Update Example Cars and Simulation to the latest version (tyre load sensitivity, constant load) ${\color{red}\textsf{High priority}}$
 
@@ -40,3 +40,15 @@ here we have all the things that are currently in the making or things we're pla
 - Add a <b>Telemetry Analysis Tool</b> ${\color{green}\textsf{Low priority}}$
 
 - Add a <b>Car Library</b> where the user can download pre-made cars ${\color{green}\textsf{Low priority}}$
+
+## To Do List Alf
+
+- Performance improvement ${\color{red}\textsf{High priority}}$
+
+- UI redesign ${\color{orange}\textsf{Mid priority}}$
+
+- Car Engine Audio ${\color{purple}\textsf{Nice To Have}}$
+
+- Wheels Rotation Animation ${\color{purple}\textsf{Nice To Have}}$
+
+- Sky cube texture ${\color{purple}\textsf{Nice To Have}}$

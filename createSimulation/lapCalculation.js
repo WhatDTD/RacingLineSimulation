@@ -51,17 +51,24 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
 
     //Power Limited Acceleration
-    function calculateAccelerationPL(m, P, Fd, V){
+    function calculateAccelerationPL(m, P, Fd, Fr, Fc, slipAngleLimit, V){
+        let x = Fr === 0 ? 0 : Fc / Fr;
+        x = Math.min(Math.max(x, 0), 1);
+        let currentSlipAngleRad = (slipAngleLimit * (Math.PI / 180)) * (x**2);
+        let FLat = Fc < Fr ? Fc : Fr;
+        let tyreDragForce = FLat * Math.sin(currentSlipAngleRad);
+        let aTyreDrag = tyreDragForce / m;
+
         let f = ((P * 1000) - Fd * V)/(m * V);
-        return f;
+        return f - aTyreDrag;
     }
 
     //Maximum acceleration trought a turn of radius r
-    function calculateAccelerationForR(m, aFL, aPL, Fr, Fc){
-        let a = aFL < aPL ? aFL : aPL; //the lowest acceleration is maximum possible
+    function calculateAccelerationForR(aFL, aPL, Fr, Fc){
         let FLat = Fc < Fr ? Fc : Fr; //the lowest between the Friction force and the Centripetal force is the maximum possible
         let FLatNorm = FLat/Fr;
-        return Math.sin(Math.acos(FLatNorm))*a; //calculation of the grip circle
+        let aGripCircle = Math.sin(Math.acos(FLatNorm))*aFL; //calculation of the grip circle
+        return aPL < aGripCircle ? aPL : aGripCircle;
     }
 
     //terminal velocity
@@ -152,8 +159,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let latFr = calculateFrictionForce(realLatFrC, N);
             let Fd = calculateDragForce(airDens, V, Cd, A);
             let aFL = calculateAccelerationFL(m, longFr);
-            let aBL = calculateAccelerationPL(m, Bp, -Fd, V);
-            let a = calculateAccelerationForR(m, aFL, aBL, latFr, Fc);
+            let aBL = calculateAccelerationPL(m, Bp, -Fd, latFr, Fc, -SimCar.tyre.slipAngleLimit, V);
+            let a = calculateAccelerationForR(aFL, aBL, latFr, Fc);
             let FLat = Fc < latFr ? Fc : latFr;
 
             simulatedLap.nodes[i].longitudinalG =-a/g;
@@ -249,9 +256,9 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let aFL = calculateAccelerationFL(m, longFr);
 
-        let aPL = calculateAccelerationPL(m, P, Fd, V);
+        let aPL = calculateAccelerationPL(m, P, Fd, latFr, Fc, SimCar.tyre.slipAngleLimit, V);
 
-        let a = calculateAccelerationForR(m, aFL, aPL, latFr, Fc);
+        let a = calculateAccelerationForR(aFL, aPL, latFr, Fc);
 
         let newVel = V+a*simulatedLap.nodes[i-1].t; //to account for the time error
 
