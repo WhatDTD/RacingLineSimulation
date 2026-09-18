@@ -49,10 +49,26 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         return Fr/m
     }
 
+    //Simple Power Curve Calculation
+    function calculatePowerCurveValue(gears, V, P, Pg){
+        let gear = 0;
+        while(gears[gear] < V * 3.6){
+            gear++;
+        }
+        let minV = gears[gear-1]/3.6;
+        let maxV = gears[gear]/3.6;
+        let startPowerMul = Math.pow(gear/(gears.length - 1), 1/Pg);
+        //The higher the gear the less we drop power
+        //Pg determines how much the power drops at the gear change
+        //The higher the value the less the power drops
+        let gearNorm = (V - minV)/(maxV - minV);
+        return P * ((1 - startPowerMul) * gearNorm + startPowerMul);
+    }
+
 
     //Power Limited Acceleration
     function calculateAccelerationPL(m, P, Fd, Fr, Fc, slipAngleLimit, V){
-        let x = Fr === 0 ? 0 : Fc / Fr;
+        let x = Fr == 0 ? 0 : Fc / Fr;
         x = Math.min(Math.max(x, 0), 1);
         let currentSlipAngleRad = (slipAngleLimit * (Math.PI / 180)) * (x**2);
         let FLat = Fc < Fr ? Fc : Fr;
@@ -150,9 +166,10 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         while (list[i].V > list[i+1].V) {
             let V = list[i+1].V;
+            let roll = 0;
             let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
-            let N = calculateNormalForce(m, g, Fl, Fc, 0);
+            let N = calculateNormalForce(m, g, Fl, Fc, roll);
             let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, SimCar.tyre.longTls);
             let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, SimCar.tyre.latTls);
             let longFr = calculateFrictionForce(realLongFrC, N);
@@ -224,20 +241,24 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     simulatedLap.nodes[0].throttle = 100;
     simulatedLap.nodes[0].brake = 0;
     simulatedLap.nodes[0].wheelsAngle = 0;
+
+    let m = simulatedLap.car.mass;
+    let latFrC = simulatedLap.car.tyre.latFrC*trackGrip;
+    let longFrC = simulatedLap.car.tyre.longFrC*trackGrip;
+    let Cd = simulatedLap.car.Cd;
+    let Cl = simulatedLap.car.Cl;
+    let p = simulatedLap.airDensity;
+    let A = simulatedLap.car.A;
+
     for(let i=1; i < simulatedLap.nodes.length-1; i++){
         let V = simulatedLap.nodes[i-1].V;
         let t = simulatedLap.nodes[i-1].d/V;
-        simulatedLap.nodes[i-1].t = t-t*timeError;  //to account for the time error
+        simulatedLap.nodes[i-1].t = t-t*timeError;
 
-        let m = simulatedLap.car.mass;
-        let P = simulatedLap.car.Power;
-        let latFrC = simulatedLap.car.tyre.latFrC*trackGrip;
-        let longFrC = simulatedLap.car.tyre.longFrC*trackGrip;
         let roll = 0;
-        let Cd = simulatedLap.car.Cd;
-        let Cl = simulatedLap.car.Cl;
-        let p = simulatedLap.airDensity;
-        let A = simulatedLap.car.A;
+
+        let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 2);
+
         let Fl = calculateLiftForce(p, V, Cl, A, constantLoad);
 
         let Fc = calculateCentripetalForce(m, V, simulatedLap.nodes[i].r);
