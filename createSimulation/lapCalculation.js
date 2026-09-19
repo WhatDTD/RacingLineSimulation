@@ -116,9 +116,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         return FrC * (N/(m*g))**(tls-1);
     }
 
-    //wheels angle from radius
-    function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2, Fr, Fc, slipAngleLimit){
-    
+    function getDirection(x0, y0, x1, y1, x2, y2){
         let xA = x1 - x0;
         let yA = y1 - y0;
         let aA = Math.atan2(yA, xA);
@@ -131,7 +129,12 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         while (diff > Math.PI) diff -= 2 * Math.PI;
         while (diff < -Math.PI) diff += 2 * Math.PI;
     
-        let dir = diff < 0 ? 1 : -1;
+        return diff < 0 ? 1 : -1;
+    }
+
+    //wheels angle from radius
+    function wheelsAngleFromR(r, x0, y0, x1, y1, x2, y2, Fr, Fc, slipAngleLimit){
+        let dir = getDirection(x0, y0, x1, y1, x2, y2);
         let x = Fr == 0 ? 0 : Fc/Fr;
         x = Math.min(Math.max(x, 0), 1);
     
@@ -166,7 +169,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         while (list[i].V > list[i+1].V) {
             let V = list[i+1].V;
-            let roll = 0;
+            let roll = list[i].roll * getDirection(simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
             let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
             let Fc = calculateCentripetalForce(m, V, list[i].r);
             let N = calculateNormalForce(m, g, Fl, Fc, roll);
@@ -229,7 +232,10 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //limits pass
     const limitSpeed = [];
     for(let i=0; i < data.length; i++){
-        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 0, terminalVel);
+        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, 
+                                            simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 
+                                            data[i].roll * getDirection(data[Math.max(i-1,0)].x, data[Math.max(i-1,0)].z, data[i].x, data[i].z, data[Math.min(i+1,data.length-1)].x, data[Math.min(i+1,data.length-1)].z)
+                                            , terminalVel);
         limitSpeed.push(simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V;
     }
@@ -255,7 +261,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let t = simulatedLap.nodes[i-1].d/V;
         simulatedLap.nodes[i-1].t = t-t*timeError;
 
-        let roll = 0;
+        let roll = simulatedLap.nodes[i].roll * getDirection(simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
 
         let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 2);
 

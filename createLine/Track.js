@@ -1,10 +1,11 @@
 class TrackNode {
-  constructor(x, y, z, r, d) {
+  constructor(x, y, z, r, d, roll) {
     this.x = x;
     this.y = y;
     this.z = z;
     this.r = r;
     this.d = d;
+    this.roll = roll;
   }
 
   toVector() {
@@ -131,6 +132,49 @@ class Track {
     return (a*b*c)/4/Math.sqrt(s*(s-a)*(s-b)*(s-c));
   }
 
+
+  getRollAngle(p1, p2, pBackup){
+    let b = Math.sqrt((p1.x - p2.x)**2 + (p1.z - p2.z)**2);
+    let l = 1;
+
+    let pR = {
+      x: p1.x + l/b*(p2.z - p1.z),
+      z: p1.z - l/b*(p2.x - p1.x)
+    }
+
+    let pL = {
+      x: p1.x - l/b*(p2.z - p1.z),
+      z: p1.z + l/b*(p2.x - p1.x)
+    }
+
+    const pRray = new BABYLON.Ray(
+      new BABYLON.Vector3(pR.x, 1000, pR.z),
+      BABYLON.Vector3.Down(),
+      2000
+    );
+    const pRhit = scene.pickWithRay(pRray, m => trackMeshes.includes(m));
+    if (pRhit && pRhit.pickedPoint) {
+      pR.y = pRhit.pickedPoint.y
+    }else{
+      return pBackup.roll;
+    }
+
+    const pLray = new BABYLON.Ray(
+      new BABYLON.Vector3(pL.x, 1000, pL.z),
+      BABYLON.Vector3.Down(),
+      2000
+    );
+    const pLhit = scene.pickWithRay(pLray, m => trackMeshes.includes(m));
+    if (pLhit && pLhit.pickedPoint) {
+      pL.y = pLhit.pickedPoint.y
+    }else{
+      return pBackup.roll;
+    }
+
+
+    return Math.atan((pL.y - pR.y)/2);
+  }
+
   insert(index, points) {
     const insertNodes = points.map(p => new TrackNode(p.x, p.y, p.z));
     this.nodes.splice(index + 1, 0, ...insertNodes);
@@ -203,13 +247,13 @@ class Track {
     let insertNodes = []; 
     if (this.nodes.length === 3) {
       const beforeP2 = points.slice(1, beforeP2Index).map(p => {
-        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d, p.roll);
         node.projectOntoTrack();
         //node.render();
         return node;  
       });
       const afterP2 = points.slice(beforeP2Index + 1, -1).map(p => {
-        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d, p.roll);
         node.projectOntoTrack();
         //node.render();
         return node;  
@@ -224,7 +268,7 @@ class Track {
       const insertPoints = points.slice(1, -1);
       const p3Index = this.nodes.indexOf(p3);
       insertNodes = insertPoints.map(p => {
-        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d);
+        const node = new TrackNode(p.x, p.y, p.z, p.r, p.d, p.roll);
         node.projectOntoTrack();
         //node.render();
         return node;  
@@ -249,21 +293,23 @@ class Track {
     return this.nodes.map(node => new BABYLON.Vector3(node.x, node.y, node.z));
   }
 
-  calculateAndAssignDistanceBetweenPoints(){
+  calculateAndAssignDistanceBetweenPointsAndRoll(){
     for(let i = 0; i < this.nodes.length-1; i++){
       this.nodes[i].d = distance(this.nodes[i], this.nodes[i+1]);
+      this.nodes[i].roll = this.getRollAngle(this.nodes[i], this.nodes[i+1], this.nodes[Math.max(i-1, 0)]);
     }
   }
 
   exportJSON() {
-    this.calculateAndAssignDistanceBetweenPoints();
+    this.calculateAndAssignDistanceBetweenPointsAndRoll();
 
     const data = this.nodes.map(node => ({
       x: node.x,
       y: node.y,
       z: node.z,
       r: node.r,
-      d: node.d
+      d: node.d,
+      roll: node.roll
     }));
     return JSON.stringify(data, null, 2);
   }

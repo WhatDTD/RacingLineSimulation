@@ -352,7 +352,7 @@ class SimulationAnimation{
             ).normalize();
             const rotX = Math.asin(smoothElevation.y);
             
-            const rotZ = 0;
+            const rotZ = points[i].roll;
 
             //Car Rotation
             carRotationKeysFrames.push({
