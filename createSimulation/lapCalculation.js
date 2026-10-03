@@ -192,7 +192,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let Fd = calculateDragForce(airDens, V, Cd, A);
             let aFL = calculateAccelerationFL(m, longFr);
             let aBL = calculateAccelerationPL(m, g, pitch, Bp, -Fd, latFr, Fc, -SimCar.tyre.slipAngleLimit, V);
-            let a = calculateAccelerationForR(aFL, aBL, latFr, Fc - calculateWeightVectorComponents(m, g, pitch, roll).lateral);
+            let a = calculateAccelerationForR(aFL, aBL, latFr, Fc + calculateWeightVectorComponents(m, g, pitch, roll).lateral);
             let FLat = Fc < latFr ? Fc : latFr;
 
             simulatedLap.nodes[i].longitudinalG =-a/g;
@@ -228,8 +228,6 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     for(let i=0; i < data.length-1; i++){
         if(data[i].d) totalDistance += data[i].d;
     }
-
-    //console.log("Line Length in m: "+totalDistance);
 
 
     let simulatedLap = { 
@@ -302,7 +300,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let aPL = calculateAccelerationPL(m, g, pitch, P, Fd, latFr, Fc, SimCar.tyre.slipAngleLimit, V);
 
-        let a = calculateAccelerationForR(aFL, aPL, latFr, Fc - calculateWeightVectorComponents(m, g, pitch, roll).lateral);
+        let a = calculateAccelerationForR(aFL, aPL, latFr, Fc + calculateWeightVectorComponents(m, g, pitch, roll).lateral);
 
         let newVel = V+a*simulatedLap.nodes[i-1].t; //to account for the time error
 
@@ -389,8 +387,6 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     for(let i=0; i < simulatedLap.nodes.length-2; i++){
         simulatedLap.totalTime += simulatedLap.nodes[i].t;
     }
-
-    //console.log("Time: "+simulatedLap.totalTime);
 
     return simulatedLap;
 }

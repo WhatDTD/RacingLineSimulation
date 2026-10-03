@@ -92,10 +92,9 @@ function drawGmeter(){
     ctx.moveTo(GmeterCanvas.width/2, GmeterCanvas.height/2);
     for(let i=0; i < maxG; i++){
         ctx.arc(GmeterCanvas.width/2, GmeterCanvas.height/2, radius, 0, 2 * Math.PI, false);
-        ctx.stroke();
-
         radius += gap;
     }
+    ctx.stroke();
     ctx.closePath();
     ctx.beginPath();
     ctx.fillStyle = GballColor;
