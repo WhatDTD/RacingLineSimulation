@@ -72,7 +72,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let FcVert = calculateCentripetalForce(m, V, vr);
         return{
             lateral: FcLat * Math.cos(roll) + FcVert * Math.sin(roll),
-            vertical: FcLat * Math.sin(roll) + FcVert * Math.cos(roll) > -m*g ? FcLat * Math.sin(roll) + FcVert * Math.cos(roll) : -m*g-1
+            vertical: FcLat * Math.sin(roll) + FcVert * Math.cos(roll) > 0 ? FcLat * Math.sin(roll) + FcVert * Math.cos(roll) : 0
         }
     }
 
