@@ -48,6 +48,7 @@ function simulationToCsv(simulation){
         decStringWithComma(simulatedLap.nodes[i].z, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].d, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].r, 3)+";"+
+        decStringWithComma(simulatedLap.nodes[i].vr, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].t, 3)+";"+
         decStringWithComma(distance, 3)+";"+
         decStringWithComma(time, 3)+";"+

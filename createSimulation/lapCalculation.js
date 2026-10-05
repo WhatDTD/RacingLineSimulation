@@ -35,7 +35,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let vr = calculateRadius(p1, pm, p3)*(pm.y < (p1.y + p3.y)/2 ? 1 : -1)
 
-        return vr ? (Math.abs(vr) > 15 ? vr : 15*Math.sign(vr)) : 10000; //to remove noise
+        return vr && vr != Infinity && vr != -Infinity ? (Math.abs(vr) > 15 ? vr : 15*Math.sign(vr)) : 100000; //to remove noise
     }
 
 
@@ -58,7 +58,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //Normal Force
     function calculateNormalForce(m, g, Fl, FcVert, pitch, roll){
-        return calculateWeightVectorComponents(m, g, pitch, roll).vertical + FcVert + Fl;
+        return Math.max(calculateWeightVectorComponents(m, g, pitch, roll).vertical + FcVert + Fl, m*g);
     }
 
 
@@ -72,7 +72,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let FcVert = calculateCentripetalForce(m, V, vr);
         return{
             lateral: FcLat * Math.cos(roll) + FcVert * Math.sin(roll),
-            vertical: FcLat * Math.sin(roll) + FcVert * Math.cos(roll) > 0 ? FcLat * Math.sin(roll) + FcVert * Math.cos(roll) : 0
+            vertical: FcLat * Math.sin(roll) + FcVert * Math.cos(roll)
         }
     }
 
@@ -280,6 +280,11 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     for(let i=0; i < data.length-1; i++){
         data[i].d = distance(data[i], data[i+1]);
         totalDistance += data[i].d;
+    }
+
+    //vertical radius smoothing
+    for(let i = 2; i < data.length; i++){
+        data[i-1].vr = bezierCurveSmoothing3(data[i-2].vr, data[i-1].vr, data[i].vr, 0.05);
     }
 
 
