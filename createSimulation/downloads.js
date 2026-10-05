@@ -48,7 +48,6 @@ function simulationToCsv(simulation){
         decStringWithComma(simulatedLap.nodes[i].z, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].d, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].r, 3)+";"+
-        decStringWithComma(simulatedLap.nodes[i].vr, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].t, 3)+";"+
         decStringWithComma(distance, 3)+";"+
         decStringWithComma(time, 3)+";"+
@@ -60,8 +59,7 @@ function simulationToCsv(simulation){
         decStringWithComma(simulatedLap.nodes[i].RPM, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].wheelsAngle*deg, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].lateralG, 3)+";"+
-        decStringWithComma(simulatedLap.nodes[i].longitudinalG, 3)+";"+
-        decStringWithComma(simulatedLap.nodes[i].verticalG, 3)+
+        decStringWithComma(simulatedLap.nodes[i].longitudinalG, 3)+
         (first ? ";"+decStringWithComma(simulatedLap.totalTime, 3) : "")+
         (first ? ";"+decStringWithComma(simulatedLap.lengthInMeters, 3) : "");
         
