@@ -13,7 +13,6 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     }
 
 
-    const timeError = 0/100;
 
     //Lift Force
     function calculateLiftForce(p, V, Cl, A, constantLoad){
@@ -180,6 +179,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         while (list[i].V > list[i+1].V) {
             let V = list[i+1].V;
+            let t = list[i].d/V;
             let roll = list[i].roll * getDirection(simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
             let pitch = Math.asin((list[i+1].y - list[i].y)/list[i].d);
             let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
@@ -201,8 +201,9 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             simulatedLap.nodes[i].throttle = 0;
             simulatedLap.nodes[i].brake = calculatePedalInput(m, Fd, aBL, a);
 
-            let t = list[i].d/V;
-            t = t-t*timeError; //to account for the time error
+            simulatedLap.nodes[i].energyOnPowerKJ = 0;
+            simulatedLap.nodes[i].energyOnBrakeKJ = Bp*(simulatedLap.nodes[i].brake/100)*t;
+            
             let newSpeed = list[i+1].V + a*t;
             if (newSpeed < list[i].V && newSpeed < list[i-1].V) {
                 list[i].V = newSpeed;
@@ -260,6 +261,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     simulatedLap.nodes[0].throttle = 100;
     simulatedLap.nodes[0].brake = 0;
     simulatedLap.nodes[0].wheelsAngle = 0;
+    simulatedLap.nodes[0].energyOnPowerKJ = 0;
+    simulatedLap.nodes[0].energyOnBrakeKJ = 0;
 
     let m = simulatedLap.car.mass;
     let latFrC = simulatedLap.car.tyre.latFrC*trackGrip;
@@ -272,7 +275,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     for(let i=1; i < simulatedLap.nodes.length-1; i++){
         let V = simulatedLap.nodes[i-1].V;
         let t = simulatedLap.nodes[i-1].d/V;
-        simulatedLap.nodes[i-1].t = t-t*timeError;
+        simulatedLap.nodes[i-1].t = t;
 
         let roll = simulatedLap.nodes[i].roll * getDirection(simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
 
@@ -311,6 +314,9 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         simulatedLap.nodes[i].brake = 0;
         simulatedLap.nodes[i].throttle = calculatePedalInput(m, Fd, aPL, a);
+
+        simulatedLap.nodes[i].energyOnPowerKJ = P*(simulatedLap.nodes[i].throttle/100)*t;
+        simulatedLap.nodes[i].energyOnBrakeKJ = 0;
 
         if(!newVel){
             newVel = V;

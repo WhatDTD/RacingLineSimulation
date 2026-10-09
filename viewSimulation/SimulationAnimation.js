@@ -7,10 +7,14 @@ class SimulationAnimation{
         this.FRAME_RATE = 60;
         this.totalTime = simulatedLap.totalTime;
         this.totalDistance = simulatedLap.lengthInMeters;
+        this.totalEnergyOnPowerKJ = simulatedLap.nodes.slice(0, -1).reduce((n, {energyOnPowerKJ}) => n + energyOnPowerKJ, 0);
+        this.totalEnergyOnBrakeKJ = simulatedLap.nodes.slice(0, -1).reduce((n, {energyOnBrakeKJ}) => n + energyOnBrakeKJ, 0);
         this.animations = [];
         this.currentNode = 0;
         this.distanceTravelled = 0;
         this.time = 0;
+        this.currentEnergyOnPowerKJ = simulatedLap.nodes.slice(0, -1).reduce((n, {energyOnPowerKJ}) => n + energyOnPowerKJ, 0);
+        this.currentEnergyOnBrakeKJ = 0;
         this.color = "rgb(0 0 0)";
 
         //Gmeter related stuff
@@ -291,6 +295,18 @@ class SimulationAnimation{
         BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
         );
 
+        //energy On Power KJ
+        const energyOnPowerAnim = new BABYLON.Animation(`currentEnergyOnPowerKJ`, "currentEnergyOnPowerKJ", this.FRAME_RATE,
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
+        //energy On Brake KJ
+        const energyOnBrakeAnim = new BABYLON.Animation(`currentEnergyOnBrakeKJ`, "currentEnergyOnBrakeKJ", this.FRAME_RATE,
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+        );
+
 
         const carMovementKeysFrames = [];
         const carRotationKeysFrames = [];
@@ -303,9 +319,13 @@ class SimulationAnimation{
         const currentNodeKeysFrames = [];
         const distanceTravelledKeysFrames = [];
         const timeKeysFrames = [];
+        const energyOnPowerKJKeyFrames = [];
+        const energyOnBrakeKJKeyFrames = [];
 
         let t = 0;
         let d = 0;
+        let energyOnPowerKJsum = this.totalEnergyOnPowerKJ;
+        let energyOnBrakeKJsum = 0;
 
         let precRotY;
         let helmetPrecRotY;
@@ -425,8 +445,22 @@ class SimulationAnimation{
               value: t
             });
 
+            //energy On Power KJ
+            energyOnPowerKJKeyFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: energyOnPowerKJsum
+            });
+
+            //energy On Brake KJ
+            energyOnBrakeKJKeyFrames.push({
+              frame: this.FRAME_RATE * t,
+              value: energyOnBrakeKJsum
+            });
+
             t += this.simulatedLap.nodes[i].t;
             d += this.simulatedLap.nodes[i].d;
+            energyOnPowerKJsum -= this.simulatedLap.nodes[i].energyOnPowerKJ;
+            energyOnBrakeKJsum += this.simulatedLap.nodes[i].energyOnBrakeKJ;
         }
     
     
@@ -485,6 +519,23 @@ class SimulationAnimation{
         //Time
         timeAnim.setKeys(timeKeysFrames);
         this.animations.push(timeAnim);
+
+
+        //energy On Power KJ
+        energyOnPowerKJKeyFrames.push({
+          frame: this.FRAME_RATE * this.totalTime,
+          value: 0
+        });
+        energyOnPowerAnim.setKeys(energyOnPowerKJKeyFrames);
+        this.animations.push(energyOnPowerAnim);
+
+        //energy On Brake KJ
+        energyOnBrakeKJKeyFrames.push({
+          frame: this.FRAME_RATE * this.totalTime,
+          value: this.totalEnergyOnBrakeKJ
+        });
+        energyOnBrakeAnim.setKeys(energyOnBrakeKJKeyFrames);
+        this.animations.push(energyOnBrakeAnim);
     }
 
 
