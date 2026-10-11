@@ -30,30 +30,30 @@ function calculateTyreStress(simLap){
         RR: 0
     }
 
-    for(let i=0; i < simLap.simulatedLap.nodes.length-1; i++){
+    for(let i=0; i < simLap.simulatedLap.nodes.length-2; i++){
         let lat = simLap.simulatedLap.nodes[i].lateralG;
         let longit = simLap.simulatedLap.nodes[i].longitudinalG;
         let stress = simLap.simulatedLap.tyreStress;
 
-        stress.FL++;
-        stress.FR++;
-        stress.RL++;
-        stress.RR++;
+        stress.FL += simLap.simulatedLap.nodes[i].t;
+        stress.FR += simLap.simulatedLap.nodes[i].t;
+        stress.RL += simLap.simulatedLap.nodes[i].t;
+        stress.RR += simLap.simulatedLap.nodes[i].t;
 
         if(lat < 0){
-            stress.FL += Math.abs(lat);
-            stress.RL += Math.abs(lat);
+            stress.FL += Math.abs(lat)*simLap.simulatedLap.nodes[i].t;
+            stress.RL += Math.abs(lat)*simLap.simulatedLap.nodes[i].t;
         }else{
-            stress.FR += Math.abs(lat);
-            stress.RR += Math.abs(lat);
+            stress.FR += Math.abs(lat)*simLap.simulatedLap.nodes[i].t;
+            stress.RR += Math.abs(lat)*simLap.simulatedLap.nodes[i].t;
         }
 
         if(longit < 0){
-            stress.FL += Math.abs(longit);
-            stress.FR += Math.abs(longit);
+            stress.FL += Math.abs(longit)*simLap.simulatedLap.nodes[i].t;
+            stress.FR += Math.abs(longit)*simLap.simulatedLap.nodes[i].t;
         }else{
-            stress.RL += Math.abs(longit);
-            stress.RR += Math.abs(longit);
+            stress.RL += Math.abs(longit)*simLap.simulatedLap.nodes[i].t;
+            stress.RR += Math.abs(longit)*simLap.simulatedLap.nodes[i].t;
         }
     }
 }
@@ -73,31 +73,31 @@ function calculateMaxSpeed(simLap){
 
 function calculateThrottleStats(simLap){
     let i=0;
-    let fullThrottleNodes = 0;
-    let throttleNodes = 0;
+    let fullThrottleTime = 0;
+    let throttleTime = 0;
     while(i < simLap.simulatedLap.nodes.length-2){
-        if(simLap.simulatedLap.nodes[i].throttle != 0){
-            throttleNodes++;
-            if(simLap.simulatedLap.nodes[i].throttle >= 100) fullThrottleNodes++;
+        if(simLap.simulatedLap.nodes[i].throttle > 0){
+            throttleTime += simLap.simulatedLap.nodes[i].t;
+            if(simLap.simulatedLap.nodes[i].throttle >= 99.5) fullThrottleTime += simLap.simulatedLap.nodes[i].t;
         }
         i++;
     }
 
-    simLap.simulatedLap.stats.fullThrottlePercentage = (fullThrottleNodes/i)*100;
-    simLap.simulatedLap.stats.throttlePercentage = (throttleNodes/i)*100;
+    simLap.simulatedLap.stats.fullThrottlePercentage = (fullThrottleTime/simLap.totalTime)*100;
+    simLap.simulatedLap.stats.throttlePercentage = (throttleTime/simLap.totalTime)*100;
 }
 
 function calculateBrakeStats(simLap){
     let i=0;
-    let brakeNodes = 0;
+    let brakeTime = 0;
     while(i < simLap.simulatedLap.nodes.length-2){
-        if(simLap.simulatedLap.nodes[i].brake != 0){
-            brakeNodes++;
+        if(simLap.simulatedLap.nodes[i].brake > 0){
+            brakeTime += simLap.simulatedLap.nodes[i].t;
         }
         i++;
     }
 
-    simLap.simulatedLap.stats.brakePercentage = (brakeNodes/i)*100;
+    simLap.simulatedLap.stats.brakePercentage = (brakeTime/simLap.totalTime)*100;
 }
 
 
@@ -172,9 +172,9 @@ function updateStats(){
             tyreLabel.innerHTML = Math.trunc(pc)+"%";
         }
 
-        tyre.innerHTML = (tyreStress/(sim.nodes.length-2)).toFixed(1)+"G";
+        tyre.innerHTML = (tyreStress/sim.totalTime).toFixed(1)+"G";
 
-        let pcThreshold = 40;
+        let pcThreshold = 50;
         let hslThreshold = 130;
 
         if(pc > pcThreshold) pc = pcThreshold;

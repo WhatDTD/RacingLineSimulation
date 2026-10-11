@@ -33,8 +33,6 @@ here we have all the things that are currently in the making or things we're pla
 
 - Change pages browser tab name to cooler names ${\color{green}\textsf{Low priority}}$
 
-- Add tabs icons with <b>Favicons</b> ${\color{green}\textsf{Low priority}}$
-
 - Add <b>Sync on Track</b> button in <b>View Simulation</b>; when the button is clicked all the simulations should be at the same normalized position on track ${\color{yellow}\textsf{Low-Mid priority}}$
 
 - Add a <b>Telemetry Analysis Tool</b> ${\color{green}\textsf{Low priority}}$
@@ -44,6 +42,8 @@ here we have all the things that are currently in the making or things we're pla
 ## To Do List Alf
 
 - Performance improvement ${\color{red}\textsf{High priority}}$
+
+- Add tabs icons with <b>Favicons</b> ${\color{green}\textsf{Low priority}}$
 
 - UI redesign ${\color{orange}\textsf{Mid priority}}$
 
