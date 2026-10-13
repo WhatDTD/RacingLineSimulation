@@ -146,7 +146,7 @@ function drawTrackMapPoints(){
     simulationsList.forEach(sim => {
         if(sim !== simulationsList[currentCar]){
             TMPctx.beginPath();
-            TMPctx.fillStyle = sim.color;
+            TMPctx.fillStyle = colorToStyleString(sim.color);
             let node = sim.simulatedLap.nodes[Math.trunc(sim.currentNode)];
             TMPctx.arc(zero.x-node.x+currentPointRadiusPc*width/2+gap, zero.y+node.z+currentPointRadiusPc*width/2+gap, trackMapCanvas.width*pointsRadiusPc, 0, Math.PI*2);
             TMPctx.fill();
@@ -157,7 +157,7 @@ function drawTrackMapPoints(){
     if(!simulationsList[currentCar]) return;
     TMPctx.beginPath();
     let sim = simulationsList[currentCar];
-    TMPctx.fillStyle = sim.color;
+    TMPctx.fillStyle = colorToStyleString(sim.color);
     let node = sim.simulatedLap.nodes[Math.trunc(sim.currentNode)];
     TMPctx.arc(zero.x-node.x+currentPointRadiusPc*width/2+gap, zero.y+node.z+currentPointRadiusPc*width/2+gap, trackMapCanvas.width*currentPointRadiusPc, 0, Math.PI*2);
     TMPctx.fill();
@@ -184,7 +184,7 @@ function calculateSectors(){
                 startIndex++;
             }
 
-            let simData = {nodes: [], avgV:0, color: sim.color};
+            let simData = {nodes: [], avgV:0, color: colorToStyleString(sim.color)};
             let endDistance = startDistance;
             let endIndex = startIndex
             let time = 0;
@@ -239,4 +239,8 @@ function changeMapSize(value){
     trackMapSectorsCanvas.style = `width: ${size+value}vw;`
     trackMapPointsCanvas.style = `width: ${size+value}vw;`
     size += value;
+}
+
+function colorToStyleString(color){
+    return `rgb(${Math.trunc(color.r*255)} ${Math.trunc(color.g*255)} ${Math.trunc(color.b*255)})`
 }

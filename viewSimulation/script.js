@@ -174,12 +174,17 @@ window.addEventListener("keydown", (e)=>{
 
 const light = new BABYLON.PointLight("light", new BABYLON.Vector3(10, 10, 0), scene);
 
-let colorList = [ {r: 0, g: 0, b: 0.6},
-                  {r: 0.6, g: 0, b: 0},
-                  {r: 0, g: 0.6, b: 0},
-                  {r: 1, g: 0.8, b: 0},
-                  {r: 0, g: 1, b: 1},
-                  {r: 1, g: 0, b: 1}
+let colorList = [ {r: 0, g: 0.1, b: 0.6}, //Blue
+                  {r: 0.6, g: 0, b: 0}, //Red
+                  {r: 0.06, g: 0.6, b: 0}, //Green
+                  {r: 0.8, g: 0.5, b: 0}, //Yellow
+                  {r: 0, g: 0.5, b: 0.6}, //BlueSky
+                  {r: 0.6, g: 0.1, b: 0.5}, //Magenta
+                  {r: 0.9, g: 0.2, b: 0}, //Orange
+                  {r: 0.3, g: 0, b: 0.4}, //Purple
+                  {r: 1, g: 0.8, b: 0.9}, //Pink
+                  {r: 1, g: 1, b: 1}, //White
+                  {r: 0, g: 0, b: 0} //Black
 ]
 
 let cameras = ["driverCam", "Tcam", "bumperCam", "onboard1", "onboard2", "onboard3", "topView", "chase"];
@@ -268,12 +273,22 @@ importSimulation.addEventListener('change', async (event) => {
   beginAnimations(0);
   pauseAnimations();
   drawTrackMap();
-  simulationAnimation.setLineColor(colorList[colorCounter].r, colorList[colorCounter].g, colorList[colorCounter].b);
+
+  if(simulationsList.length < 2){
+    simulationAnimation.setSimulationColor(colorList[colorCounter], false);
+  }else if(simulationsList.length == 2){
+    simulationsList[0].setSimulationColor(colorList[colorCounter-1]);
+    simulationAnimation.setSimulationColor(colorList[colorCounter]);
+  }else{
+    simulationAnimation.setSimulationColor(colorList[colorCounter]);
+  }
+
   calculateSectors();
   simulationAnimation.showLine(showLines);
   if(simulationsList) currentCar = simulationsList.length-1;
   calculateLapStats(await simulationAnimation);
   colorCounter++;
+  if(colorCounter > colorList.length-1) colorCounter = 0;
 });
 
 
@@ -325,6 +340,8 @@ const nextCameraButton = document.querySelector("#nextCamera");
 nextCameraButton.addEventListener("click", () =>{
   nextCamera();
 });
+
+//scene.animationTimeScale
 
 
 const playPauseButton = document.querySelector("#playPause");

@@ -16,6 +16,7 @@ class SimulationAnimation{
         this.currentEnergyOnPowerKJ = simulatedLap.nodes.slice(0, -1).reduce((n, {energyOnPowerKJ}) => n + energyOnPowerKJ, 0);
         this.currentEnergyOnBrakeKJ = 0;
         this.color = "rgb(0 0 0)";
+        this.dynamicMaterials = [];
 
         //Gmeter related stuff
         this.maxG = Math.max(Math.abs(simulatedLap.nodes[0].longitudinalG), Math.abs(simulatedLap.nodes[0].lateralG));
@@ -66,20 +67,24 @@ class SimulationAnimation{
             this.carMesh.renderingGroupId = 2; //so it renders on the track(0) and on line(1)
             this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 2);
             this.carMesh.getChildMeshes(false).forEach(mesh => {
+              //dynamic body color
+              if(mesh.material && mesh.material.name.includes("RLSdynamic")){
+                this.dynamicMaterials.push(mesh.material)
+              }
 
-            if (mesh.name.includes("WHEEL_STEERABLE")) {  //adds rolling and steering animation
-              this.steerableWheel.push(mesh);
-            } else if (mesh.name.includes("STEERABLE")) {  //adds only steering animation
-              this.steerables.push(mesh);
+              if (mesh.name.includes("WHEEL_STEERABLE")) {  //adds rolling and steering animation
+                this.steerableWheel.push(mesh);
+              } else if (mesh.name.includes("STEERABLE")) {  //adds only steering animation
+                this.steerables.push(mesh);
 
-            } else if (mesh.name.includes("STEERING_WHEEL")) {   //adds steering animation with steering ratio multiplier
-              this.steeringWheel.push(mesh);
+              } else if (mesh.name.includes("STEERING_WHEEL")) {   //adds steering animation with steering ratio multiplier
+                this.steeringWheel.push(mesh);
 
-            } else if (mesh.name.includes("WHEEL_REAR")) {    //only rolling animation
-              this.rearWheels.push(mesh);
-            } else if (mesh.name.includes("DRIVER_HELMET")) {
-              this.helmet.push(mesh);
-            }
+              } else if (mesh.name.includes("WHEEL_REAR")) {    //only rolling animation
+                this.rearWheels.push(mesh);
+              } else if (mesh.name.includes("DRIVER_HELMET")) {
+                this.helmet.push(mesh);
+              }
             });
 
 
@@ -244,9 +249,14 @@ class SimulationAnimation{
         this.deleteCarMesh();
     }
 
-    setLineColor(r,g,b){
-        this.lineMesh.color = new BABYLON.Color3(r, g, b);
-        this.color = `rgb(${Math.trunc(r*255)} ${Math.trunc(g*255)} ${Math.trunc(b*255)})`;
+    setSimulationColor(color, changeDynamicMaterial = true){
+        this.lineMesh.color = new BABYLON.Color3(color.r, color.g, color.b);
+        this.color = color;
+        if(changeDynamicMaterial){
+          this.dynamicMaterials.forEach(material => {
+            material.albedoColor = this.color;
+          });
+        }
     }
 
     carRenderFront(){
