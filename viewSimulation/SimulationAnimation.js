@@ -68,7 +68,7 @@ class SimulationAnimation{
             this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 2);
             this.carMesh.getChildMeshes(false).forEach(mesh => {
               //dynamic body color
-              if(mesh.material && mesh.material.name.includes("RLSdynamic")){
+              if(mesh.material && mesh.material.name.includes("RLSdynamic") && !this.dynamicMaterials.includes(mesh.material)){
                 this.dynamicMaterials.push(mesh.material)
               }
 
@@ -192,6 +192,10 @@ class SimulationAnimation{
         });
     }
 
+    getPosition(){
+      return this.carMesh.absolutePosition;
+    }
+
     switchToCamera(id){
         scene.useRightHandedSystem = true;
         this.helmet.forEach(mesh => {
@@ -259,9 +263,22 @@ class SimulationAnimation{
         }
     }
 
+    lineRenderFront(){
+      this.lineMesh.renderingGroupId = 1;
+    }
+
+    lineRenderBehind(){
+      this.lineMesh.renderingGroupId = 0;
+    }
+
     carRenderFront(){
         this.carMesh.renderingGroupId = 2;
         this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 2);
+    }
+
+    carRenderBetween(){
+      this.carMesh.renderingGroupId = 1;
+        this.carMesh.getChildMeshes(false).forEach(m => m.renderingGroupId = 1);
     }
 
     carRenderBehind(){

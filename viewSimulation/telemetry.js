@@ -141,5 +141,6 @@ engine.runRenderLoop(() => {
     updateTimeLine();
     drawGmeter();
     drawTrackMapPoints();
+    calculateSimulationsTransparency();
     scene.render();
 });

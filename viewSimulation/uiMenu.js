@@ -5,7 +5,7 @@ const uiElements = {
 };
 
 window.addEventListener("keydown", (e) => {
-  if (e.key == "1") {
+  if (e.key == "0") {
     if(uiElements.visible){
         uiElements.buttonsUiHtml.style.display = 'none';
         uiElements.uiElementsMenuHtml.style.display = 'none';

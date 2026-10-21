@@ -286,6 +286,8 @@ importSimulation.addEventListener('change', async (event) => {
   calculateSectors();
   simulationAnimation.showLine(showLines);
   if(simulationsList) currentCar = simulationsList.length-1;
+  currentCamera = cameras.indexOf("topView");
+  updateSimulationsRender(currentCamera);
   calculateLapStats(await simulationAnimation);
   colorCounter++;
   if(colorCounter > colorList.length-1) colorCounter = 0;
@@ -336,9 +338,52 @@ prevCarButton.addEventListener("click", () =>{
   updateStats();
 });
 
+//Keyboard next/previous Car Keys
+
+//PreviosCar
+window.addEventListener("keydown", (e) => {
+  if (e.key === "z") {
+    prevCar();
+    updateStats();
+  }
+});
+
+//NextCar
+window.addEventListener("keydown", (e) => {
+  if (e.key === "x") {
+    nextCar();
+    updateStats();
+  }
+});
+
 const nextCameraButton = document.querySelector("#nextCamera");
 nextCameraButton.addEventListener("click", () =>{
   nextCamera();
+});
+
+//Cameras Keyboard
+window.addEventListener("keydown", (e) => {
+  switch(e.key){
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+    case "5":
+    case "6":
+    case "7":
+    case "8":
+      scene.useRightHandedSystem = true;
+      currentCamera = Number(e.key)-1;
+      updateSimulationsRender(currentCamera);
+      simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
+      break;
+    case "9":
+      scene.useRightHandedSystem = false;
+      currentCamera = -1;
+      updateSimulationsRender(currentCamera);
+      scene.activeCamera = camera;
+      break;
+  }
 });
 
 //scene.animationTimeScale
@@ -351,6 +396,19 @@ playPauseButton.addEventListener("click", () => {
       resumeAnimations();
     }else{
       pauseAnimations();
+    }
+  }
+});
+
+//Play/Pause Key
+window.addEventListener("keydown", (e) => {
+  if (e.key === "p") {
+    if(worstSimulation){
+      if(isAnimationPaused){
+        resumeAnimations();
+      }else{
+        pauseAnimations();
+      }
     }
   }
 });
@@ -369,6 +427,48 @@ timeLine.addEventListener("change", (e) =>{
     setTimeout(() => {
       pauseAnimations();
     }, 1);
+  }
+});
+
+//skip/goBack Keys
+window.addEventListener("keydown", (e) => {
+  switch(e.key){
+    case ",":
+      timeLine.value = Number(timeLine.value)-1;
+      beginAnimations(timeLine.value);
+      if(isAnimationPaused){
+        setTimeout(() => {
+          pauseAnimations();
+        }, 1);
+      }
+      break;
+    case ".":
+      timeLine.value = Number(timeLine.value)+1;
+      beginAnimations(timeLine.value);
+      if(isAnimationPaused){
+        setTimeout(() => {
+          pauseAnimations();
+        }, 1);
+      }
+      break;
+    case ";":
+      timeLine.value = Number(timeLine.value)-3*60;
+      beginAnimations(timeLine.value);
+      if(isAnimationPaused){
+        setTimeout(() => {
+          pauseAnimations();
+        }, 1);
+      }
+      break;
+    case ":":
+      timeLine.value = Number(timeLine.value)+3*60;
+      beginAnimations(timeLine.value);
+      if(isAnimationPaused){
+        setTimeout(() => {
+          pauseAnimations();
+        }, 1);
+      }
+      break;
   }
 });
 
@@ -427,7 +527,12 @@ function nextCar(){
     currentCar++;
     if(currentCar >= simulationsList.length) currentCar = 0;
     simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
-    if(scene.activeCamera == camera) scene.useRightHandedSystem = false;
+    if(scene.activeCamera == camera){
+      scene.useRightHandedSystem = false;
+      updateSimulationsRender(currentCamera);
+    }else{
+      updateSimulationsRender(currentCamera);
+    };
   }
 }
 
@@ -437,26 +542,65 @@ function prevCar(){
     currentCar--;
     if(currentCar < 0) currentCar = simulationsList.length-1;
     simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
-    if(scene.activeCamera == camera) scene.useRightHandedSystem = false;
+    if(scene.activeCamera == camera){
+      scene.useRightHandedSystem = false;
+      updateSimulationsRender(currentCamera);
+    }else{
+      updateSimulationsRender(currentCamera);
+    };
   }
 }
 
 function nextCamera(){
   if(simulationsList.length){
     if(currentCamera > cameras.length-2){
-      simulationsList.forEach(sim => {
-        sim.carRenderBehind();
-      });
       scene.useRightHandedSystem = false;
       scene.activeCamera = camera;
       currentCamera = -1;
+      updateSimulationsRender(currentCamera);
     }else{
-      simulationsList.forEach(sim => {
-        sim.carRenderFront();
-      });
       scene.useRightHandedSystem = true;
       currentCamera++;
+      updateSimulationsRender(currentCamera);
       simulationsList[currentCar].switchToCamera(cameras[currentCamera]);
     }
+  }
+}
+
+function updateSimulationsRender(currentCamera){
+  switch (cameras[currentCamera]){
+    case "driverCam":
+    case "Tcam":
+    case "bumperCam":
+    case "onboard1":
+    case "onboard2":
+    case "onboard3":
+      simulationsList.forEach(sim => {
+        if(sim == simulationsList[currentCar]){
+          sim.carRenderFront();
+        }else{
+          sim.carRenderBehind();
+        }
+        sim.lineRenderBehind();
+      });
+      break;
+
+    case "topView":
+      simulationsList.forEach(sim => {
+        if(sim == simulationsList[currentCar]){
+          sim.carRenderFront();
+        }else{
+          sim.carRenderBetween();
+        }
+        sim.lineRenderFront();
+      });
+      break;
+
+    case "chase":
+    default:
+      simulationsList.forEach(sim => {
+        sim.carRenderBehind();
+        sim.lineRenderBehind();
+      });
   }
 }
