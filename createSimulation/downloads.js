@@ -29,7 +29,7 @@ function allowDownloads(value){
 
 
 function simulationToCsv(simulation){
-    let csv = "x;y;z;d;r;t;Distance m;Time s;LimitSpeed Km/h;Speed Km/h;Brake;Throttle;Gear;RPM;Energy On Power (KJ);Energy On Brake (KJ);WheelsAngle Deg;latG;longG;Total Time s;Line Length m\r\n"
+    let csv = "x;y;z;d;r;t;Distance m;Time s;LimitSpeed Km/h;Speed Km/h;Brake;Throttle;Gear;RPM;Power (Kw);Energy On Power (KJ);Energy On Brake (KJ);WheelsAngle Deg;latG;longG;Total Time s;Line Length m\r\n"
 
     let first = true;
 
@@ -57,6 +57,7 @@ function simulationToCsv(simulation){
         decStringWithComma(simulatedLap.nodes[i].throttle, 3)+";"+
         simulatedLap.nodes[i].gear+";"+
         decStringWithComma(simulatedLap.nodes[i].RPM, 3)+";"+
+        decStringWithComma(simulatedLap.nodes[i].P, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].energyOnPowerKJ, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].energyOnBrakeKJ, 3)+";"+
         decStringWithComma(simulatedLap.nodes[i].wheelsAngle*deg, 3)+";"+

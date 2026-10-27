@@ -59,6 +59,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     //Simple Power Curve Calculation
     function calculatePowerCurveValue(gears, V, P, Pg){
+        if(V*3.6 > gears[gears.length-1]) return 0;
         let gear = 0;
         while(gears[gear] < V * 3.6){
             gear++;
@@ -66,12 +67,19 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         }
         let minV = gears[gear-1]/3.6;
         let maxV = gears[gear]/3.6;
+        let expectedVgap = gears[gears.length-1]/(gears.length-1)/3.6;
+        let actualVgap = maxV - minV;
+        let gearEfficency = expectedVgap/actualVgap;
         let startPowerMul = Math.pow(gear/(gears.length - 1), 1/Pg);
         //The higher the gear the less we drop power
         //Pg determines how much the power drops at the gear change
         //The higher the value the less the power drops
-        let gearNorm = (V - minV)/(maxV - minV);
-        let resPower = P * ((1 - startPowerMul) * gearNorm + startPowerMul)
+
+        let gearNorm = (V - minV)/actualVgap;
+        let a = 1/Math.sqrt(gearEfficency + startPowerMul) * gearNorm;
+        let y = -1*((a - 1 + startPowerMul/1.5)**2)+1
+        let resPower = P * y;
+        resPower = Math.max(0, resPower);
         return !resPower || resPower > P ? P : resPower;
     }
 
@@ -201,6 +209,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             simulatedLap.nodes[i].throttle = 0;
             simulatedLap.nodes[i].brake = calculatePedalInput(m, Fd, aBL, a);
 
+            simulatedLap.nodes[i].P = 0;
             simulatedLap.nodes[i].energyOnPowerKJ = 0;
             simulatedLap.nodes[i].energyOnBrakeKJ = Bp*(simulatedLap.nodes[i].brake/100)*t;
             
@@ -261,6 +270,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     simulatedLap.nodes[0].throttle = 100;
     simulatedLap.nodes[0].brake = 0;
     simulatedLap.nodes[0].wheelsAngle = 0;
+    simulatedLap.nodes[0].P = SimCar.Power;
     simulatedLap.nodes[0].energyOnPowerKJ = 0;
     simulatedLap.nodes[0].energyOnBrakeKJ = 0;
 
@@ -281,7 +291,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let pitch = Math.asin((simulatedLap.nodes[i+1].y - simulatedLap.nodes[i].y)/simulatedLap.nodes[i].d);
 
-        let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 2);
+        let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 0.9);
 
         let Fl = calculateLiftForce(p, V, Cl, A, constantLoad);
 
@@ -315,6 +325,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         simulatedLap.nodes[i].brake = 0;
         simulatedLap.nodes[i].throttle = calculatePedalInput(m, Fd, aPL, a);
 
+        simulatedLap.nodes[i].P = P;
         simulatedLap.nodes[i].energyOnPowerKJ = P*(simulatedLap.nodes[i].throttle/100)*t;
         simulatedLap.nodes[i].energyOnBrakeKJ = 0;
 
