@@ -70,13 +70,13 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
         let expectedVgap = gears[gears.length-1]/(gears.length-1)/3.6;
         let actualVgap = maxV - minV;
         let gearEfficency = expectedVgap/actualVgap;
-        let startPowerMul = Math.pow(gear/(gears.length - 1), 1/Pg);
+        let startPowerMul = Math.pow(gear/(gears.length - 1), 1/Pg) * (1.12/Math.sqrt(gearEfficency)) * Math.sqrt(1.5**gearEfficency);
         //The higher the gear the less we drop power
         //Pg determines how much the power drops at the gear change
         //The higher the value the less the power drops
 
         let gearNorm = (V - minV)/actualVgap;
-        let a = 1/Math.sqrt(gearEfficency + startPowerMul) * gearNorm;
+        let a = 1/Math.sqrt(gearEfficency + startPowerMul) * gearNorm**2;
         let y = -1*((a - 1 + startPowerMul/1.5)**2)+1
         let resPower = P * y;
         resPower = Math.max(0, resPower);
@@ -291,7 +291,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let pitch = Math.asin((simulatedLap.nodes[i+1].y - simulatedLap.nodes[i].y)/simulatedLap.nodes[i].d);
 
-        let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 0.9);
+        let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 1);
 
         let Fl = calculateLiftForce(p, V, Cl, A, constantLoad);
 
