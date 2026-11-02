@@ -261,10 +261,11 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     //limits pass
     const limitSpeed = [];
     for(let i=0; i < data.length; i++){
-        simulatedLap.nodes[i].V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, 
+        let V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, 
                                             simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 
                                             data[i].roll * getDirection(data[Math.max(i-1,0)].x, data[Math.max(i-1,0)].z, data[i].x, data[i].z, data[Math.min(i+1,data.length-1)].x, data[Math.min(i+1,data.length-1)].z)
                                             , 299792458);
+        simulatedLap.nodes[i].V = simulatedLap.nodes[i].limitSpeed ? Math.min(simulatedLap.nodes[i].limitSpeed, V) : V;
         limitSpeed.push(simulatedLap.nodes[i].V > terminalVel ? terminalVel : simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V > terminalVel ? terminalVel : simulatedLap.nodes[i].V;
     }
