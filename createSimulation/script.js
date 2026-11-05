@@ -380,9 +380,9 @@ const simulationBtn = document.querySelector("#RunSimulation");
 const simulationBtnSpan = document.querySelector("#RunSimulationSpan");
 
 simulationBtn.addEventListener("click", (e) =>{
-  lastBestSimulation = deepCopy(bestSimulation);
+  lastBestSimulation = deepCopyOf(bestSimulation);
   simulatedLap = calculateLap(simCar, line, simulationStartVelocity, airDensity, trackGrip);
-  if(simulatedLap.totalTime <= bestSimulation.totalTime) bestSimulation = deepCopy(simulatedLap);
+  if(simulatedLap.totalTime <= bestSimulation.totalTime) bestSimulation = deepCopyOf(simulatedLap);
   updateSimulationTime(simulatedLap.totalTime);
 
   if(simBestResBtn.hasAttribute("disabled")) simBestResBtn.removeAttribute("disabled");
@@ -398,7 +398,7 @@ function checkSimulationBtn(){
 }
 
 
-function deepCopy(obj){
+function deepCopyOf(obj){
   return JSON.parse(JSON.stringify(obj));
 }
 
@@ -980,17 +980,17 @@ function activateSimSetup(){
   simBestResBtn = document.querySelector("#simBestRes");
 
   simBestResBtn.addEventListener("click", (e) =>{
-    simCar = deepCopy(bestSimulation.car);
-    airDensity = deepCopy(bestSimulation.airDensity);
-    trackGrip = deepCopy(bestSimulation.trackGrip);
-    simulationStartVelocity = deepCopy(bestSimulation.simulationStartVelocity);
+    simCar = deepCopyOf(bestSimulation.car);
+    airDensity = deepCopyOf(bestSimulation.airDensity);
+    trackGrip = deepCopyOf(bestSimulation.trackGrip);
+    simulationStartVelocity = deepCopyOf(bestSimulation.simulationStartVelocity);
     updateSimSetup();
 
     //console.log(bestSimulation, lastBestSimulation,simulatedLap)
 
-    lastBestSimulation = deepCopy(bestSimulation);
+    lastBestSimulation = deepCopyOf(bestSimulation);
     updateSimulationTime(bestSimulation.totalTime);
-    simulatedLap = deepCopy(bestSimulation);
+    simulatedLap = deepCopyOf(bestSimulation);
 
     simBestResBtn.setAttribute("disabled",true);
   });

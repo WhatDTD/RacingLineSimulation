@@ -247,8 +247,8 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
 
     let simulatedLap = { 
-        nodes: data,
-        car: JSON.parse(JSON.stringify(SimCar)),
+        nodes: deepCopyOf(data),
+        car: deepCopyOf(SimCar),
         airDensity: airDens,
         trackGrip: trackGrip,
         simulationStartVelocity: simulationStartVelocity,
@@ -259,14 +259,12 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     if(simulatedLap.car.gearBox.gears[simulatedLap.car.gearBox.gears.length-1]/3.6 < terminalVel) terminalVel = simulatedLap.car.gearBox.gears[simulatedLap.car.gearBox.gears.length-1]/3.6;
 
     //limits pass
-    const limitSpeed = [];
     for(let i=0; i < data.length; i++){
         let V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, 
                                             simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 
                                             data[i].roll * getDirection(data[Math.max(i-1,0)].x, data[Math.max(i-1,0)].z, data[i].x, data[i].z, data[Math.min(i+1,data.length-1)].x, data[Math.min(i+1,data.length-1)].z)
                                             , 299792458);
         simulatedLap.nodes[i].V = simulatedLap.nodes[i].limitSpeed ? Math.min(simulatedLap.nodes[i].limitSpeed, V) : V;
-        limitSpeed.push(simulatedLap.nodes[i].V > terminalVel ? terminalVel : simulatedLap.nodes[i].V);
         simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V > terminalVel ? terminalVel : simulatedLap.nodes[i].V;
     }
 
@@ -322,7 +320,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
         let a = calculateAccelerationForR(aFL, aPL, latFr, Math.cos(roll)*Fc + calculateWeightVectorComponents(m, g, pitch, roll).lateral);
 
-        let newVel = V+a*simulatedLap.nodes[i-1].t; //to account for the time error
+        let newVel = V+a*simulatedLap.nodes[i-1].t;
 
         let FLat = Math.cos(roll)*Fc < latFr ? Math.cos(roll)*Fc : latFr;
 
