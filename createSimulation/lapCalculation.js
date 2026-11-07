@@ -180,24 +180,27 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
     let terminalVel = calculateTerminalVel(SimCar.Power, airDens, SimCar.Cd, SimCar.A);
     
     //deceleration function
-    function calculateDeceleration(car, latFrC, longFrC, list, endPoint) {
+    function calculateDeceleration(car, nodes, endPoint) {
         let i = endPoint - 1;
         let brakingSamples = 0;
         let brakingDistance = 0;
+        let brakePeak = 0;
 
         let m = car.mass;
         let Bp = car.brakingPower;
         let Cd = car.Cd;
         let Cl = car.Cl;
         let A = car.A;
+        let latFrC = car.tyre.latFrC*trackGrip;
+        let longFrC = car.tyre.longFrC*trackGrip;
 
-        while (list[i].V > list[i+1].V) {
-            let V = list[i+1].V;
-            let t = list[i].d/V;
-            let roll = list[i].roll * getDirection(simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
-            let pitch = Math.asin((list[i+1].y - list[i].y)/list[i].d);
+        while (nodes[i].V > nodes[i+1].V) {
+            let V = nodes[i+1].V;
+            let t = nodes[i].d/V;
+            let roll = nodes[i].roll * getDirection(nodes[i-1].x, nodes[i-1].z, nodes[i].x, nodes[i].z, nodes[i+1].x, nodes[i+1].z);
+            let pitch = Math.asin((nodes[i+1].y - nodes[i].y)/nodes[i].d);
             let Fl = calculateLiftForce(airDens, V, Cl, A, constantLoad);
-            let Fc = calculateCentripetalForce(m, V, list[i].r);
+            let Fc = calculateCentripetalForce(m, V, nodes[i].r);
             let N = calculateNormalForce(m, g, Fl, Fc, pitch, roll);
             let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, SimCar.tyre.longTls);
             let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, SimCar.tyre.latTls);
@@ -209,37 +212,129 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
             let a = calculateAccelerationForR(aFL, aBL, latFr, Math.cos(roll)*Fc + calculateWeightVectorComponents(m, g, pitch, roll).lateral);
             let FLat = Math.cos(roll)*Fc < latFr ? Math.cos(roll)*Fc : latFr;
 
-            simulatedLap.nodes[i].longitudinalG =-a/g;
-            simulatedLap.nodes[i].lateralG =(FLat/m)/g;
+            nodes[i].longitudinalG =-a/g;
+            nodes[i].lateralG =(FLat/m)/g;
 
-            simulatedLap.nodes[i].throttle = 0;
-            simulatedLap.nodes[i].brake = calculatePedalInput(m, Fd, aBL, a);
+            nodes[i].throttle = 0;
+            nodes[i].brake = calculatePedalInput(m, Fd, aBL, a);
+            brakePeak = Math.max(brakePeak, nodes[i].brake);
 
-            simulatedLap.nodes[i].P = 0;
-            simulatedLap.nodes[i].energyOnPowerKJ = 0;
-            simulatedLap.nodes[i].energyOnBrakeKJ = Bp*(simulatedLap.nodes[i].brake/100)*t;
+            nodes[i].P = 0;
+            nodes[i].energyOnPowerKJ = 0;
+            nodes[i].energyOnBrakeKJ = Bp*(nodes[i].brake/100)*t;
             
-            let newSpeed = list[i+1].V + a*t;
-            if (newSpeed < list[i].V && newSpeed < list[i-1].V) {
-                list[i].V = newSpeed;
-                list[i].t = t;
+            let newSpeed = nodes[i+1].V + a*t;
+            if (newSpeed < nodes[i].V && newSpeed < nodes[i-1].V) {
+                nodes[i].V = newSpeed;
+                nodes[i].t = t;
             }else{
-                let BrakingData={maxSpeed: list[i], samples: brakingSamples, distance: brakingDistance};
+                let BrakingData={
+                    maxSpeed: nodes[i],
+                    samples: brakingSamples,
+                    distance: brakingDistance,
+                    peak: brakePeak
+                };
                 return BrakingData;
             }
 
-            simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, latFr, Math.cos(roll)*Fc, car.tyre.slipAngleLimit);
+            nodes[i].wheelsAngle = wheelsAngleFromR(nodes[i].r, nodes[i-1].x, nodes[i-1].z, nodes[i].x, nodes[i].z, nodes[i+1].x, nodes[i+1].z, latFr, Math.cos(roll)*Fc, car.tyre.slipAngleLimit);
 
             i--;
             brakingSamples++;
-            brakingDistance += list[i].d;
+            brakingDistance += nodes[i].d;
         }
 
-        let BrakingData={maxSpeed: list[i], samples: brakingSamples, distance: brakingDistance};
+        let BrakingData={
+            maxSpeed: nodes[i],
+            samples: brakingSamples,
+            distance: brakingDistance,
+            peak: brakePeak
+        };
         return BrakingData;
     }
 
-    //line length test
+    //lap calculation main function
+    function simulateLap(nodes, car){
+        //limit pass
+        for(let i=0; i < nodes.length; i++){
+            let V = maxVelforR(car.mass, g, nodes[i].r, car.tyre.latFrC*trackGrip, car.tyre.latTls, 
+                                                car.Cl, car.A, airDens, constantLoad, 
+                                                nodes[i].roll * getDirection(nodes[Math.max(i-1,0)].x, nodes[Math.max(i-1,0)].z, 
+                                                nodes[i].x, nodes[i].z, 
+                                                nodes[Math.min(i+1, nodes.length-1)].x, nodes[Math.min(i+1, nodes.length-1)].z)
+                                                , 299792458);
+            nodes[i].V = nodes[i].limitSpeed ? Math.min(nodes[i].limitSpeed, V) : V;
+            nodes[i].limitSpeed = nodes[i].V > terminalVel ? terminalVel : nodes[i].V;
+        }
+
+        //actual lap simulation
+        nodes[0].V = simulationStartVelocity ? simulationStartVelocity/3.6 : car.tyre.longFrC*trackGrip * g / nodes[0].d;
+        nodes[0].lateralG = 0;
+        nodes[0].longitudinalG = car.tyre.longFrC*trackGrip;
+        nodes[0].throttle = 100;
+        nodes[0].brake = 0;
+        nodes[0].wheelsAngle = 0;
+        nodes[0].P = car.Power;
+        nodes[0].energyOnPowerKJ = 0;
+        nodes[0].energyOnBrakeKJ = 0;
+
+        let m = car.mass;
+        let latFrC = car.tyre.latFrC*trackGrip;
+        let longFrC = car.tyre.longFrC*trackGrip;
+        let Cd = car.Cd;
+        let Cl = car.Cl;
+        let p = airDens;
+        let A = car.A;
+
+        for(let i=1; i < nodes.length-1; i++){
+            let V = nodes[i-1].V;
+            let t = nodes[i-1].d/V;
+            nodes[i-1].t = t;
+
+            let roll = nodes[i].roll * getDirection(nodes[i-1].x, nodes[i-1].z, nodes[i].x, nodes[i].z, nodes[i+1].x, nodes[i+1].z);
+            let pitch = Math.asin((nodes[i+1].y - nodes[i].y)/nodes[i].d);
+            let P = calculatePowerCurveValue(car.gearBox.gears, V, car.Power, 550/car.Power);
+            let Fl = calculateLiftForce(p, V, Cl, A, constantLoad);
+            let Fc = calculateCentripetalForce(m, V, nodes[i].r);
+            let N = calculateNormalForce(m, g, Fl, Fc, pitch, roll);
+            let Fd = calculateDragForce(p, V, Cd, A);
+            let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, car.tyre.latTls);
+            let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, car.tyre.longTls);
+            let latFr = calculateFrictionForce(realLatFrC, N);
+            let longFr = calculateFrictionForce(realLongFrC, N);
+            let aFL = calculateAccelerationFL(m, longFr);
+            let aPL = calculateAccelerationPL(m, g, pitch, P, Fd, latFr, Math.cos(roll)*Fc, car.tyre.slipAngleLimit, V);
+            let a = calculateAccelerationForR(aFL, aPL, latFr, Math.cos(roll)*Fc + calculateWeightVectorComponents(m, g, pitch, roll).lateral);
+            let newVel = V+a*nodes[i-1].t;
+            let FLat = Math.cos(roll)*Fc < latFr ? Math.cos(roll)*Fc : latFr;
+
+            nodes[i].longitudinalG =a/g;
+            nodes[i].lateralG =(FLat/m)/g;
+
+            nodes[i].brake = 0;
+            nodes[i].throttle = calculatePedalInput(m, Fd, aPL, a);
+
+            nodes[i].P = P;
+            nodes[i].energyOnPowerKJ = P*(nodes[i].throttle/100)*t;
+            nodes[i].energyOnBrakeKJ = 0;
+
+            if(!newVel){
+                newVel = V;
+            }
+
+            nodes[i].wheelsAngle = wheelsAngleFromR(nodes[i].r, nodes[i-1].x, nodes[i-1].z, nodes[i].x, nodes[i].z, nodes[i+1].x, nodes[i+1].z, latFr, Math.cos(roll)*Fc, car.tyre.slipAngleLimit);
+
+            if (newVel <= nodes[i].V){
+                nodes[i].V = newVel;
+            }else if(newVel > nodes[i].V){
+                calculateDeceleration(car, nodes, i);
+            }
+        }
+        return nodes;
+    }
+
+
+    //line length
     let totalDistance = 0;
     for(let i=0; i < data.length-1; i++){
         if(data[i].d) totalDistance += data[i].d;
@@ -258,94 +353,7 @@ function calculateLap(SimCar, data, simulationStartVelocity, airDens, trackGrip)
 
     if(simulatedLap.car.gearBox.gears[simulatedLap.car.gearBox.gears.length-1]/3.6 < terminalVel) terminalVel = simulatedLap.car.gearBox.gears[simulatedLap.car.gearBox.gears.length-1]/3.6;
 
-    //limits pass
-    for(let i=0; i < data.length; i++){
-        let V = maxVelforR(simulatedLap.car.mass, g, data[i].r, simulatedLap.car.tyre.latFrC*trackGrip, SimCar.tyre.latTls, 
-                                            simulatedLap.car.Cl, simulatedLap.car.A, airDens, constantLoad, 
-                                            data[i].roll * getDirection(data[Math.max(i-1,0)].x, data[Math.max(i-1,0)].z, data[i].x, data[i].z, data[Math.min(i+1,data.length-1)].x, data[Math.min(i+1,data.length-1)].z)
-                                            , 299792458);
-        simulatedLap.nodes[i].V = simulatedLap.nodes[i].limitSpeed ? Math.min(simulatedLap.nodes[i].limitSpeed, V) : V;
-        simulatedLap.nodes[i].limitSpeed = simulatedLap.nodes[i].V > terminalVel ? terminalVel : simulatedLap.nodes[i].V;
-    }
-
-    //actual lap simulation
-    simulatedLap.nodes[0].V = simulationStartVelocity ? simulationStartVelocity/3.6 : simulatedLap.car.tyre.longFrC*trackGrip * g / simulatedLap.nodes[0].d;
-    simulatedLap.nodes[0].lateralG = 0;
-    simulatedLap.nodes[0].longitudinalG = simulatedLap.car.tyre.longFrC*trackGrip;
-    simulatedLap.nodes[0].throttle = 100;
-    simulatedLap.nodes[0].brake = 0;
-    simulatedLap.nodes[0].wheelsAngle = 0;
-    simulatedLap.nodes[0].P = SimCar.Power;
-    simulatedLap.nodes[0].energyOnPowerKJ = 0;
-    simulatedLap.nodes[0].energyOnBrakeKJ = 0;
-
-    let m = simulatedLap.car.mass;
-    let latFrC = simulatedLap.car.tyre.latFrC*trackGrip;
-    let longFrC = simulatedLap.car.tyre.longFrC*trackGrip;
-    let Cd = simulatedLap.car.Cd;
-    let Cl = simulatedLap.car.Cl;
-    let p = simulatedLap.airDensity;
-    let A = simulatedLap.car.A;
-
-    for(let i=1; i < simulatedLap.nodes.length-1; i++){
-        let V = simulatedLap.nodes[i-1].V;
-        let t = simulatedLap.nodes[i-1].d/V;
-        simulatedLap.nodes[i-1].t = t;
-
-        let roll = simulatedLap.nodes[i].roll * getDirection(simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z);
-
-        let pitch = Math.asin((simulatedLap.nodes[i+1].y - simulatedLap.nodes[i].y)/simulatedLap.nodes[i].d);
-
-        let P = calculatePowerCurveValue(simulatedLap.car.gearBox.gears, V, simulatedLap.car.Power, 550/simulatedLap.car.Power);
-
-        let Fl = calculateLiftForce(p, V, Cl, A, constantLoad);
-
-        let Fc = calculateCentripetalForce(m, V, simulatedLap.nodes[i].r);
-
-        let N = calculateNormalForce(m, g, Fl, Fc, pitch, roll);
-
-        let Fd = calculateDragForce(p, V, Cd, A);
-
-        let realLatFrC = calculateFrictionCoefficientOnLoad(m, g, N, latFrC, SimCar.tyre.latTls);
-
-        let realLongFrC = calculateFrictionCoefficientOnLoad(m, g, N, longFrC, SimCar.tyre.longTls);
-
-        let latFr = calculateFrictionForce(realLatFrC, N);
-
-        let longFr = calculateFrictionForce(realLongFrC, N);
-
-        let aFL = calculateAccelerationFL(m, longFr);
-
-        let aPL = calculateAccelerationPL(m, g, pitch, P, Fd, latFr, Math.cos(roll)*Fc, SimCar.tyre.slipAngleLimit, V);
-
-        let a = calculateAccelerationForR(aFL, aPL, latFr, Math.cos(roll)*Fc + calculateWeightVectorComponents(m, g, pitch, roll).lateral);
-
-        let newVel = V+a*simulatedLap.nodes[i-1].t;
-
-        let FLat = Math.cos(roll)*Fc < latFr ? Math.cos(roll)*Fc : latFr;
-
-        simulatedLap.nodes[i].longitudinalG =a/g;
-        simulatedLap.nodes[i].lateralG =(FLat/m)/g;
-
-        simulatedLap.nodes[i].brake = 0;
-        simulatedLap.nodes[i].throttle = calculatePedalInput(m, Fd, aPL, a);
-
-        simulatedLap.nodes[i].P = P;
-        simulatedLap.nodes[i].energyOnPowerKJ = P*(simulatedLap.nodes[i].throttle/100)*t;
-        simulatedLap.nodes[i].energyOnBrakeKJ = 0;
-
-        if(!newVel){
-            newVel = V;
-        }
-
-        simulatedLap.nodes[i].wheelsAngle = wheelsAngleFromR(simulatedLap.nodes[i].r, simulatedLap.nodes[i-1].x, simulatedLap.nodes[i-1].z, simulatedLap.nodes[i].x, simulatedLap.nodes[i].z, simulatedLap.nodes[i+1].x, simulatedLap.nodes[i+1].z, latFr, Math.cos(roll)*Fc, simulatedLap.car.tyre.slipAngleLimit);
-
-        if (newVel <= simulatedLap.nodes[i].V){
-            simulatedLap.nodes[i].V = newVel;
-        }else if(newVel > simulatedLap.nodes[i].V){
-            calculateDeceleration(simulatedLap.car, simulatedLap.car.tyre.latFrC*trackGrip, simulatedLap.car.tyre.longFrC*trackGrip, simulatedLap.nodes, i);
-        }
-    }
+    simulatedLap.nodes = simulateLap(simulatedLap.nodes, simulatedLap.car);
 
     //gear and rpm calculation
     for(let i=0; i < simulatedLap.nodes.length-1; i++){
